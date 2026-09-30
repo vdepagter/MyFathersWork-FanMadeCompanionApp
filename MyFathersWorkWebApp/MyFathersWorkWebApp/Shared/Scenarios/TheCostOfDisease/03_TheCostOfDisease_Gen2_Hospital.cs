@@ -13,7 +13,7 @@ public static partial class TheCostOfDisease
         globalData.TheCostOfDiseaseVars.HubId = CostOfDiseaseHubId.Hospital;
         globalData.ActiveHub                  = new GameplayHub(globalData);
         globalData.ActiveHub.SetDefaultTitle();
-        globalData.ActiveHub.SetSubtitle(Years.Early);
+        globalData.ActiveHub.SetSubtitle(globalData.Years);
 
         const string       boardSection    = "Board";
         GameplayHubSection boardOfTrustees = globalData.ActiveHub.AddSection(boardSection, true);
@@ -729,7 +729,7 @@ public static partial class TheCostOfDisease
         globalData.SaveToUndo();
         globalData.ActiveWindow = new GameplayWindow(globalData);
         globalData.ActiveWindow.AddDefaultTitle();
-        globalData.ActiveWindow.AddDefaultTitle();
+        globalData.ActiveWindow.AddDefaultContent();
         globalData.ActiveWindow.AddNextContent(1);
         globalData.ActiveWindow.AddYesNo(ImmortalityMwUpdate2, _ => { });
     }

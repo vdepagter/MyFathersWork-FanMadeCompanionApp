@@ -125,7 +125,7 @@
 @if (GlobalData.ActiveInputPopup != null)
 {
     _SaveGame = true;
-    <InputPopup GlobalData=@GlobalData GameplayPopUp=@GlobalData.ActiveInputPopup Refresh=Refresh/>
+    <InputPopup @key="GlobalData.ActiveInputPopup" GlobalData=@GlobalData GameplayPopUp=@GlobalData.ActiveInputPopup Refresh=Refresh/>
 }
 
 <PauseMenu 

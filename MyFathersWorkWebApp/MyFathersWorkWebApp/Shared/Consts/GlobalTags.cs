@@ -95,6 +95,7 @@ public static class GlobalTags
     public const string Gameplay_ClickAtTheEndOfGeneration  = "Gameplay_ClickAtTheEndOfGeneration";
     public const string Gameplay_DrJr                       = "Gameplay_DrJr";
     public const string Gameplay_Dr                         = "Gameplay_Dr";
+    public const string Gameplay_Third                      = "Gameplay_Third";
 
     // Others
     public const string GameplayStartTag = "Gameplay_";

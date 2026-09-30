@@ -8,9 +8,11 @@ public class GameplayHub(GlobalData globalData)
     public string                   Subtitle { get; private set; } = string.Empty;
     public List<GameplayHubSection> Sections { get; }              = new();
 
-    public void SetDefaultTitle([CallerMemberName] string callerName = "")
+    public void SetDefaultTitle(Func<string, string>? contentProcessor = null, [CallerMemberName] string callerName = "")
     {
-        Title = globalData.GetScenarioLocalizedTag(callerName + "_Title");
+        string title                        = globalData.GetScenarioLocalizedTag(callerName + "_Title");
+        if (contentProcessor != null) title = contentProcessor(title);
+        Title = title;
     }
 
     public void SetSubtitle(Years years)

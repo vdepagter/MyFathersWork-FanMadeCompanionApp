@@ -36,4 +36,10 @@ public static class PopUpIcon
     public const string ExperimentBBack            = "ExperimentBBack";
     public const string S1_HunterToken             = "S1_HunterToken";
     public const string S1_WolfToken               = "S1_WolfToken";
+    public const string S1_VialToken               = "S1_VialToken";
+    public const string S1_MWUpdateLycanthropic    = "S1_MWUpdateLycanthropic";
+    public const string GainCaretakerFromLost      = "GainCaretakerFromLost";
+    public const string CompulsionBack             = "CompulsionBack";
+    public const string Servant                    = "Servant";
+    public const string Spouse_Servant             = "Spouse_Servant";
 }
