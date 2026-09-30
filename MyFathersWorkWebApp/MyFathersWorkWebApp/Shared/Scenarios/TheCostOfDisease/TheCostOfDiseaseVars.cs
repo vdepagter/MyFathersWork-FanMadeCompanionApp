@@ -7,7 +7,7 @@ namespace MyFathersWorkWebApp;
 public class TheCostOfDiseaseVars
 {
     // globalData.TheCostOfDiseaseVars.RandomElement([
-    // ], x) Current: 58 // TODO Return to this value after finishing scenario code
+    // ], x) Current: 58 (Gen I & II), Gen III uses 59 - 259 (see _RND_ constants in the Gen III files)
     public int[] RandomArray { get; set; } = new int[300 + 1];
 
     public CostOfDiseaseHubId HubId   { get; set; }
@@ -65,6 +65,62 @@ public class TheCostOfDiseaseVars
     public int                         GoodCount            { get; set; }
     public Society                     Society              { get; set; } = Society.None;
 
+    // Generation III - common
+    public CostOfDiseaseEnding Ending          { get; set; } = CostOfDiseaseEnding.None;
+    public bool                Lycan           { get; set; }
+    public bool                Gen3SetupShown  { get; set; } // originally gen3pg
+    public bool                SuspicionMoved  { get; set; } // originally Prosperity1 / University1
+
+    // Generation III - Gloomy Gothic
+    public int          HuntVp     { get; set; }
+    public int          CharityPenalty { get; set; } // originally conpat
+    public ExtendedBool Confront   { get; set; } = ExtendedBool.None;
+    public ExtendedBool Taxes      { get; set; } = ExtendedBool.None;
+    public ExtendedBool VialUse    { get; set; } = ExtendedBool.None;
+    public int          HuntNumber { get; set; } // originally huntnum
+
+    // Generation III - Prosperity
+    public int          HuntCount      { get; set; }
+    public string[]     HuntersFirst   { get; set; } = new string[2];  // originally h1a, h1b
+    public string[]     HuntersSecond  { get; set; } = new string[2];  // originally h2a, h2b
+    public int[]        HuntRewards    { get; set; } = new int[8];     // originally reward1 - reward8
+    public int          HuntReward     { get; set; }                   // originally huntreward1 / huntreward2
+    public int          HuntDirection  { get; set; }                   // 0 - North, 1 - East, 2 - West, 3 - South
+    public int          HuntBeast      { get; set; }                   // originally huntbeast
+    public string       HuntName       { get; set; } = string.Empty;
+    public ExtendedBool Overrun        { get; set; } = ExtendedBool.None;
+    public ExtendedBool Frenzy         { get; set; } = ExtendedBool.None;
+    public bool         ReturnToEvil   { get; set; } // Prosperity3b
+    public int          AngryMobCount  { get; set; }
+
+    // Generation III - University
+    public int    Mental     { get; set; }
+    public string SanePlayer { get; set; } = string.Empty;
+    public bool   Ultimate   { get; set; }
+    public bool   Killed     { get; set; }
+    public bool[] DetVisited { get; set; } = new bool[4]; // originally det1 - det4
+    public int    DetCount   { get; set; }
+
+    // Generation III - No University
+    public ExtendedBool                             Electricity     { get; set; } = ExtendedBool.None; // True -> peeps 0, False -> peeps 1
+    public bool                                     ImmortalityNone { get; set; }                      // originally imm == "none"
+    public int                                      BarCount        { get; set; }
+    public int                                      NewMasterIndex  { get; set; }
+    public string                                   MasterworkCheck { get; set; } = string.Empty; // originally tempcheck / tempcomp
+    public Dictionary<string, MasterworkDiscipline> MwDiscipline    { get; set; } = new();
+    public Dictionary<string, MasterworkType>       MwType          { get; set; } = new();
+    public Dictionary<string, int>                  MwCost          { get; set; } = new(); // Science index: 0 - Engineering, 1 - Chemistry, 2 - Biology
+    public Dictionary<string, string>               MwName          { get; set; } = new();
+    public Dictionary<string, int>                  MwAdjective     { get; set; } = new();
+
+    // Final Scoring
+    public Dictionary<string, int> Scores           { get; set; } = new();
+    public int                     ScoreIndex       { get; set; }
+    public string[]                TiedPlayers      { get; set; } = [];
+    public string[]                TieMasterworks   { get; set; } = [];
+    public int                     TieIndex         { get; set; }
+    public bool                    FamilyWinner     { get; set; }
+
     public const string WOLVES_EVIL_TOWN_NAME  = "Rage";
     public const string HUNTERS_EVIL_TOWN_NAME = "Kraven";
 
@@ -88,6 +144,25 @@ public class TheCostOfDiseaseVars
         if (playerName == _GlobalData.PlayerDName) index += 3;
 
         return list[RandomArray[index] % list.Count];
+    }
+
+    public int RandomInRange(int min, int max, int index)
+    {
+        return min + RandomArray[index] % (max - min + 1);
+    }
+
+    // Deterministic Fisher-Yates shuffle, uses (list.Count - 1) random values starting at startIndex
+    public List<T> Shuffle<T>(List<T> list, int startIndex)
+    {
+        List<T> result = new(list);
+
+        for (int x = result.Count - 1; x > 0; --x)
+        {
+            int swapIndex = RandomArray[startIndex + result.Count - 1 - x] % (x + 1);
+            (result[x], result[swapIndex]) = (result[swapIndex], result[x]);
+        }
+
+        return result;
     }
 
     public void Reset(GlobalData globalData)
@@ -132,6 +207,45 @@ public class TheCostOfDiseaseVars
         GoodCount            = 0;
         Society              = Society.None;
 
+        Ending          = CostOfDiseaseEnding.None;
+        Lycan           = false;
+        Gen3SetupShown  = false;
+        SuspicionMoved  = false;
+        HuntVp          = 0;
+        CharityPenalty  = 0;
+        Confront        = ExtendedBool.None;
+        Taxes           = ExtendedBool.None;
+        VialUse         = ExtendedBool.None;
+        HuntNumber      = 0;
+        HuntCount       = 0;
+        HuntersFirst    = [string.Empty, string.Empty];
+        HuntersSecond   = [string.Empty, string.Empty];
+        HuntRewards     = [0, 1, 2, 3, 4, 5, 6, 7];
+        HuntReward      = 0;
+        HuntDirection   = 0;
+        HuntBeast       = 0;
+        HuntName        = string.Empty;
+        Overrun         = ExtendedBool.None;
+        Frenzy          = ExtendedBool.None;
+        ReturnToEvil    = false;
+        AngryMobCount   = 0;
+        Mental          = 0;
+        SanePlayer      = string.Empty;
+        Ultimate        = false;
+        Killed          = false;
+        DetVisited      = [false, false, false, false];
+        DetCount        = 0;
+        Electricity     = ExtendedBool.None;
+        ImmortalityNone = false;
+        BarCount        = 0;
+        NewMasterIndex  = 0;
+        MasterworkCheck = string.Empty;
+        ScoreIndex      = 0;
+        TiedPlayers     = [];
+        TieMasterworks  = [];
+        TieIndex        = 0;
+        FamilyWinner    = false;
+
         string[] players = [globalData.PlayerAName, globalData.PlayerBName, globalData.PlayerCName, globalData.PlayerDName];
 
         foreach (string player in players)
@@ -141,6 +255,12 @@ public class TheCostOfDiseaseVars
             Ally[player]                 = Faction.None;
             BuildingPlay[player]         = 0;
             HelpedExposeBuilding[player] = [false, false, false];
+            MwDiscipline[player]         = MasterworkDiscipline.None;
+            MwType[player]               = MasterworkType.None;
+            MwCost[player]               = 0;
+            MwName[player]               = string.Empty;
+            MwAdjective[player]          = 0;
+            Scores[player]               = 0;
         }
 
         for (int x = 0; x < 6; ++x) Letter[x] = string.Empty;

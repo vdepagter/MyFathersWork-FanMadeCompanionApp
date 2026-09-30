@@ -91,6 +91,11 @@ public class GameplayWindow(GlobalData globalData)
         }
     }
 
+    public void AddCustomContent(string content, bool fromNewLine = false)
+    {
+        Elements.Add(new GameplayElement(content, null, fromNewLine));
+    }
+
     public void AddClickHere(Action<GlobalData> nextCallback, bool fromNewLine = false)
     {
         Elements.Add(new GameplayElement(globalData.GetLocalizedUITag(GlobalTags.Gameplay_ClickHere), nextCallback, fromNewLine));
@@ -145,9 +150,10 @@ public class GameplayWindow(GlobalData globalData)
 
         string format = playerFormatterTag switch
         {
-            PlayerFormatterTag.DrJr => globalData.GetLocalizedUITag(GlobalTags.Gameplay_DrJr),
-            PlayerFormatterTag.Dr   => globalData.GetLocalizedUITag(GlobalTags.Gameplay_Dr),
-            _                       => "{{0=...|Oliver|James|Olivia|...}}"
+            PlayerFormatterTag.DrJr  => globalData.GetLocalizedUITag(GlobalTags.Gameplay_DrJr),
+            PlayerFormatterTag.Dr    => globalData.GetLocalizedUITag(GlobalTags.Gameplay_Dr),
+            PlayerFormatterTag.Third => globalData.GetLocalizedUITag(GlobalTags.Gameplay_Third),
+            _                        => "{{0=...|Oliver|James|Olivia|...}}"
         };
 
         if (showPlayer(globalData.PlayerAName)) Elements.Add(new GameplayElement(format.FormatWithReplacement(0,                               globalData.PlayerAName), data => nextCallback(data.PlayerAName), true));

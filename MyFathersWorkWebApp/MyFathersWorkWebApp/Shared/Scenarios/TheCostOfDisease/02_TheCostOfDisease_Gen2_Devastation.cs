@@ -12,7 +12,7 @@ public static partial class TheCostOfDisease
         globalData.TheCostOfDiseaseVars.HubId = CostOfDiseaseHubId.Devastation;
         globalData.ActiveHub                  = new GameplayHub(globalData);
         globalData.ActiveHub.SetDefaultTitle();
-        globalData.ActiveHub.SetSubtitle(Years.Early);
+        globalData.ActiveHub.SetSubtitle(globalData.Years);
 
         const string       envelopesSection = "Envelopes";
         GameplayHubSection envelopes        = globalData.ActiveHub.AddSection(envelopesSection, true);
@@ -919,7 +919,8 @@ public static partial class TheCostOfDisease
         globalData.ActiveWindow = new GameplayWindow(globalData);
         globalData.ActiveWindow.AddDefaultTitle();
         globalData.ActiveWindow.AddDefaultContent();
-        globalData.ActiveWindow.AddNextContent(1, false, content => content
+        globalData.ActiveWindow.AddNextContent(1);
+        globalData.ActiveWindow.AddNextContent(2, false, content => content
                                                                    .FormatWithIndex(0, globalData.LocalizedPlayerNumberIndex())
                                                                    .FormatWithIndex(1, index));
         globalData.ActiveWindow.AddClickHereToContinue(nextAction);

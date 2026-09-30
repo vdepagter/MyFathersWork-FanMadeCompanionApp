@@ -2,7 +2,8 @@
 
 public enum PlayerFormatterTag
 {
-    None = 0,
-    DrJr = 1,
-    Dr   = 2
+    None  = 0,
+    DrJr  = 1,
+    Dr    = 2,
+    Third = 3
 }
