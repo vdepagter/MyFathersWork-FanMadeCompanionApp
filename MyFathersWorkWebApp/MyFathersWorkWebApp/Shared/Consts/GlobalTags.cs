@@ -58,6 +58,17 @@ public static class GlobalTags
     // Scenario Language Screen
     public const string ScenarioLanguage_Title    = "ScenarioLanguage_Title";
     public const string ScenarioLanguage_Subtitle = "ScenarioLanguage_Subtitle";
+    public const string ScenarioLanguage_Mirror     = "ScenarioLanguage_Mirror";
+    public const string ScenarioLanguage_MirrorDesc = "ScenarioLanguage_MirrorDesc";
+
+    // Mirror Mode Popup
+    public const string Mirror_Title       = "Mirror_Title";
+    public const string Mirror_Question    = "Mirror_Question";
+    public const string Mirror_Hidden      = "Mirror_Hidden";
+    public const string Mirror_Number      = "Mirror_Number";
+    public const string Mirror_NumberError = "Mirror_NumberError";
+    public const string Mirror_Nothing     = "Mirror_Nothing";
+    public const string Mirror_Roll        = "Mirror_Roll";
 
     // Gameplay
     public const string Gameplay_Yes                        = "Gameplay_Yes";

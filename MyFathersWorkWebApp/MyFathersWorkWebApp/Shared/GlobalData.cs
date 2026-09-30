@@ -6,7 +6,7 @@ using Newtonsoft.Json;
 
 namespace MyFathersWorkWebApp;
 
-public class GlobalData
+public partial class GlobalData
 {
     private class UndoData
     {
@@ -41,7 +41,7 @@ public class GlobalData
 
     [JsonIgnore] private Stack<UndoData> UndoStack { get; } = new();
 
-    [JsonIgnore] public bool IsUndoDisabled => UndoStack.Count <= 1;
+    [JsonIgnore] public bool IsUndoDisabled => ActiveMirrorQuestion == null && UndoStack.Count <= 1;
 
     [JsonIgnore] private bool _UndoInProgress;
 
@@ -161,6 +161,13 @@ public class GlobalData
 
     public void Undo()
     {
+        if (ActiveMirrorQuestion != null)
+        {
+            // Back from a mirror question returns to the screen it was asked from
+            ActiveMirrorQuestion = null;
+            if (ActiveHub != null || ActiveWindow != null || ActivePopup != null || ActiveInputPopup != null) return;
+        }
+
         if (UndoStack.Count <= 1) return;
         _UndoInProgress = true;
         UndoStack.Pop();
@@ -176,9 +183,22 @@ public class GlobalData
             NullValueHandling      = NullValueHandling.Ignore
         };
         JsonConvert.PopulateObject(prev.JsonData, this, settings);
-        GetHubMethod()?.Invoke(this);
-        prev.Callback?.Invoke(this);
         _UndoInProgress = false;
+
+        RunScenarioAction(() =>
+        {
+            _UndoInProgress = true;
+
+            try
+            {
+                GetHubMethod()?.Invoke(this);
+                prev.Callback?.Invoke(this);
+            }
+            finally
+            {
+                _UndoInProgress = false;
+            }
+        });
     }
 
     public async void SaveGame(IJSRuntime js)
@@ -213,10 +233,11 @@ public class GlobalData
         }
 
         TheCostOfDiseaseVars.Reset(this);
-        ActiveHub        = null;
-        ActiveWindow     = null;
-        ActivePopup      = null;
-        ActiveInputPopup = null;
+        ActiveHub            = null;
+        ActiveWindow         = null;
+        ActivePopup          = null;
+        ActiveInputPopup     = null;
+        ActiveMirrorQuestion = null;
 
         string json = System.Text.Encoding.UTF8.GetString(Convert.FromBase64String(base64));
         JsonSerializerSettings settings = new JsonSerializerSettings
@@ -241,7 +262,7 @@ public class GlobalData
             return;
         }
 
-        activeHub(this);
+        RunScenarioAction(() => activeHub(this));
         UndoStack.Push(new UndoData
         {
             JsonData = json,

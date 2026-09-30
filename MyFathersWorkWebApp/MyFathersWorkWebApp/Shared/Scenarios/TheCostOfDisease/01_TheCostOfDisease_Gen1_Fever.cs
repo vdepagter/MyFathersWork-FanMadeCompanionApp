@@ -396,7 +396,7 @@ public static partial class TheCostOfDisease
     {
         globalData.SaveToUndo();
         globalData.ActivePopup = new GameplayPopup(globalData, PopUpTitle.EndOfGeneration, PopUpIcon.MFWlogo,
-            PopUpButton.Confirm, globalData.TheCostOfDiseaseVars.RandomElement([S5Fate1, S5Fate2], 5));
+            PopUpButton.Confirm, data => data.TheCostOfDiseaseVars.RandomElement([S5Fate1, S5Fate2], 5).Invoke(data));
     }
 
     private static void S5Fate1(GlobalData globalData)

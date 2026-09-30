@@ -1,4 +1,4 @@
-namespace MyFathersWorkWebApp;
+﻿namespace MyFathersWorkWebApp;
 
 public static partial class TheCostOfDisease
 {
@@ -225,15 +225,7 @@ public static partial class TheCostOfDisease
 
         globalData.SaveToUndo();
 
-        // Science index: 0 - Engineering, 1 - Chemistry, 2 - Biology
-        List<int> costs = discipline switch
-        {
-            MasterworkDiscipline.Biology     => [0, 1],
-            MasterworkDiscipline.Engineering => [2, 1],
-            MasterworkDiscipline.Chemistry   => [0, 2],
-            _                                => [0, 1, 2]
-        };
-        vars.MwCost[player] = vars.RandomElement(costs, _RND_MASTERWORK_COST + vars.NewMasterIndex);
+        vars.MwCost[player] = -1; // drawn when the card is shown (MasterworkCost)
 
         int disciplineIndex = (int)discipline - 1;
 
@@ -299,14 +291,31 @@ public static partial class TheCostOfDisease
         return globalData.GetScenarioLocalizedTag("MasterworkReward_Content" + (int)globalData.TheCostOfDiseaseVars.MwType[player]);
     }
 
+    private static int MasterworkCost(GlobalData globalData, string player)
+    {
+        TheCostOfDiseaseVars vars = globalData.TheCostOfDiseaseVars;
+        if (vars.MwCost[player] >= 0) return vars.MwCost[player];
+
+        // Science index: 0 - Engineering, 1 - Chemistry, 2 - Biology
+        List<int> costs = vars.MwDiscipline[player] switch
+        {
+            MasterworkDiscipline.Biology     => [0, 1],
+            MasterworkDiscipline.Engineering => [2, 1],
+            MasterworkDiscipline.Chemistry   => [0, 2],
+            _                                => [0, 1, 2]
+        };
+        vars.MwCost[player] = vars.RandomElement(costs, _RND_MASTERWORK_COST + Array.IndexOf(globalData.GetActivePlayers(), player));
+        return vars.MwCost[player];
+    }
+
     private static string MasterworkCard(GlobalData globalData, string player)
     {
         TheCostOfDiseaseVars vars = globalData.TheCostOfDiseaseVars;
 
         return globalData.GetScenarioLocalizedTag("MasterworkCard_Content" + (int)vars.MwType[player])
                          .FormatWithReplacement(0, vars.MwName[player])
-                         .FormatWithIndex(1, vars.MwCost[player])
-                         .FormatWithIndex(2, vars.MwCost[player])
+                         .FormatWithIndex(1, MasterworkCost(globalData, player))
+                         .FormatWithIndex(2, MasterworkCost(globalData, player))
                + MasterworkReward(globalData, player)
                + globalData.GetScenarioLocalizedTag("MasterworkCard_Note");
     }

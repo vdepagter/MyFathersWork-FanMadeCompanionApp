@@ -1,0 +1,111 @@
+<div class="popup-overlay">
+    <div class="popup-box mirror-popup">
+        <h2>@GlobalData.GetLocalizedUITag(GlobalTags.Mirror_Title)</h2>
+
+        @if (Question.IsNumeric)
+        {
+            <p class="mirror-question">@GlobalData.GetLocalizedUITag(GlobalTags.Mirror_Number)</p>
+            <p class="mirror-context">@(Question.Before + " ")<b>___</b>@(" " + Question.After)</p>
+
+            <input @bind="_Number" @bind:event="oninput" type="number" class="input-field" min="@Question.NumericMin" max="@(Question.NumericMin + Question.Count - 1)"/>
+
+            @if (_ShowNumberError)
+            {
+                <p class="mirror-error">@GlobalData.GetLocalizedUITag(GlobalTags.Mirror_NumberError).FormatWithReplacement(0, Question.NumericMin.ToString()!).FormatWithReplacement(1, (Question.NumericMin + Question.Count - 1).ToString()!)</p>
+            }
+
+            <button class="popup-button" @onclick="ConfirmNumber">@GlobalData.GetLocalizedUITag(GlobalTags.Gameplay_Confirm)</button>
+        }
+        else if (Question.Hidden)
+        {
+            <p class="mirror-question">@GlobalData.GetLocalizedUITag(GlobalTags.Mirror_Hidden)</p>
+
+            <div class="mirror-grid">
+                @foreach (MirrorOption option in Question.Options)
+                {
+                    <button class="mirror-choice" @onclick="() => Answer(option)">@option.Changed</button>
+                }
+            </div>
+        }
+        else if (Question.ShortLabels)
+        {
+            <p class="mirror-question">@GlobalData.GetLocalizedUITag(GlobalTags.Mirror_Question)</p>
+
+            @if (Question.Before != string.Empty || Question.After != string.Empty)
+            {
+                <p class="mirror-context">@(Question.Before + " ")<b>___</b>@(" " + Question.After)</p>
+            }
+
+            <div class="mirror-grid">
+                @foreach (MirrorOption option in Question.Options)
+                {
+                    <button class="mirror-choice" @onclick="() => Answer(option)">@Label(option)</button>
+                }
+            </div>
+        }
+        else
+        {
+            <p class="mirror-question">@GlobalData.GetLocalizedUITag(GlobalTags.Mirror_Question)</p>
+
+            <div class="mirror-list">
+                @foreach (MirrorOption option in Question.Options)
+                {
+                    <button class="mirror-card" @onclick="() => Answer(option)">
+                        @if (option.Before != string.Empty)
+                        {
+                            <span class="mirror-card-context">@(option.Before + " ")</span>
+                        }
+                        <b>@Label(option)</b>
+                        @if (option.After != string.Empty)
+                        {
+                            <span class="mirror-card-context">@(" " + option.After)</span>
+                        }
+                    </button>
+                }
+            </div>
+        }
+
+        <button class="mirror-roll" @onclick="Roll">@GlobalData.GetLocalizedUITag(GlobalTags.Mirror_Roll)</button>
+    </div>
+</div>
+
+@code
+{
+    [Parameter] public MirrorQuestion Question   { get; set; } = null!;
+    [Parameter] public GlobalData     GlobalData { get; set; } = null!;
+    [Parameter] public Action         Refresh    { get; set; } = null!;
+
+    private int? _Number;
+    private bool _ShowNumberError;
+
+    private string Label(MirrorOption option)
+    {
+        return option.Changed == string.Empty ? GlobalData.GetLocalizedUITag(GlobalTags.Mirror_Nothing) : option.Changed;
+    }
+
+    private void Answer(MirrorOption option)
+    {
+        GlobalData.AnswerMirrorQuestion(option.Value);
+        Refresh();
+    }
+
+    private void ConfirmNumber()
+    {
+        int value = (_Number ?? int.MinValue) - Question.NumericMin!.Value;
+
+        if (value < 0 || value >= Question.Count)
+        {
+            _ShowNumberError = true;
+            return;
+        }
+
+        GlobalData.AnswerMirrorQuestion(value);
+        Refresh();
+    }
+
+    private void Roll()
+    {
+        GlobalData.RollMirrorQuestion();
+        Refresh();
+    }
+}

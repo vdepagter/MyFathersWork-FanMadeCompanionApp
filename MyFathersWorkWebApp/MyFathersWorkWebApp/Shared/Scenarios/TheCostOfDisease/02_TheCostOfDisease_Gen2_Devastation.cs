@@ -24,9 +24,9 @@ public static partial class TheCostOfDisease
         GameplayHubSection suspicion        = globalData.ActiveHub.AddSection(suspicionSection, true);
         suspicion.ReplaceShouldShow(() => globalData.Years is Years.Middle or Years.Late);
         suspicion.AddDefaultContent(suspicionSection);
-        suspicion.AddSpecialClickHere(suspicionSection, _ => BuildingSignin(0, globalData), false, content => content.FormatWithIndex(0, (int)globalData.TheCostOfDiseaseVars.Gen2Buildings[0]));
-        suspicion.AddSpecialClickHere(suspicionSection, _ => BuildingSignin(1, globalData), true,  content => content.FormatWithIndex(0, (int)globalData.TheCostOfDiseaseVars.Gen2Buildings[1]));
-        suspicion.AddSpecialClickHere(suspicionSection, _ => BuildingSignin(2, globalData), true,  content => content.FormatWithIndex(0, (int)globalData.TheCostOfDiseaseVars.Gen2Buildings[2]));
+        suspicion.AddSpecialClickHere(suspicionSection, _ => BuildingSignin(0, globalData), false, content => content.FormatWithIndex(0, (int)SuspicionBuilding(globalData, 0)));
+        suspicion.AddSpecialClickHere(suspicionSection, _ => BuildingSignin(1, globalData), true,  content => content.FormatWithIndex(0, (int)SuspicionBuilding(globalData, 1)));
+        suspicion.AddSpecialClickHere(suspicionSection, _ => BuildingSignin(2, globalData), true,  content => content.FormatWithIndex(0, (int)SuspicionBuilding(globalData, 2)));
         suspicion.AddNextContent(1, suspicionSection);
 
         const string       hereditaryDiseaseSection = "HereditaryDisease";
@@ -103,7 +103,6 @@ public static partial class TheCostOfDisease
         globalData.ActivePopup = new GameplayPopup(globalData, PopUpTitle.SpecialSetup, PopUpIcon.S1_LetterBACK, PopUpButton.Confirm, Gen1InsanityYes, string.Empty);
 
         List<int> letterIds = [0, 1, 2, 3, 4, 5];
-        List<int> randomIds = [globalData.TheCostOfDiseaseVars.RandomArray[41], globalData.TheCostOfDiseaseVars.RandomArray[42], globalData.TheCostOfDiseaseVars.RandomArray[43], globalData.TheCostOfDiseaseVars.RandomArray[44]];
 
         string content = globalData.GetScenarioLocalizedTag(_LETTER_CODE_0_CONTENT);
 
@@ -111,7 +110,7 @@ public static partial class TheCostOfDisease
 
         foreach (string player in globalData.GetActivePlayers())
         {
-            int letterId = letterIds[randomIds[index] % letterIds.Count];
+            int letterId = globalData.TheCostOfDiseaseVars.RandomElement(letterIds, 41 + index);
             globalData.TheCostOfDiseaseVars.Letter[letterId] = player;
 
             content += globalData.GetScenarioLocalizedTag(_LETTER_CODE_0_CONTENT + "1").FormatWithReplacement(0, player).FormatWithReplacement(1, (letterId + 1).ToString());
@@ -144,7 +143,7 @@ public static partial class TheCostOfDisease
         globalData.ActiveWindow = new GameplayWindow(globalData);
         globalData.ActiveWindow.AddDefaultBaseTitle();
         globalData.ActiveWindow.AddDefaultContent(content => content.FormatWithReplacement(0, globalData.TheCostOfDiseaseVars.Gen1Sane));
-        globalData.ActiveWindow.AddClickHereToContinue(globalData.TheCostOfDiseaseVars.RandomBool(45) ? Gen1InsanityYes_1 : Gen1InsanityYes_2);
+        globalData.ActiveWindow.AddClickHereToContinue(data => data.TheCostOfDiseaseVars.RandomElement<Action<GlobalData>>([Gen1InsanityYes_2, Gen1InsanityYes_1], 45).Invoke(data));
     }
 
     private static void Gen1InsanityYes_1(GlobalData globalData)
@@ -165,15 +164,11 @@ public static partial class TheCostOfDisease
         globalData.TheCostOfDiseaseVars.Tracker += 2;
         if (globalData.PlayersNum == 4) globalData.TheCostOfDiseaseVars.Tracker += 3;
 
-        List<BuildingS1A> buildings = [BuildingS1A.HardwareStore, BuildingS1A.WireService, BuildingS1A.BookStore, BuildingS1A.Warehouse, BuildingS1A.PetStore];
         BuildingS1A       removed   = globalData.TheCostOfDiseaseVars.Building == BankOrLibrary.Bank ? BuildingS1A.WireService : BuildingS1A.BookStore;
-        buildings.Remove(removed);
-        BuildingS1A firstBuilding = globalData.TheCostOfDiseaseVars.RandomElement(buildings, 50);
-        buildings.Remove(firstBuilding);
-        BuildingS1A secondBuilding = globalData.TheCostOfDiseaseVars.RandomElement(buildings, 51);
 
-        globalData.TheCostOfDiseaseVars.Gen2Buildings[0] = firstBuilding;
-        globalData.TheCostOfDiseaseVars.Gen2Buildings[1] = secondBuilding;
+        // The other two buildings are drawn when first shown (Gen2Building)
+        globalData.TheCostOfDiseaseVars.Gen2Buildings[0] = BuildingS1A.None;
+        globalData.TheCostOfDiseaseVars.Gen2Buildings[1] = BuildingS1A.None;
         globalData.TheCostOfDiseaseVars.Gen2Buildings[2] = removed;
 
         globalData.ActivePopup = new GameplayPopup(globalData, PopUpTitle.Setup, globalData.TheCostOfDiseaseVars.Seedy == ExtendedBool.True ? PopUpIcon.AngryMobSetup2 : PopUpIcon.AngryMobSetup1, PopUpButton.Confirm,
@@ -181,6 +176,29 @@ public static partial class TheCostOfDisease
                                    .FormatWithCondition(0, () => globalData.TheCostOfDiseaseVars.Building == BankOrLibrary.Bank)
                                    .FormatWithReplacement(1, globalData.TheCostOfDiseaseVars.Tracker.ToString())
                                    .FormatWithCondition(2, () => globalData.TheCostOfDiseaseVars.Seedy == ExtendedBool.True));
+    }
+
+    // Hub sections are built even while hidden - only draw the buildings once the Suspicion section is shown
+    private static BuildingS1A SuspicionBuilding(GlobalData globalData, int index)
+    {
+        return globalData.Years is Years.Middle or Years.Late ? Gen2Building(globalData, index) : BuildingS1A.None;
+    }
+
+    private static BuildingS1A Gen2Building(GlobalData globalData, int index)
+    {
+        BuildingS1A[] chosen = globalData.TheCostOfDiseaseVars.Gen2Buildings;
+
+        if (chosen[0] == BuildingS1A.None || chosen[1] == BuildingS1A.None)
+        {
+            List<BuildingS1A> buildings = [BuildingS1A.HardwareStore, BuildingS1A.WireService, BuildingS1A.BookStore, BuildingS1A.Warehouse, BuildingS1A.PetStore];
+            buildings.Remove(chosen[2]);
+            BuildingS1A firstBuilding = globalData.TheCostOfDiseaseVars.RandomElement(buildings, 50);
+            buildings.Remove(firstBuilding);
+            chosen[1] = globalData.TheCostOfDiseaseVars.RandomElement(buildings, 51);
+            chosen[0] = firstBuilding;
+        }
+
+        return chosen[index];
     }
 
     #endregion Intro
@@ -257,7 +275,7 @@ public static partial class TheCostOfDisease
         globalData.ActiveWindow = new GameplayWindow(globalData);
         globalData.ActiveWindow.AddDefaultTitle(content =>
             content.FormatWithIndex(0, globalData.TheCostOfDiseaseVars.RandomElement([0, 1, 2], 46))
-                   .FormatWithReplacement(1, (globalData.TheCostOfDiseaseVars.RandomArray[47] % 30).ToString()));
+                   .FormatWithReplacement(1, globalData.TheCostOfDiseaseVars.RandomInRange(0, 29, 47).ToString()));
         globalData.ActiveWindow.AddDefaultContent(content => content
                                                             .FormatWithReplacement(0, globalData.GetTmpValue<string>(_LETTER_PLAYER_NAME_TMP))
                                                             .FormatWithCondition(1, () => globalData.TheCostOfDiseaseVars.Wolves == Affiliation.Evil));
@@ -289,7 +307,7 @@ public static partial class TheCostOfDisease
         globalData.ActiveWindow = new GameplayWindow(globalData);
         globalData.ActiveWindow.AddDefaultTitle(content =>
             content.FormatWithIndex(0, globalData.TheCostOfDiseaseVars.RandomElement([0, 1, 2], 48))
-                   .FormatWithReplacement(1, (globalData.TheCostOfDiseaseVars.RandomArray[49] % 30).ToString()));
+                   .FormatWithReplacement(1, globalData.TheCostOfDiseaseVars.RandomInRange(0, 29, 49).ToString()));
         globalData.ActiveWindow.AddDefaultContent(content => content
                                                             .FormatWithReplacement(0, globalData.GetTmpValue<string>(_LETTER_PLAYER_NAME_TMP))
                                                             .FormatWithCondition(1, () => globalData.TheCostOfDiseaseVars.Hunters == Affiliation.Evil));
@@ -419,9 +437,9 @@ public static partial class TheCostOfDisease
         globalData.SaveToUndo();
         globalData.ActivePopup = new GameplayPopup(globalData, PopUpTitle.Setup, PopUpIcon.S1_Suspicious_Building, PopUpButton.Confirm, _ => { },
             content => content
-                      .FormatWithIndex(0, (int)globalData.TheCostOfDiseaseVars.Gen2Buildings[0])
-                      .FormatWithIndex(1, (int)globalData.TheCostOfDiseaseVars.Gen2Buildings[1])
-                      .FormatWithIndex(2, (int)globalData.TheCostOfDiseaseVars.Gen2Buildings[2]));
+                      .FormatWithIndex(0, (int)Gen2Building(globalData, 0))
+                      .FormatWithIndex(1, (int)Gen2Building(globalData, 1))
+                      .FormatWithIndex(2, (int)Gen2Building(globalData, 2)));
     }
 
     #endregion Changes
@@ -593,7 +611,7 @@ public static partial class TheCostOfDisease
     {
         globalData.SaveToUndo();
 
-        BuildingS1A building = globalData.TheCostOfDiseaseVars.Gen2Buildings[globalData.GetTmpValue<int>(_INVESTIGATE_BUILDING_INDEX)];
+        BuildingS1A building = Gen2Building(globalData, globalData.GetTmpValue<int>(_INVESTIGATE_BUILDING_INDEX));
 
         globalData.ActiveWindow = new GameplayWindow(globalData);
         globalData.ActiveWindow.AddDefaultTitle();
@@ -619,7 +637,7 @@ public static partial class TheCostOfDisease
 
         string      playerName    = globalData.GetTmpValue<string>(_INVESTIGATE_BUILDING_PLAYER);
         int         buildingIndex = globalData.GetTmpValue<int>(_INVESTIGATE_BUILDING_INDEX);
-        BuildingS1A building      = globalData.TheCostOfDiseaseVars.Gen2Buildings[buildingIndex];
+        BuildingS1A building      = Gen2Building(globalData, buildingIndex);
         globalData.TheCostOfDiseaseVars.BuildingPlay[playerName] += 1;
 
         globalData.ActiveWindow = new GameplayWindow(globalData);
@@ -682,7 +700,7 @@ public static partial class TheCostOfDisease
     private static void DevEventCure_0(GlobalData globalData)
     {
         globalData.SaveToUndo();
-        globalData.ActivePopup = new GameplayPopup(globalData, PopUpTitle.SpecialSetup, PopUpIcon.ExperimentBBack, PopUpButton.Confirm, globalData.TheCostOfDiseaseVars.RandomElement([Diseases2A, Diseases2B], 57));
+        globalData.ActivePopup = new GameplayPopup(globalData, PopUpTitle.SpecialSetup, PopUpIcon.ExperimentBBack, PopUpButton.Confirm, data => data.TheCostOfDiseaseVars.RandomElement([Diseases2A, Diseases2B], 57).Invoke(data));
     }
 
     private static void Diseases2A(GlobalData globalData)
@@ -786,8 +804,8 @@ public static partial class TheCostOfDisease
 
             if (globalData.TheCostOfDiseaseVars.BuildingsExposeValue[x] > 0)
             {
-                globalData.ActiveWindow.AddNextContent(1, true,  content => content.FormatWithIndex(0, (int)globalData.TheCostOfDiseaseVars.Gen2Buildings[index]));
-                globalData.ActiveWindow.AddNextContent(2, false, content => content.FormatWithIndex(0, (int)globalData.TheCostOfDiseaseVars.Gen2Buildings[index]));
+                globalData.ActiveWindow.AddNextContent(1, true,  content => content.FormatWithIndex(0, (int)Gen2Building(globalData, index)));
+                globalData.ActiveWindow.AddNextContent(2, false, content => content.FormatWithIndex(0, (int)Gen2Building(globalData, index)));
 
                 foreach (string playerName in globalData.GetActivePlayers())
                 {
@@ -797,8 +815,8 @@ public static partial class TheCostOfDisease
             }
             else
             {
-                globalData.ActiveWindow.AddNextContent(4, true,  content => content.FormatWithIndex(0, (int)globalData.TheCostOfDiseaseVars.Gen2Buildings[index]));
-                globalData.ActiveWindow.AddNextContent(2, false, content => content.FormatWithIndex(0, (int)globalData.TheCostOfDiseaseVars.Gen2Buildings[index]));
+                globalData.ActiveWindow.AddNextContent(4, true,  content => content.FormatWithIndex(0, (int)Gen2Building(globalData, index)));
+                globalData.ActiveWindow.AddNextContent(2, false, content => content.FormatWithIndex(0, (int)Gen2Building(globalData, index)));
             }
         }
 
@@ -852,7 +870,7 @@ public static partial class TheCostOfDisease
     private static void DiseaseEnd_0(GlobalData globalData)
     {
         globalData.SaveToUndo();
-        globalData.ActivePopup = new GameplayPopup(globalData, PopUpTitle.SpecialSetup, PopUpIcon.S1_EstateUpgradeBACK, PopUpButton.Confirm, globalData.TheCostOfDiseaseVars.RandomElement([DiseaseEffectA, DiseaseEffectB], 58));
+        globalData.ActivePopup = new GameplayPopup(globalData, PopUpTitle.SpecialSetup, PopUpIcon.S1_EstateUpgradeBACK, PopUpButton.Confirm, data => data.TheCostOfDiseaseVars.RandomElement([DiseaseEffectA, DiseaseEffectB], 58).Invoke(data));
     }
 
     private static void DiseaseEffectA(GlobalData globalData)

@@ -1,4 +1,5 @@
 ﻿using System.Security.Cryptography;
+using Newtonsoft.Json;
 
 // ReSharper disable AutoPropertyCanBeMadeGetOnly.Global
 
@@ -7,12 +8,19 @@ namespace MyFathersWorkWebApp;
 public class TheCostOfDiseaseVars
 {
     // globalData.TheCostOfDiseaseVars.RandomElement([
-    // ], x) Current: 58 (Gen I & II), Gen III uses 59 - 259 (see _RND_ constants in the Gen III files)
+    // ], x) Current: 58 (Gen I & II), Gen III uses 59 - 203 (see _RND_ constants in the Gen III files)
+    // -1 = not drawn yet (mirror mode asks the players what the official app shows)
     public int[] RandomArray { get; set; } = new int[300 + 1];
 
     public CostOfDiseaseHubId HubId   { get; set; }
-    public Affiliation        Wolves  { get; set; }
-    public Affiliation        Hunters { get; set; }
+    // Which faction is evil is drawn when a screen first depends on it, so mirror mode asks once the official app reveals it
+    [JsonIgnore] public Affiliation Wolves  { get { DrawAffiliations(); return _Wolves; }  set => _Wolves = value; }
+    [JsonIgnore] public Affiliation Hunters { get { DrawAffiliations(); return _Hunters; } set => _Hunters = value; }
+
+    [JsonProperty(nameof(Wolves))]  private Affiliation _Wolves;
+    [JsonProperty(nameof(Hunters))] private Affiliation _Hunters;
+
+    public bool AffiliationsPending { get; set; }
     public int                Tracker { get; set; } // Rename to -> SuspicionMarkerPos
 
     public bool         Creepy4   { get; set; }
@@ -81,9 +89,8 @@ public class TheCostOfDiseaseVars
 
     // Generation III - Prosperity
     public int          HuntCount      { get; set; }
-    public string[]     HuntersFirst   { get; set; } = new string[2];  // originally h1a, h1b
-    public string[]     HuntersSecond  { get; set; } = new string[2];  // originally h2a, h2b
-    public int[]        HuntRewards    { get; set; } = new int[8];     // originally reward1 - reward8
+    public string[]     HunterOrder    { get; set; } = new string[4];  // originally hunt1a, hunt1b, hunt2a, hunt2b, empty = not drawn yet
+    public int[]        HuntRewards    { get; set; } = new int[8];     // originally reward1 - reward8, -1 = not drawn yet
     public int          HuntReward     { get; set; }                   // originally huntreward1 / huntreward2
     public int          HuntDirection  { get; set; }                   // 0 - North, 1 - East, 2 - West, 3 - South
     public int          HuntBeast      { get; set; }                   // originally huntbeast
@@ -130,12 +137,21 @@ public class TheCostOfDiseaseVars
 
     public bool RandomBool(int index)
     {
-        return RandomArray[index] % 2 == 1;
+        return RandomSlot(index, 2, value => value == 1 ? "true" : "false") == 1;
+    }
+
+    public void DrawAffiliations()
+    {
+        if (!AffiliationsPending) return;
+        bool swap = RandomBool(0);
+        AffiliationsPending = false;
+        _Wolves             = swap ? Affiliation.Evil : Affiliation.Good;
+        _Hunters            = swap ? Affiliation.Good : Affiliation.Evil;
     }
 
     public T RandomElement<T>(List<T> list, int index)
     {
-        return list[RandomArray[index] % list.Count];
+        return list[RandomSlot(index, list.Count, value => MirrorValueLabel(list[value]))];
     }
 
     public T RandomElement<T>(List<T> list, string playerName, int startIndex)
@@ -145,34 +161,44 @@ public class TheCostOfDiseaseVars
         if (playerName == _GlobalData.PlayerCName) index += 2;
         if (playerName == _GlobalData.PlayerDName) index += 3;
 
-        return list[RandomArray[index] % list.Count];
+        return RandomElement(list, index);
     }
 
     public int RandomInRange(int min, int max, int index)
     {
-        return min + RandomArray[index] % (max - min + 1);
+        return min + RandomSlot(index, max - min + 1, value => (min + value).ToString(), min);
     }
 
-    // Deterministic Fisher-Yates shuffle, uses (list.Count - 1) random values starting at startIndex
-    public List<T> Shuffle<T>(List<T> list, int startIndex)
+    // Returns RandomArray[index] % count. In mirror mode an unanswered slot (-1) asks the players what the official app shows.
+    private int RandomSlot(int index, int count, Func<int, string> valueLabel, int? numericMin = null)
     {
-        List<T> result = new(list);
+        if (count <= 1) return 0;
 
-        for (int x = result.Count - 1; x > 0; --x)
+        int value = RandomArray[index];
+        if (value >= 0) return value % count;
+
+        if (!_GlobalData.MirrorMode)
         {
-            int swapIndex = RandomArray[startIndex + result.Count - 1 - x] % (x + 1);
-            (result[x], result[swapIndex]) = (result[swapIndex], result[x]);
+            RandomArray[index] = RandomNumberGenerator.GetInt32(int.MaxValue);
+            return RandomArray[index] % count;
         }
 
-        return result;
+        if (_GlobalData.IsMirrorSimulating) return _GlobalData.MirrorSimulationValue % count;
+        throw new MirrorQuestionException(index, count, valueLabel, numericMin);
+    }
+
+    private static string MirrorValueLabel<T>(T value)
+    {
+        return value is Delegate callback ? callback.Method.Name : value?.ToString() ?? string.Empty;
     }
 
     public void Reset(GlobalData globalData)
     {
         _GlobalData = globalData;
 
-        Wolves               = Affiliation.Good;
-        Hunters              = Affiliation.Evil;
+        _Wolves              = Affiliation.Good;
+        _Hunters             = Affiliation.Evil;
+        AffiliationsPending  = false;
         Tracker              = 0;
         Creepy4              = false;
         Seedy                = ExtendedBool.None;
@@ -220,9 +246,8 @@ public class TheCostOfDiseaseVars
         VialUse         = ExtendedBool.None;
         HuntNumber      = 0;
         HuntCount       = 0;
-        HuntersFirst    = [string.Empty, string.Empty];
-        HuntersSecond   = [string.Empty, string.Empty];
-        HuntRewards     = [0, 1, 2, 3, 4, 5, 6, 7];
+        HunterOrder     = [string.Empty, string.Empty, string.Empty, string.Empty];
+        HuntRewards     = [-1, -1, -1, -1, -1, -1, -1, -1];
         HuntReward      = 0;
         HuntDirection   = 0;
         HuntBeast       = 0;
@@ -275,8 +300,7 @@ public class TheCostOfDiseaseVars
         {
             byte[] box = new byte[4];
             rng.GetBytes(box);
-            RandomArray[x] = BitConverter.ToInt32(box, 0);
-            if (RandomArray[x] < 0) RandomArray[x] *= -1;
+            RandomArray[x] = globalData.MirrorMode ? -1 : BitConverter.ToInt32(box, 0) & int.MaxValue;
         }
     }
 }

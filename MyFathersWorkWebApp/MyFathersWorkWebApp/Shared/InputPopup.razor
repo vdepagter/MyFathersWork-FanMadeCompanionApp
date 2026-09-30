@@ -27,8 +27,12 @@
     private void OnAcceptClicked()
     {
         if (!GameplayPopUp.Validate(_Value)) return;
-        GlobalData.ActiveInputPopup = null;
-        GameplayPopUp.OnClose(_Value);
+        string value = _Value;
+        GlobalData.RunScenarioAction(() =>
+        {
+            GlobalData.ActiveInputPopup = null;
+            GameplayPopUp.OnClose(value);
+        });
         Refresh();
     }
 }

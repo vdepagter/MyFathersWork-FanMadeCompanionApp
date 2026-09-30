@@ -90,8 +90,9 @@ public static partial class TheCostOfDisease
         globalData.ActiveWindow.AddDefaultContent();
         globalData.ActiveWindow.AddClickHereToContinue(EradicateDisease);
 
-        globalData.TheCostOfDiseaseVars.FeverVp    = globalData.TheCostOfDiseaseVars.RandomElement([4, 5, 6, 7],   7);
-        globalData.TheCostOfDiseaseVars.FeverMoney = globalData.TheCostOfDiseaseVars.RandomElement([8, 9, 10, 11], 8);
+        // Drawn when shown (DrawFeverReward)
+        globalData.TheCostOfDiseaseVars.FeverVp    = 0;
+        globalData.TheCostOfDiseaseVars.FeverMoney = 0;
     }
 
     private static void EradicateDisease(GlobalData globalData)
@@ -181,7 +182,7 @@ public static partial class TheCostOfDisease
         globalData.ActiveWindow.AddDefaultBaseTitle();
 
         globalData.ActiveWindow.AddDefaultContent(content => content.FormatWithReplacement(0, globalData.TheCostOfDiseaseVars.Gen1Sane));
-        globalData.ActiveWindow.AddClickHereToContinue(globalData.TheCostOfDiseaseVars.RandomBool(9) ? Gen1InsanityYes2_1 : Gen1InsanityYes2_2);
+        globalData.ActiveWindow.AddClickHereToContinue(data => data.TheCostOfDiseaseVars.RandomElement<Action<GlobalData>>([Gen1InsanityYes2_2, Gen1InsanityYes2_1], 9).Invoke(data));
     }
 
     private static void Gen1InsanityYes2_1(GlobalData globalData)
@@ -333,6 +334,7 @@ public static partial class TheCostOfDisease
     {
         globalData.SaveToUndo();
         globalData.TheCostOfDiseaseVars.Cured = ExtendedBool.True;
+        DrawFeverReward(globalData);
 
         globalData.ActiveWindow = new GameplayWindow(globalData);
         globalData.ActiveWindow.AddDefaultBaseTitle();
@@ -344,6 +346,13 @@ public static partial class TheCostOfDisease
         globalData.ActiveWindow.AddClickHere(Unicure1);
         globalData.ActiveWindow.AddNextContent(2, false, content => content.FormatWithReplacement(0, globalData.TheCostOfDiseaseVars.FeverMoney.ToString()));
         globalData.ActiveWindow.AddClickHere(Unicure2);
+    }
+
+    private static void DrawFeverReward(GlobalData globalData)
+    {
+        TheCostOfDiseaseVars vars = globalData.TheCostOfDiseaseVars;
+        if (vars.FeverVp == 0) vars.FeverVp = vars.RandomElement([4, 5, 6, 7], 7);
+        if (vars.FeverMoney == 0) vars.FeverMoney = vars.RandomElement([8, 9, 10, 11], 8);
     }
 
     private static void Unicure1(GlobalData globalData)
@@ -769,13 +778,6 @@ public static partial class TheCostOfDisease
     private static void SymposiumEvent2(GlobalData globalData)
     {
         globalData.SaveToUndo();
-        globalData.TheCostOfDiseaseVars.Symp = globalData.PlayersNum switch
-        {
-            2 => globalData.TheCostOfDiseaseVars.RandomElement([3, 4],    35),
-            3 => globalData.TheCostOfDiseaseVars.RandomElement([4, 5, 6], 35),
-            _ => globalData.TheCostOfDiseaseVars.RandomElement([6, 7, 8], 35) // 4 players
-        };
-
         globalData.ActiveWindow = new GameplayWindow(globalData);
         globalData.ActiveWindow.AddDefaultTitle(content => content.FormatWithIndex(0,   (int)globalData.TheCostOfDiseaseVars.Sci3));
         globalData.ActiveWindow.AddDefaultContent(content => content.FormatWithIndex(0, (int)globalData.TheCostOfDiseaseVars.Sci3));
@@ -785,6 +787,14 @@ public static partial class TheCostOfDisease
     private static void SymposiumEvent3(GlobalData globalData)
     {
         globalData.SaveToUndo();
+        // Drawn here, where it is shown
+        globalData.TheCostOfDiseaseVars.Symp = globalData.PlayersNum switch
+        {
+            2 => globalData.TheCostOfDiseaseVars.RandomElement([3, 4],    35),
+            3 => globalData.TheCostOfDiseaseVars.RandomElement([4, 5, 6], 35),
+            _ => globalData.TheCostOfDiseaseVars.RandomElement([6, 7, 8], 35) // 4 players
+        };
+
         int superSymp = globalData.TheCostOfDiseaseVars.Symp + globalData.PlayersNum switch
         {
             4 => 3,
@@ -908,9 +918,8 @@ public static partial class TheCostOfDisease
     private static void NoHospitalCons_0(GlobalData globalData)
     {
         globalData.SaveToUndo();
-        Action<GlobalData> nextStep = globalData.TheCostOfDiseaseVars.RandomElement([S5HospA1, S5HospA2, S5HospA3], 39);
-
-        globalData.ActivePopup = new GameplayPopup(globalData, PopUpTitle.SpecialSetup, PopUpIcon.AdvanceJournalTrack, PopUpButton.Confirm, nextStep, string.Empty);
+        globalData.ActivePopup = new GameplayPopup(globalData, PopUpTitle.SpecialSetup, PopUpIcon.AdvanceJournalTrack, PopUpButton.Confirm,
+            data => data.TheCostOfDiseaseVars.RandomElement([S5HospA1, S5HospA2, S5HospA3], 39).Invoke(data), string.Empty);
 
         string content = "";
 

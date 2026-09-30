@@ -30,8 +30,11 @@
 
     private void OnAcceptClicked()
     {
-        GlobalData.ActivePopup = null;
-        GameplayPopUp.OnClose(GlobalData);
+        GlobalData.RunScenarioAction(() =>
+        {
+            GlobalData.ActivePopup = null;
+            GameplayPopUp.OnClose(GlobalData);
+        });
         Refresh();
     }
 }

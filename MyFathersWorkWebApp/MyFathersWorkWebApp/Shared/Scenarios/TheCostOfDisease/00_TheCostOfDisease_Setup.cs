@@ -29,24 +29,22 @@ public static partial class TheCostOfDisease
         globalData.ActiveWindow.AddDefaultContent();
         globalData.ActiveWindow.AddClickHereToContinue(Dubious);
 
-        List<Affiliation> affiliations;
+        TheCostOfDiseaseVars vars = globalData.TheCostOfDiseaseVars;
 
         if (globalData.TownName == TheCostOfDiseaseVars.WOLVES_EVIL_TOWN_NAME)
         {
-            affiliations = [Affiliation.Evil, Affiliation.Good];
+            vars.Wolves  = Affiliation.Evil;
+            vars.Hunters = Affiliation.Good;
         }
         else if (globalData.TownName == TheCostOfDiseaseVars.HUNTERS_EVIL_TOWN_NAME)
         {
-            affiliations = [Affiliation.Good, Affiliation.Evil];
+            vars.Wolves  = Affiliation.Good;
+            vars.Hunters = Affiliation.Evil;
         }
         else
         {
-            affiliations = [Affiliation.Good, Affiliation.Evil];
-            if (globalData.TheCostOfDiseaseVars.RandomBool(0)) (affiliations[0], affiliations[1]) = (affiliations[1], affiliations[0]);
+            vars.AffiliationsPending = true; // drawn on first use (DrawAffiliations)
         }
-
-        globalData.TheCostOfDiseaseVars.Wolves  = affiliations[0];
-        globalData.TheCostOfDiseaseVars.Hunters = affiliations[1];
     }
 
     private static void Dubious(GlobalData globalData)

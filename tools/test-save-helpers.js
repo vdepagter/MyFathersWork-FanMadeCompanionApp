@@ -8,6 +8,7 @@
 // Years: 0 Early, 1 Middle, 2 Late. Generation: 0/1/2. Enum values in vars are numeric (see Shared/Enums).
 // Every per-player dictionary in TheCostOfDiseaseVars must be present, otherwise lookups throw (Reset runs before
 // the save is applied, with the *old* player names). RandomArray may be omitted - Reset rolls a fresh one.
+// opts.mirror = true starts in mirror mode with every random draw unanswered.
 //
 //   await run(["end of the Generation", "Confirm", "Click here to continue", "type:42", "Confirm"])
 //
@@ -21,10 +22,11 @@ window.mkSave = (hub, opts = {}) => {
     Wolves: 0, Hunters: 1, Tracker: 7, Mayor: "Bob", Building: 1, Charity: "Cleo", FeverCure: "Anna",
     Hosp: d(true), Life: d(false), LifeCount: 0, Ally: d(0), BuildingPlay: d(0), HelpedExposeBuilding: d([false, false, false]),
     Gen2Buildings: [1, 3, 2], BuildingsExposeValue: [1, 0, 2], Letter: ["", "", "", "", "", ""],
-    MwDiscipline: d(0), MwType: d(0), MwCost: d(0), MwName: d(""), MwAdjective: d(0), Scores: d(0), HubId: hub
+    MwDiscipline: d(0), MwType: d(0), MwCost: d(0), MwName: d(""), MwAdjective: d(0), Scores: d(0), HubId: hub,
+    ...(opts.mirror ? { RandomArray: Array(301).fill(-1) } : {})
   }, opts.vars || {});
   const g = {
-    Language: "English", ScenarioLanguage: "English_Source", ScenarioId: 1, PlayersNum: n,
+    Language: "English", ScenarioLanguage: "English_Source", ScenarioId: 1, PlayersNum: n, MirrorMode: !!opts.mirror,
     PlayerAName: "Anna", PlayerBName: "Bob", PlayerCName: n > 2 ? "Cleo" : "", PlayerDName: n > 3 ? "Dan" : "",
     TownName: "Testville", Years: opts.years ?? 2, Generation: opts.gen ?? 1, TmpValues: {}, TheCostOfDiseaseVars: v
   };

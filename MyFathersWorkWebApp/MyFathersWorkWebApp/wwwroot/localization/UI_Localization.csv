@@ -48,6 +48,16 @@ Scenario_ATimeOfWar_Desc;SCENARIO NOT READY! DO NOT USE TO PLAY!<br /><br />The 
 //====== Scenario Language Screen ======;;
 ScenarioLanguage_Title;Scenario Language;Język scenariusza
 ScenarioLanguage_Subtitle;Please select the language in which the scenario will be presented.;Proszę wybrać język, w którym będzie prezentowany scenariusz.
+ScenarioLanguage_Mirror;Play along with the official app;Graj razem z oficjalną aplikacją
+ScenarioLanguage_MirrorDesc;Nothing is rolled at random. Whenever the story depends on chance, you pick what the official app shows.;Nic nie jest losowane. Za każdym razem, gdy historia zależy od przypadku, wybierasz to, co pokazuje oficjalna aplikacja.
+//====== Mirror Mode ======;;
+Mirror_Title;Official App Check;Sprawdź oficjalną aplikację
+Mirror_Question;Continue in the official app. Which of these does it show?;Kontynuuj w oficjalnej aplikacji. Co z tego pokazuje?
+Mirror_Hidden;The official app decides this in secret and doesn't show it yet. Pick the value if you know it, otherwise let it roll.;Oficjalna aplikacja decyduje o tym w tajemnicy i jeszcze tego nie pokazuje. Wybierz wartość, jeśli ją znasz, w przeciwnym razie losuj.
+Mirror_Number;Continue in the official app. Which number does it show?;Kontynuuj w oficjalnej aplikacji. Jaką liczbę pokazuje?
+Mirror_NumberError;Enter a number from {{0=...|1}} to {{1=...|999}}.;Wpisz liczbę od {{0=...|1}} do {{1=...|999}}.
+Mirror_Nothing;(no extra text);(brak dodatkowego tekstu)
+Mirror_Roll;Roll for me;Losuj za mnie
 //====== Scenario Settings ======;;
 ScenarioLang_English_Source;English - Source;Angielski - Źródłowy
 ScenarioLang_English_Simple;English - Simple;Angielski - Prostrzy

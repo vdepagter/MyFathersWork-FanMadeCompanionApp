@@ -1,4 +1,4 @@
-namespace MyFathersWorkWebApp;
+﻿namespace MyFathersWorkWebApp;
 
 public static partial class TheCostOfDisease
 {
@@ -51,7 +51,7 @@ public static partial class TheCostOfDisease
         const string       huntIsOnSection = "HuntIsOn";
         GameplayHubSection huntIsOn        = globalData.ActiveHub.AddSection(huntIsOnSection, true);
         huntIsOn.ReplaceShouldShow(() => Hunters() && globalData.Years == Years.Middle && vars.Confront == ExtendedBool.True);
-        huntIsOn.AddDefaultContent(huntIsOnSection, content => content.FormatWithReplacement(0, vars.HuntVp.ToString()));
+        huntIsOn.AddDefaultContent(huntIsOnSection, content => content.FormatWithReplacement(0, (vars.Confront == ExtendedBool.True ? HuntVp(globalData) : 0).ToString()));
 
         const string       huntersHavenSection = "HuntersHaven";
         GameplayHubSection huntersHaven        = globalData.ActiveHub.AddSection(huntersHavenSection, true);
@@ -118,7 +118,7 @@ public static partial class TheCostOfDisease
         {
             if (!placeBuilding(globalData.TheCostOfDiseaseVars.BuildingsExposeValue[x])) continue;
             content += globalData.GetScenarioLocalizedTag(tag)
-                                 .FormatWithIndex(0, (int)globalData.TheCostOfDiseaseVars.Gen2Buildings[x])
+                                 .FormatWithIndex(0, (int)Gen2Building(globalData, x))
                                  .FormatWithIndex(1, x);
         }
 
@@ -169,7 +169,7 @@ public static partial class TheCostOfDisease
     private static void GloomyHunterIntro(GlobalData globalData)
     {
         globalData.SaveToUndo();
-        globalData.TheCostOfDiseaseVars.HuntVp = globalData.TheCostOfDiseaseVars.RandomElement([4, 5], _RND_HUNT_VP);
+        globalData.TheCostOfDiseaseVars.HuntVp = 0; // drawn when first shown (HuntVp)
 
         globalData.ActiveWindow = new GameplayWindow(globalData);
         globalData.ActiveWindow.AddGameplayTitle(GlobalTags.Gameplay_Generation_III);
@@ -565,7 +565,7 @@ public static partial class TheCostOfDisease
 
         globalData.ActiveWindow = new GameplayWindow(globalData);
         globalData.ActiveWindow.AddDefaultTitle();
-        globalData.ActiveWindow.AddDefaultContent(content => content.FormatWithReplacement(0, globalData.TheCostOfDiseaseVars.HuntVp.ToString()));
+        globalData.ActiveWindow.AddDefaultContent(content => content.FormatWithReplacement(0, HuntVp(globalData).ToString()));
         globalData.ActiveWindow.AddClickHereToContinue(ConfrontationFail_0);
     }
 
@@ -591,7 +591,7 @@ public static partial class TheCostOfDisease
     {
         globalData.SaveToUndo();
         globalData.ActivePopup = new GameplayPopup(globalData, PopUpTitle.SpecialSetup, PopUpIcon.ScoreTrackMarker, PopUpButton.Confirm, GloomyGothicLate,
-            content => content.FormatWithReplacement(0, globalData.TheCostOfDiseaseVars.HuntVp.ToString()));
+            content => content.FormatWithReplacement(0, HuntVp(globalData).ToString()));
     }
 
     private static void TaxesEventNoConfrontation(GlobalData globalData)
@@ -607,7 +607,7 @@ public static partial class TheCostOfDisease
     {
         globalData.SaveToUndo();
         globalData.ActivePopup = new GameplayPopup(globalData, PopUpTitle.SpecialSetup, PopUpIcon.S1_HunterToken, PopUpButton.Confirm,
-            globalData.TheCostOfDiseaseVars.RandomElement([TaxesEventNoConfrontation2, GloomyGothicLate], _RND_TAXES_NEXT));
+            data => data.TheCostOfDiseaseVars.RandomElement([TaxesEventNoConfrontation2, GloomyGothicLate], _RND_TAXES_NEXT).Invoke(data));
     }
 
     private static void TaxesEventNoConfrontation2(GlobalData globalData)
@@ -657,6 +657,13 @@ public static partial class TheCostOfDisease
     {
         globalData.SaveToUndo();
         globalData.ActivePopup = new GameplayPopup(globalData, PopUpTitle.SpecialSetup, PopUpIcon.ScoreTrackMarker, PopUpButton.Confirm, GloomyGothic);
+    }
+
+    private static int HuntVp(GlobalData globalData)
+    {
+        TheCostOfDiseaseVars vars = globalData.TheCostOfDiseaseVars;
+        if (vars.HuntVp == 0) vars.HuntVp = vars.RandomElement([4, 5], _RND_HUNT_VP);
+        return vars.HuntVp;
     }
 
     private static string TieredRewardsText(GlobalData globalData, string tag, int randomIndex)

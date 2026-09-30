@@ -1,10 +1,10 @@
-namespace MyFathersWorkWebApp;
+﻿namespace MyFathersWorkWebApp;
 
 public static partial class TheCostOfDisease
 {
     private const int _RND_MAYOR_RESOLVE_VP  = 70;
-    private const int _RND_HUNT_REWARDS      = 71;  // 71 - 77
-    private const int _RND_HUNTERS           = 78;  // 78 - 80
+    private const int _RND_HUNT_REWARDS      = 71;  // 71 - 77 (reward per position, 8th position uses _RND_HUNT_REWARD_LAST)
+    private const int _RND_HUNTERS           = 78;  // 78 - 80 (hunter per position)
     private const int _RND_HUNT_CHOOSER      = 81;  // 81 - 84 (chooser, hunt name) x 2 hunts
     private const int _RND_HUNT_MONSTER      = 85;  // 85 - 88 (one per direction)
     private const int _RND_HUNT_SUCCESS      = 89;  // 89 - 94 (title, sound, reward) x 2 hunts
@@ -12,6 +12,7 @@ public static partial class TheCostOfDisease
     private const int _RND_HUNT_CHECK        = 99;  // 99 - 101
     private const int _RND_ANGRY_MOB         = 102; // 102 - 111
     private const int _RND_ANGRY_MOB_VP      = 112; // 112 - 121
+    private const int _RND_HUNT_REWARD_LAST  = 122;
     private const int _ANGRY_MOB_RANDOM_SIZE = 10;
 
     // Monsters: 0 - Strigoi, 1 - Moon Presence, 2 - Manticore, 3 - Golem, 4 - Wight, 5 - Pricolici, 6 - Troll, 7 - Priest
@@ -169,31 +170,8 @@ public static partial class TheCostOfDisease
 
         TheCostOfDiseaseVars vars = globalData.TheCostOfDiseaseVars;
         vars.HuntCount   = 0;
-        vars.HuntRewards = vars.Shuffle([0, 1, 2, 3, 4, 5, 6, 7], _RND_HUNT_REWARDS).ToArray();
-
-        List<string> hunters = vars.Shuffle(globalData.GetActivePlayers().ToList(), _RND_HUNTERS);
-
-        switch (globalData.PlayersNum)
-        {
-            case 2:
-            {
-                vars.HuntersFirst  = [globalData.PlayerAName, globalData.PlayerBName];
-                vars.HuntersSecond = [globalData.PlayerAName, globalData.PlayerBName];
-                break;
-            }
-            case 3:
-            {
-                vars.HuntersFirst  = [hunters[0], hunters[1]];
-                vars.HuntersSecond = [hunters[2], hunters[1]];
-                break;
-            }
-            default:
-            {
-                vars.HuntersFirst  = [hunters[0], hunters[1]];
-                vars.HuntersSecond = [hunters[2], hunters[3]];
-                break;
-            }
-        }
+        vars.HuntRewards = [-1, -1, -1, -1, -1, -1, -1, -1];
+        vars.HunterOrder = [string.Empty, string.Empty, string.Empty, string.Empty];
 
         globalData.ActiveWindow = new GameplayWindow(globalData);
         globalData.ActiveWindow.AddGameplayTitle(GlobalTags.Gameplay_Generation_III);
@@ -514,9 +492,38 @@ public static partial class TheCostOfDisease
     // 0 - first hunt (after the Early Years), 1 - second hunt (after the Middle Years)
     private static int HuntIndex(GlobalData globalData) => globalData.Years == Years.Middle ? 0 : 1;
 
+    // Hunters and rewards are shuffled (Harlowe "shuffled") but drawn one position at a time when they are shown,
+    // so mirror mode asks for them when the official app shows them
     private static string[] CurrentHunters(GlobalData globalData)
     {
-        return HuntIndex(globalData) == 0 ? globalData.TheCostOfDiseaseVars.HuntersFirst : globalData.TheCostOfDiseaseVars.HuntersSecond;
+        if (globalData.PlayersNum == 2) return [globalData.PlayerAName, globalData.PlayerBName];
+        if (HuntIndex(globalData) == 0) return [HunterAt(globalData, 0), HunterAt(globalData, 1)];
+        return globalData.PlayersNum == 3 ? [HunterAt(globalData, 2), HunterAt(globalData, 1)] : [HunterAt(globalData, 2), HunterAt(globalData, 3)];
+    }
+
+    private static string HunterAt(GlobalData globalData, int position)
+    {
+        TheCostOfDiseaseVars vars = globalData.TheCostOfDiseaseVars;
+
+        for (int x = 0; x <= position; ++x)
+        {
+            if (vars.HunterOrder[x] != string.Empty) continue;
+            List<string> remaining = globalData.GetActivePlayers().Except(vars.HunterOrder).ToList();
+            vars.HunterOrder[x] = vars.RandomElement(remaining, _RND_HUNTERS + x);
+        }
+
+        return vars.HunterOrder[position];
+    }
+
+    // 0 - 3 first hunt, 4 - 7 second hunt (North, East, West, South)
+    private static int HuntRewardAt(GlobalData globalData, int position)
+    {
+        TheCostOfDiseaseVars vars = globalData.TheCostOfDiseaseVars;
+        if (vars.HuntRewards[position] >= 0) return vars.HuntRewards[position];
+
+        List<int> remaining = new List<int> { 0, 1, 2, 3, 4, 5, 6, 7 }.Except(vars.HuntRewards).ToList();
+        vars.HuntRewards[position] = vars.RandomElement(remaining, position == 7 ? _RND_HUNT_REWARD_LAST : _RND_HUNT_REWARDS + position);
+        return vars.HuntRewards[position];
     }
 
     private static void CharityAwardGood(GlobalData globalData)
@@ -604,16 +611,16 @@ public static partial class TheCostOfDisease
         int                  hunt    = HuntIndex(globalData);
         string[]             hunters = CurrentHunters(globalData);
         string               chooser = vars.RandomElement(hunters.ToList(), _RND_HUNT_CHOOSER + hunt * 2);
-        vars.HuntName = vars.RandomElement(hunters.ToList(), _RND_HUNT_CHOOSER + hunt * 2 + 1);
+        vars.HuntName = string.Empty; // drawn in HuntNight, where it is shown
 
         globalData.ActiveWindow = new GameplayWindow(globalData);
         globalData.ActiveWindow.AddDefaultTitle(content => content.FormatWithIndex(0, hunt));
         globalData.ActiveWindow.AddDefaultContent(content => content.FormatWithReplacement(0, chooser));
         globalData.ActiveWindow.AddNextContentWithLinks(1, [HuntersChoice_North, HuntersChoice_East, HuntersChoice_West, HuntersChoice_South], false,
             content => content
-                      .FormatWithIndex(0, vars.HuntRewards[hunt * 4])
-                      .FormatWithIndex(1, vars.HuntRewards[hunt * 4 + 1])
-                      .FormatWithIndex(2, vars.HuntRewards[hunt * 4 + 2]));
+                      .FormatWithIndex(0, HuntRewardAt(globalData, hunt * 4))
+                      .FormatWithIndex(1, HuntRewardAt(globalData, hunt * 4 + 1))
+                      .FormatWithIndex(2, HuntRewardAt(globalData, hunt * 4 + 2)));
     }
 
     private static void HuntersChoice_North(GlobalData globalData) => HuntersChoiceDirection(0, globalData);
@@ -625,7 +632,7 @@ public static partial class TheCostOfDisease
     {
         TheCostOfDiseaseVars vars = globalData.TheCostOfDiseaseVars;
         vars.HuntDirection = direction;
-        vars.HuntReward    = vars.HuntRewards[HuntIndex(globalData) * 4 + direction];
+        vars.HuntReward    = HuntRewardAt(globalData, HuntIndex(globalData) * 4 + direction);
         vars.HuntBeast     = vars.RandomElement(_DirectionMonsters[direction].ToList(), _RND_HUNT_MONSTER + direction);
         HuntNight(globalData);
     }
@@ -635,10 +642,16 @@ public static partial class TheCostOfDisease
         TheCostOfDiseaseVars vars = globalData.TheCostOfDiseaseVars;
 
         globalData.SaveToUndo();
+
         globalData.ActiveWindow = new GameplayWindow(globalData);
         globalData.ActiveWindow.AddDefaultTitle(content => content.FormatWithIndex(0, vars.HuntBeast));
         globalData.ActiveWindow.AddNextContent(1 + vars.HuntDirection, false, content => content.FormatWithReplacement(0, globalData.TownName));
-        globalData.ActiveWindow.AddNextContent(10 + vars.HuntBeast, true, content => content.FormatWithReplacement(0, vars.HuntName));
+        globalData.ActiveWindow.AddNextContent(10 + vars.HuntBeast, true, content =>
+        {
+            // Only some beasts name a hunter - draw the name when it is shown
+            if (content.Contains("{{0=") && vars.HuntName == string.Empty) vars.HuntName = vars.RandomElement(CurrentHunters(globalData).ToList(), _RND_HUNT_CHOOSER + HuntIndex(globalData) * 2 + 1);
+            return content.FormatWithReplacement(0, vars.HuntName);
+        });
         globalData.ActiveWindow.AddNextContent(20, false, content => content.FormatWithIndex(0, vars.HuntReward));
         globalData.ActiveWindow.AddNextContentWithLinks(21, [HuntSuccess, HuntFail]);
     }
