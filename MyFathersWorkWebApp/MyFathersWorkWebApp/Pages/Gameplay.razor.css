@@ -187,9 +187,12 @@ a:hover {
 .round-tracker {
     display: flex;
     justify-content: center;
+    flex-wrap: wrap;
     gap: 0.5rem;
     margin-top: 8rem;
     margin-bottom: 1rem;
+    padding: 0 0.5rem;
+    max-width: 100%;
 }
 
 .round-step {
@@ -259,4 +262,41 @@ a:hover {
 
 .gameplay-link:active {
     color: #2986cc;
+}
+
+/* Phones: keep all 9 round steps on one row and let the content use the full width */
+@media (max-width: 600px) {
+    .round-tracker {
+        flex-wrap: nowrap;
+        gap: 0.25rem;
+        margin-top: 4.5rem;
+    }
+
+    .round-step {
+        flex: 1 1 0;
+        min-width: 0;
+        max-width: 52px;
+        width: auto;
+        height: 44px;
+        font-size: 0.65rem;
+        border-width: 1px;
+        border-radius: 6px;
+    }
+
+    .gameplay-container {
+        padding: 1rem 0.75rem;
+    }
+
+    .gameplay-container h1 {
+        font-size: 2rem;
+    }
+
+    .parchment-box {
+        padding: 1rem;
+    }
+
+    .main-panel, .section-panel {
+        width: 100%;
+        padding: 0.75rem 1rem;
+    }
 }
