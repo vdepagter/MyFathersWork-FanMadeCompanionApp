@@ -119,7 +119,9 @@ public class TheCostOfDiseaseVars
     public string[]                TiedPlayers      { get; set; } = [];
     public string[]                TieMasterworks   { get; set; } = [];
     public int                     TieIndex         { get; set; }
+    public int[]                   TieUpgrades      { get; set; } = []; // Estate Upgrades per TieMasterworks entry
     public bool                    FamilyWinner     { get; set; }
+    public string                  Winner           { get; set; } = string.Empty;
 
     public const string WOLVES_EVIL_TOWN_NAME  = "Rage";
     public const string HUNTERS_EVIL_TOWN_NAME = "Kraven";
@@ -244,7 +246,9 @@ public class TheCostOfDiseaseVars
         TiedPlayers     = [];
         TieMasterworks  = [];
         TieIndex        = 0;
+        TieUpgrades     = [];
         FamilyWinner    = false;
+        Winner          = string.Empty;
 
         string[] players = [globalData.PlayerAName, globalData.PlayerBName, globalData.PlayerCName, globalData.PlayerDName];
 

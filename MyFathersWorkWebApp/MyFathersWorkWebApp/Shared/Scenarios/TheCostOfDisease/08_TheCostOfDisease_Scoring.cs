@@ -1,4 +1,4 @@
-namespace MyFathersWorkWebApp;
+﻿namespace MyFathersWorkWebApp;
 
 public static partial class TheCostOfDisease
 {
@@ -55,8 +55,7 @@ public static partial class TheCostOfDisease
 
         if (tied.Length == 1)
         {
-            vars.FamilyWinner = false;
-            Rankings(globalData);
+            DeclareWinner(tied[0], globalData);
             return;
         }
 
@@ -64,6 +63,15 @@ public static partial class TheCostOfDisease
         vars.TieMasterworks = [];
         vars.TieIndex       = 0;
         TieBreaker1(globalData);
+    }
+
+    // Rulebook, End of the Game: most points wins. Ties go to the player who completed their Masterwork,
+    // then to the player with the most Estate Upgrades. If still tied, the family shares the win.
+    private static void DeclareWinner(string winner, GlobalData globalData)
+    {
+        globalData.TheCostOfDiseaseVars.Winner       = winner;
+        globalData.TheCostOfDiseaseVars.FamilyWinner = string.IsNullOrEmpty(winner);
+        Rankings(globalData);
     }
 
     private static void TieBreaker1(GlobalData globalData)
@@ -95,20 +103,18 @@ public static partial class TheCostOfDisease
         {
             case 0:
             {
-                vars.FamilyWinner = true;
-                Rankings(globalData);
+                DeclareWinner(string.Empty, globalData);
                 break;
             }
             case 1:
             {
-                vars.Scores[vars.TieMasterworks[0]] += 1;
-                vars.FamilyWinner                   =  false;
-                Rankings(globalData);
+                DeclareWinner(vars.TieMasterworks[0], globalData);
                 break;
             }
             default:
             {
-                vars.TieIndex = 0;
+                vars.TieIndex    = 0;
+                vars.TieUpgrades = new int[vars.TieMasterworks.Length];
                 TieBreaker2(globalData);
                 break;
             }
@@ -123,8 +129,8 @@ public static partial class TheCostOfDisease
         globalData.SaveToUndo();
         globalData.ActiveInputPopup = new GameplayInputPopup(globalData, "0", PopUpButton.Confirm, IsValidScore, value =>
         {
-            vars.Scores[player] += int.Parse(value);
-            vars.TieIndex       += 1;
+            vars.TieUpgrades[vars.TieIndex] =  int.Parse(value);
+            vars.TieIndex                   += 1;
 
             if (vars.TieIndex < vars.TieMasterworks.Length)
             {
@@ -132,8 +138,9 @@ public static partial class TheCostOfDisease
                 return;
             }
 
-            vars.FamilyWinner = TopScorers(globalData).Length > 1;
-            Rankings(globalData);
+            int      mostUpgrades = vars.TieUpgrades.Max();
+            string[] leaders      = vars.TieMasterworks.Where((_, index) => vars.TieUpgrades[index] == mostUpgrades).ToArray();
+            DeclareWinner(leaders.Length == 1 ? leaders[0] : string.Empty, globalData);
         }, false, content => content.FormatWithReplacement(0, player));
     }
 
@@ -145,7 +152,7 @@ public static partial class TheCostOfDisease
         globalData.ActiveWindow = new GameplayWindow(globalData);
         globalData.ActiveWindow.AddDefaultTitle();
 
-        string[] ranking = globalData.GetActivePlayers().OrderByDescending(player => vars.Scores[player]).ToArray();
+        string[] ranking = globalData.GetActivePlayers().OrderByDescending(player => vars.Scores[player]).ThenByDescending(player => player == vars.Winner).ToArray();
 
         for (int x = 0; x < ranking.Length; ++x)
         {

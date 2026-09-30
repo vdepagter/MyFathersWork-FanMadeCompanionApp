@@ -88,9 +88,9 @@ Source size for reference: `FearOfTheUnknown.txt` 378 passages, `ATimeOfWar.txt`
 
 ## Cost of Disease - known deviations / open questions
 
-- Gen III building tiles: Gloomy Gothic uses `BuildingsExposeValue <= 1`, Prosperity `> 0`. Looks inconsistent, but `<= 1` appears identically in every story version in the Unity project (earlier English edit, latest English, Spanish), so it was kept as the developer shipped it.
+- Gen III building tiles: Gloomy Gothic uses `BuildingsExposeValue <= 1`, Prosperity `> 0`. Looks inconsistent, but `<= 1` appears identically in every story version in the Unity project (earlier English edit, latest English, Spanish), so it was kept as the developer shipped it. The owner decided to keep it, but suspects it may be flawed.
 - "Still Wary" popup lists Wolves allies only (source always appended the first player due to an always-true condition).
-- Tie breaker 2 asks for "the additional tie breaker score (as described in the rulebook)" - the original only had an unlabeled score field. Needs the real rule text.
+- Ties follow the rulebook (End of the Game): most points, then completed Masterwork, then most Estate Upgrades, else the family shares the win. Tie-breakers pick the winner without changing scores (the original app added +1 / the entered number to the score).
 - "A Return to Evil" keeps the end-of-generation prompt (source jumped straight to scoring).
 - Gen II Hospital: when everybody visited the Hospital the source skips "A Steady Focus"; the web app shows it.
 - Not ported: endings/achievements gallery, sharing, voice audio, 5-player games.

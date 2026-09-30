@@ -380,6 +380,6 @@ Scoring_Content2;Check to make sure the player with <b>Immortality</b> completed
 Scoring_Content3;<link=0>Click to tabulate scores for posterity...</link>
 ScoreEntry_Content;Please enter the final score for <b>{{0=...|Oliver|James|Olivia|...}} III</b>.
 TieBreaker1_Content;The highest score is tied. Did <b>{{0=...|Oliver|James|Olivia|...}} III</b> complete their Masterwork?
-TieBreaker2_Content;More than one tied player completed their Masterwork. Next tie breaker: the player with the most Estate Upgrades wins. Please enter the number of Estate Upgrades in the Estate of <b>{{0=...|Oliver|James|Olivia|...}} III</b>.
+TieBreaker2_Content;More than one tied player completed their Masterwork. Please enter the number of <b>Estate Upgrades</b> owned by <b>{{0=...|Oliver|James|Olivia|...}} III</b>. <i>(The player with the most Estate Upgrades wins. If still tied, the family shares the win.)</i>
 Rankings_Content1;<b>{{0=|1st|2nd|3rd|4th}}</b> - {{1=...|Oliver|James|Olivia|...}} III ({{2=...|40|...}}VP)<br />
 Rankings_Content2;{{0=?|<b>The family is victorious!</b>|<b>{{1=...|Oliver|James|Olivia|...}} III is victorious!</b>}}

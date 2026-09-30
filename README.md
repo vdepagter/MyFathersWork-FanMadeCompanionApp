@@ -23,7 +23,7 @@ The official app for *My Father's Work* lacks essential features, contains error
 - Share the final scoring and tie-breaker screens between scenarios (they currently live inside The Cost of Disease).
 - Abridged (TL;DR) story option.
 - More languages: the menus exist in English and Polish, the story text only in English.
-- Two open questions for The Cost of Disease: the wording of the second tie-breaker step, and one building-tile rule in Generation III.
+- Possible source flaw kept as-is in The Cost of Disease: the Generation III evil branch puts back building tiles that were exposed by a single vote.
 - Nice-to-haves from the official app: endings and achievements gallery, sharing, voice-over.
 
 ### 🎲 Using the app
