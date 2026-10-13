@@ -20,14 +20,29 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          lfs: true # images are stored in Git LFS
+          fetch-depth: 0 # full history, needed to count commits for the version number
+          lfs: false
+
+      # Images are stored in Git LFS. Only pull the web app's files, not UnityOriginalApp/ (saves LFS bandwidth)
+      - name: Pull LFS files of the web app
+        run: git lfs pull --include "MyFathersWorkWebApp/**"
+
+      # Version 0.66.6.<revision>: the revision counts the commits on main (first parent) since 3d78856,
+      # the last commit on main before versioning was introduced. The merge that introduced it is .0,
+      # every later commit/merge on main adds 1.
+      - name: Compute version
+        run: |
+          REVISION=$(( $(git rev-list --count --first-parent 3d78856..HEAD) - 1 ))
+          if [ "$REVISION" -lt 0 ]; then REVISION=0; fi
+          echo "REVISION=$REVISION" >> "$GITHUB_ENV"
+          echo "Version 0.66.6.$REVISION"
 
       - uses: actions/setup-dotnet@v4
         with:
           dotnet-version: 9.0.x
 
       - name: Publish
-        run: dotnet publish MyFathersWorkWebApp/MyFathersWorkWebApp/MyFathersWorkWebApp.csproj -c Release -o publish
+        run: dotnet publish MyFathersWorkWebApp/MyFathersWorkWebApp/MyFathersWorkWebApp.csproj -c Release -p:Version=0.66.6.$REVISION -o publish
 
       - name: Prepare for GitHub Pages
         run: |
