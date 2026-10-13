@@ -65,20 +65,12 @@
         GlobalData.ActiveInputPopup = null;
         GlobalData.MirrorMode       = _MirrorMode;
         
-        GlobalData.TheCostOfDiseaseVars.Reset(GlobalData);
+        GlobalData.ResetScenarioVars();
 
-        switch (GlobalData.ScenarioId)
+        if (!GlobalData.StartScenario())
         {
-            case ScenarioId.CostOfDisease:
-            {
-                GlobalData.RunScenarioAction(() => TheCostOfDisease.Init(GlobalData));
-                break;
-            }
-            default:
-            {
-                Nav.NavigateTo("");
-                break;
-            }
+            Nav.NavigateTo("");
+            return;
         }
 
         Nav.NavigateTo("Gameplay");

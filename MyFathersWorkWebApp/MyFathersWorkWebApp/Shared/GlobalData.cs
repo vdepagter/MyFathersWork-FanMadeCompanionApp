@@ -32,7 +32,19 @@ public partial class GlobalData
     public Years                      Years                { get; set; } = Years.Early;
     public Generation                 Generation           { get; set; } = Generation.First;
     public TheCostOfDiseaseVars       TheCostOfDiseaseVars { get; }      = new();
+    public FearOfTheUnknownVars       FearOfTheUnknownVars { get; }      = new();
     public Dictionary<string, object> TmpValues            { get; }      = new();
+
+    // The active scenario's random values and final scoring state
+    [JsonIgnore] public ScenarioVars ScenarioVars => ScenarioId switch
+    {
+        ScenarioId.FearOfUnknown => FearOfTheUnknownVars,
+        _                        => TheCostOfDiseaseVars
+    };
+
+    // Only the active scenario's state is saved (keeps saves and undo snapshots small)
+    public bool ShouldSerializeTheCostOfDiseaseVars() => ScenarioId != ScenarioId.FearOfUnknown;
+    public bool ShouldSerializeFearOfTheUnknownVars() => ScenarioId == ScenarioId.FearOfUnknown;
 
     [JsonIgnore] public GameplayHub?        ActiveHub        { get; set; }
     [JsonIgnore] public GameplayWindow?     ActiveWindow     { get; set; }
@@ -47,8 +59,22 @@ public partial class GlobalData
 
     public GlobalData()
     {
-        TheCostOfDiseaseVars.Reset(this);
+        ResetScenarioVars();
     }
+
+    public void ResetScenarioVars()
+    {
+        TheCostOfDiseaseVars.Reset(this);
+        FearOfTheUnknownVars.Reset(this);
+    }
+
+    // Static class holding the active scenario's screens (SaveToUndo looks methods up by name)
+    private Type? ScenarioType => ScenarioId switch
+    {
+        ScenarioId.CostOfDisease => typeof(TheCostOfDisease),
+        ScenarioId.FearOfUnknown => typeof(FearOfTheUnknown),
+        _                        => null
+    };
 
     public string GetLocalizedUITag(string tag)
     {
@@ -78,20 +104,16 @@ public partial class GlobalData
     {
         if (_UndoInProgress) return;
 
-        switch (ScenarioId)
+        if (ScenarioType == null) return;
+
+        const BindingFlags flags  = BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic;
+        MethodInfo         method = ScenarioType.GetMethod(methodName, flags) ?? typeof(FinalScoring).GetMethod(methodName, flags)!;
+        Action<GlobalData> action = (Action<GlobalData>)Delegate.CreateDelegate(typeof(Action<GlobalData>), method);
+        UndoStack.Push(new UndoData
         {
-            case ScenarioId.CostOfDisease:
-            {
-                MethodInfo         method = typeof(TheCostOfDisease).GetMethod(methodName, BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic)!;
-                Action<GlobalData> action = (Action<GlobalData>)Delegate.CreateDelegate(typeof(Action<GlobalData>), method);
-                UndoStack.Push(new UndoData
-                {
-                    Callback = action,
-                    JsonData = JsonConvert.SerializeObject(this)
-                });
-                break;
-            }
-        }
+            Callback = action,
+            JsonData = JsonConvert.SerializeObject(this)
+        });
     }
 
     public void ResetUndo()
@@ -232,7 +254,7 @@ public partial class GlobalData
             return;
         }
 
-        TheCostOfDiseaseVars.Reset(this);
+        ResetScenarioVars();
         ActiveHub            = null;
         ActiveWindow         = null;
         ActivePopup          = null;
@@ -276,12 +298,14 @@ public partial class GlobalData
         string scenarioLocalization = ScenarioId switch
         {
             ScenarioId.CostOfDisease => "localization/TheCostOfDisease_Localization.csv",
+            ScenarioId.FearOfUnknown => "localization/FearOfTheUnknown_Localization.csv",
             _                        => string.Empty
         };
 
         string scenarioGameplayLocalization = ScenarioId switch
         {
             ScenarioId.CostOfDisease => "localization/TheCostOfDisease_Gameplay_Localization.csv",
+            ScenarioId.FearOfUnknown => "localization/FearOfTheUnknown_Gameplay_Localization.csv",
             _                        => string.Empty
         };
 
@@ -298,8 +322,55 @@ public partial class GlobalData
         OtherPossibleScenarioLanguages.AddRange(scenarioLocalizations.Keys);
     }
 
+    // Starts the active scenario after the setup screens
+    public bool StartScenario()
+    {
+        Action<GlobalData>? init = ScenarioId switch
+        {
+            ScenarioId.CostOfDisease => TheCostOfDisease.Init,
+            ScenarioId.FearOfUnknown => FearOfTheUnknown.Init,
+            _                        => null
+        };
+
+        if (init == null) return false;
+        RunScenarioAction(() => init(this));
+        return true;
+    }
+
+    public void ShowFinalEnding()
+    {
+        switch (ScenarioId)
+        {
+            case ScenarioId.CostOfDisease:
+            {
+                TheCostOfDisease.FinalEnding(this);
+                break;
+            }
+            case ScenarioId.FearOfUnknown:
+            {
+                FearOfTheUnknown.FinalEnding(this);
+                break;
+            }
+        }
+    }
+
     private Action<GlobalData>? GetHubMethod()
     {
+        if (ScenarioId == ScenarioId.FearOfUnknown)
+        {
+            return FearOfTheUnknownVars.HubId switch
+            {
+                FearOfTheUnknownHubId.WitchHunt  => FearOfTheUnknown.WitchHunt,
+                FearOfTheUnknownHubId.Foreigners => FearOfTheUnknown.Foreigners,
+                FearOfTheUnknownHubId.Creature   => FearOfTheUnknown.Creature,
+                FearOfTheUnknownHubId.Isolation  => FearOfTheUnknown.Isolation,
+                FearOfTheUnknownHubId.Tension    => FearOfTheUnknown.Tension,
+                FearOfTheUnknownHubId.Privatized => FearOfTheUnknown.Privatized,
+                FearOfTheUnknownHubId.Liberal    => FearOfTheUnknown.Liberal,
+                _                                => null
+            };
+        }
+
         if (ScenarioId == ScenarioId.CostOfDisease)
         {
             return TheCostOfDiseaseVars.HubId switch

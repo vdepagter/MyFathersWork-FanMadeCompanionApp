@@ -96,6 +96,11 @@ public class GameplayWindow(GlobalData globalData)
         Elements.Add(new GameplayElement(content, null, fromNewLine));
     }
 
+    public void AddCustomLink(string text, Action<GlobalData> nextCallback, bool fromNewLine = true)
+    {
+        Elements.Add(new GameplayElement(text, nextCallback, fromNewLine));
+    }
+
     public void AddClickHere(Action<GlobalData> nextCallback, bool fromNewLine = false)
     {
         Elements.Add(new GameplayElement(globalData.GetLocalizedUITag(GlobalTags.Gameplay_ClickHere), nextCallback, fromNewLine));
@@ -109,6 +114,11 @@ public class GameplayWindow(GlobalData globalData)
     public void AddClickHereAfterBid(Action<GlobalData> nextCallback)
     {
         Elements.Add(new GameplayElement(globalData.GetLocalizedUITag(GlobalTags.Gameplay_ClickHereAfterBid), nextCallback, true));
+    }
+
+    public void AddClickHereAfterVote(Action<GlobalData> nextCallback)
+    {
+        Elements.Add(new GameplayElement(globalData.GetLocalizedUITag(GlobalTags.Gameplay_ClickHereAfterVote), nextCallback, true));
     }
 
     public void AddChoose()

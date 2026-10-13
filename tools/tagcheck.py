@@ -1,20 +1,22 @@
 """Static check: derives every scenario localization tag the C# code requests (CallerMemberName conventions) and reports tags
 missing from the scenario CSVs. Dynamic tags (computed indices) are listed for manual checking.
-Usage: python tools/tagcheck.py [file-filter ...] [--unused]"""
+Usage: python tools/tagcheck.py [--scenario=FearOfTheUnknown] [file-filter ...] [--unused]
+The scenario defaults to TheCostOfDisease. Shared/Scenarios/FinalScoring.cs is checked against every scenario's CSVs."""
 import re, glob, sys
 
 import os
 ROOT = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'MyFathersWorkWebApp', 'MyFathersWorkWebApp') + '/'
-files = sorted(glob.glob(ROOT + 'Shared/Scenarios/TheCostOfDisease/*.cs'))
+SCENARIO = next((a.split('=', 1)[1] for a in sys.argv[1:] if a.startswith('--scenario=')), 'TheCostOfDisease')
+files = sorted(glob.glob(ROOT + 'Shared/Scenarios/' + SCENARIO + '/*.cs')) + [ROOT + 'Shared/Scenarios/FinalScoring.cs']
 args=[a for a in sys.argv[1:] if not a.startswith("--")]
 if args: files = [f for f in files if any(a in f for a in args)]
 
 tags = set()
-for f in ['TheCostOfDisease_Localization.csv', 'TheCostOfDisease_Gameplay_Localization.csv']:
+for f in [SCENARIO + '_Localization.csv', SCENARIO + '_Gameplay_Localization.csv']:
     for l in open(ROOT + 'wwwroot/localization/' + f, encoding='utf-8-sig').read().splitlines():
         if l and not l.startswith('//'): tags.add(l.split(';')[0])
 
-allsrc = ''.join(open(f, encoding='utf-8-sig').read() for f in glob.glob(ROOT + 'Shared/Scenarios/TheCostOfDisease/*.cs'))
+allsrc = ''.join(open(f, encoding='utf-8-sig').read() for f in glob.glob(ROOT + 'Shared/Scenarios/' + SCENARIO + '/*.cs'))
 consts = dict(re.findall(r'const string (\w+)\s*=\s*"([^"]*)"', allsrc))
 
 need = {}   # tag -> where
@@ -27,7 +29,7 @@ def add(tag, where):
 for f in files:
     src = open(f, encoding='utf-8-sig').read()
     # split into methods
-    for m in re.finditer(r'\n    (?:public|private) static (?:void|string|bool|int|Faction|string\[\]) (\w+)\(([^)]*)\)\s*(=>[^\n]*\n|\n    \{\n(.*?)\n    \})', src, re.S):
+    for m in re.finditer(r'\n    (?:public|private) static (?:void|string|bool|int|Faction|string\[\]|Years|Action<GlobalData>) (\w+)\(([^)]*)\)\s*(=>[^\n]*\n|\n    \{\n(.*?)\n    \})', src, re.S):
         name, body = m.group(1), m.group(3)
         where = f.split('/')[-1] + ':' + name
         if 'new GameplayHub' in body:
