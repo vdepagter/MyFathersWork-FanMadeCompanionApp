@@ -22,7 +22,8 @@ board game; the app tells them what to set up and narrates the story over 3 Gene
   - `wwwroot/localization/` - `UI_Localization.csv` (English + Polish), `TheCostOfDisease_Localization.csv` (story text) and `TheCostOfDisease_Gameplay_Localization.csv` (rules/setup text). `*-copy.csv` are old copies.
   - `wwwroot/images/setup/` (popup images, referenced by `Shared/Consts/PopUpIcon.cs`) and `wwwroot/images/gameplay/` (inline `<icon=...>`). S2_*/S3_* images for the other scenarios already exist. Images are **Git LFS** - a worktree without `git lfs pull` shows broken icons.
 - `MyFathersWorkConsole/` - porting aid. `Processor/*.txt` are the decompiled Cradle story classes for all three scenarios (the only source for Fear of the Unknown and A Time of War). `TheStoryProcessor.Run()` converts a `.txt` into readable console C# under `Processor/Scenario/ScenarioPart_*.cs` (currently holds the Cost of Disease Gen III passages; they are fully ported now).
-- `tools/` - `passage_dump.py` (read passages), `tagcheck.py` (verify localization tags), `test-save-helpers.js` (play-test from crafted saves).
+- `tools/` - `passage_dump.py` (read passages), `tagcheck.py` (verify localization tags), `sourcecheck.py` (source link labels missing from the CSVs, Unity-only end-of-generation/setup screens), `test-save-helpers.js` (play-test from crafted saves).
+- `PLAYTEST_FINDINGS.md` - findings from real play-tests, their causes and a checklist against recurrence. Read it before porting or reviewing a scenario.
 - Original Unity project (outside the repo, owner's machine): `C:\Users\ValentijndePagter\Downloads\my-fathers-work-master-4-20260622T163118Z-3-001\my-fathers-work-master-4`. Useful parts: `Assets/Scripts/OldStory/TheCostofDisease*.cs` (Cradle output, Cost of Disease only), `Assets/Scripts/UI/View*.cs` (score entry, tie breaker, ranking, endings UI flow), `Assets/Resources/setupImages`.
 
 ## How a scenario is written (conventions - follow them exactly)
@@ -73,7 +74,7 @@ private static void Changes_0(GlobalData globalData)       // setup popup
 1. Produce readable passages: in `TheStoryProcessor.cs` point `path` at the scenario `.txt` (it is hardcoded to `TheCostofDisease.txt`) and run it, or read `.txt` directly. The console output loses link labels (`OPT("Name", MethodName)`); `tools/passage_dump.py` restores them from the `.txt` (set `MFW_SOURCE=FearOfTheUnknown.txt`).
 2. Build the passage graph from the scenario start / generation intros (BFS over `Method*` references) to know what belongs to each generation.
 3. Map Twine concepts: a passage with text + `<hook>` "Click to continue" + `setupStyleEvnt` block -> window + setup popup. `$PrintEndOfTheRoundText(tag, next)` -> hub end-of-round section. `_SetupImage` -> `PopUpIcon`. `either(...)`/`GetRandom` -> `RandomArray` index. `$nameA..E` / `allyA..E` ifs -> loops over `GetActivePlayers()` (the web app supports 2-4 players, drop 5-player branches). `(display:)` / abort chains -> direct method calls.
-4. Write code, then the CSV rows, then run `python tools/tagcheck.py` (0 missing) and play-test.
+4. Write code, then the CSV rows, then run `python tools/tagcheck.py` (0 missing) and `python tools/sourcecheck.py <Scenario> <CsvPrefix>`, and play-test. Go through the checklist in `PLAYTEST_FINDINGS.md`.
 5. Keep source bugs visible: several Twine passages have dead or always-true conditions. Decide deliberately and note it (see Cost of Disease notes below).
 
 ## Adding Fear of the Unknown / A Time of War - what must be generalized
@@ -86,7 +87,7 @@ The engine is currently hardwired to Cost of Disease in these places:
 - `Pages/PlayersScenarioLanguage.razor` - `switch` calling `TheCostOfDisease.Init`; also calls `TheCostOfDiseaseVars.Reset`.
 - `GlobalData.TheCostOfDiseaseVars` - add a Vars class per scenario (reset + save), or introduce a common base.
 - `08_TheCostOfDisease_Scoring.cs` (score entry, tie breakers, rankings, endings) - the score/tie/ranking part is scenario-independent and should move to shared code; only the endings text is per scenario. Its state (`Scores`, `TiedPlayers`, ...) lives in `TheCostOfDiseaseVars`.
-- `tools/tagcheck.py` - paths point at the Cost of Disease folder/CSVs.
+- `tools/tagcheck.py` - paths point at the Cost of Disease folder/CSVs (`tools/sourcecheck.py` already takes the scenario as arguments).
 - `Pages/Home.razor` `Test()` shortcut sets `ScenarioId.CostOfDisease`.
 - `Shared/Enums/Generation.cs` has 3 values; after the last round `Generation` becomes 3 (harmless, the round tracker shows nothing as current).
 
@@ -105,4 +106,4 @@ Source size for reference: `FearOfTheUnknown.txt` 378 passages, `ATimeOfWar.txt`
 
 - `dotnet build MyFathersWorkWebApp/MyFathersWorkWebApp.sln`
 - `dotnet run --project MyFathersWorkWebApp/MyFathersWorkWebApp/MyFathersWorkWebApp.csproj` (http://localhost:5166; use `--no-launch-profile --urls http://localhost:5199` if 5166 is taken).
-- There are no automated tests. Play-test with `tools/test-save-helpers.js`: craft a save at a late-round hub, reload `/Gameplay`, and drive the flow with `run([...])`. Check the browser console for exceptions and run `python tools/tagcheck.py`. To test mirror mode, pass `mirror: true` to `mkSave`; random click-throughs that report `Mirror:` console lines find draws made too early.
+- There are no automated tests. Play-test with `tools/test-save-helpers.js`: craft a save at a late-round hub, reload `/Gameplay`, and drive the flow with `run([...])`. Check the browser console for exceptions and run `python tools/tagcheck.py`. To test mirror mode, pass `mirror: true` to `mkSave`; random click-throughs that report `Mirror:` console lines find draws made too early. Also play through round transitions, not only crafted saves: load and undo rebuild the hub, which hides hub text that was formatted with stale state (`PLAYTEST_FINDINGS.md` #1).
