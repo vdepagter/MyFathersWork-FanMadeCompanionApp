@@ -17,6 +17,15 @@
         </span>
     </label>
 
+    <label class="narration-option">
+        <b>@GlobalData.GetLocalizedUITag(GlobalTags.Audio_Narration)</b>
+        <select value="@Audio.Narration" @onchange="OnNarrationChanged">
+            <option value="@NarrationVoice.Female">@GlobalData.GetLocalizedUITag(GlobalTags.Audio_NarrationFemale)</option>
+            <option value="@NarrationVoice.Male">@GlobalData.GetLocalizedUITag(GlobalTags.Audio_NarrationMale)</option>
+            <option value="@NarrationVoice.Off">@GlobalData.GetLocalizedUITag(GlobalTags.Audio_NarrationOff)</option>
+        </select>
+    </label>
+
     <div class="language-options">
         @foreach (KeyValuePair<string, string> pair in _LocalizationOptions)
         {
@@ -42,6 +51,11 @@
     {
         Audio.PlayClick();
         Nav.NavigateTo("PlayersScenario");
+    }
+
+    private void OnNarrationChanged(ChangeEventArgs e)
+    {
+        if (Enum.TryParse(e.Value?.ToString(), out NarrationVoice narration)) Audio.SetNarration(narration);
     }
 
     protected override async Task OnInitializedAsync()

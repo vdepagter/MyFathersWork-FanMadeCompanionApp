@@ -4,6 +4,9 @@
 //   effects - one at a time, a new effect cuts the previous one (screen transitions, welcome, footsteps)
 //   popup   - one at a time, a new popup sound cuts the previous one (setup, end of round, special event)
 //   click   - may overlap
+//   voice   - one element for the voice-over: thunder lead-in, then the narration clip (docs/AUDIO_TRANSITIONS_MAP.md
+//             "Voice-over"). Own setting (female / male / off), independent of the music and effects toggles; the
+//             music is ducked while it plays. State changes are reported to one .NET listener (Pages/Gameplay.razor).
 // Browsers block audio until the first user gesture: the wanted music starts on the first gesture, effects requested
 // before it are dropped. Paths are relative so they resolve against <base href> (the site runs from a sub-path).
 (function () {
@@ -14,6 +17,7 @@
     const MUSIC_FADE_MS = 400;
     const KEY_EFFECTS   = "audio.effects";
     const KEY_MUSIC     = "audio.music";
+    const KEY_VOICE     = "audio.voice";
 
     const src = name => "audio/" + name + ".mp3";
 
@@ -127,6 +131,8 @@
     let switchingTo;             // track name (or null) a fade is switching to; undefined when no switch runs
     let fadeTimer   = 0;
     let musicEnded  = false;     // a non-looping track played to the end: do not restart it
+    let musicGain   = 1;         // full volume of the music element: 1, or MUSIC_DUCK while the voice-over plays
+    let duckTimer   = 0;
 
     music.addEventListener("ended", () => { musicEnded = true; });
 
@@ -137,6 +143,9 @@
     }
 
     function fadeOut(done) {
+        clearInterval(duckTimer);
+        duckTimer = 0;
+
         if (music.paused || currentName === null) {
             done();
             return;
@@ -158,8 +167,10 @@
 
         if (!settings.music) {
             cancelFade();
+            clearInterval(duckTimer);
+            duckTimer = 0;
             music.pause();
-            music.volume = 1;
+            music.volume = musicGain;
             return;
         }
 
@@ -178,7 +189,7 @@
         fadeOut(() => {
             switchingTo = undefined;
             music.pause();
-            music.volume = 1;
+            music.volume = musicGain;
             musicEnded   = false;
 
             if (!target) {
@@ -200,6 +211,179 @@
         if ((wanted ? wanted.name : null) === targetName) return;
         wanted = targetName ? { name: targetName, loop: loop !== false } : null;
         applyMusic();
+    }
+
+    // ---- Music ducking while the voice-over plays ------------------------------------------------------------------
+
+    const MUSIC_DUCK = 0.3;
+
+    function duckMusic(on) {
+        const target = on ? MUSIC_DUCK : 1;
+        if (musicGain === target) return;
+        musicGain = target;
+
+        clearInterval(duckTimer);
+        duckTimer = 0;
+        if (fadeTimer) return; // a track switch is fading out; it starts the next track at musicGain
+
+        // Short ramp instead of a jump
+        duckTimer = setInterval(() => {
+            const volume = music.volume;
+            const next   = volume < target ? Math.min(target, volume + 0.07) : Math.max(target, volume - 0.07);
+            music.volume = next;
+            if (next !== target) return;
+            clearInterval(duckTimer);
+            duckTimer = 0;
+        }, 30);
+    }
+
+    // ---- Voice-over -----------------------------------------------------------------------------------------------
+    // Unity (SoundManager.OnVOPlayOneTime): 4.5 s of the thunder clip, then the narration clip on the same source.
+    // Pause menu: pause; resume during the lead-in skips the rest of it (SoundManager.OnVOResume).
+
+    const VOICES        = ["female", "male", "off"];
+    const VOICE_DEFAULT = "male"; // Unity: PlayerPrefs "AudioTrack" defaults to 0 = male (ViewAudioTrack, ViewMainMenu)
+    const LEAD_IN_MS    = 4500;
+    const THUNDER       = src("sfx-vo-thunder");
+
+    function readVoice() {
+        try {
+            const value = localStorage.getItem(KEY_VOICE);
+            return VOICES.indexOf(value) >= 0 ? value : VOICE_DEFAULT;
+        } catch (e) {
+            return VOICE_DEFAULT;
+        }
+    }
+
+    const voiceElement   = new Audio();
+    voiceElement.preload = "none";
+
+    const voice = {
+        setting:  readVoice(),
+        id:       0,        // current request (0 = none); reported with every state change
+        counter:  0,
+        phase:    null,     // null | "leadin" | "clip"
+        clip:     null,     // url of the narration clip of the current request
+        timer:    0,        // lead-in timer
+        paused:   false,    // paused by the pause menu
+        listener: null      // DotNetObjectReference (Pages/Gameplay.razor), method OnVoiceState(id, state)
+    };
+
+    function notifyVoice(id, state) {
+        if (!voice.listener || !id) return;
+        try {
+            const promise = voice.listener.invokeMethodAsync("OnVoiceState", id, state);
+            if (promise && promise.catch) promise.catch(() => { });
+        } catch (e) {
+            // Listener already disposed
+        }
+    }
+
+    function startVoiceSource(url) {
+        const id    = voice.id;
+        const phase = voice.phase;
+        voiceElement.src = url;
+        try {
+            const promise = voiceElement.play();
+            if (promise && promise.catch) {
+                promise.catch(() => {
+                    // Blocked or failed (an interrupted play() rejects too: ignore when the request moved on)
+                    if (voice.id === id && voice.phase === phase && !voice.paused) endVoice();
+                });
+            }
+        } catch (e) {
+            endVoice();
+        }
+    }
+
+    function startClip() {
+        clearTimeout(voice.timer);
+        voice.timer = 0;
+        voice.phase = "clip";
+        startVoiceSource(voice.clip);
+    }
+
+    // Stops the current request (if any) and reports "stopped" for it
+    function endVoice() {
+        const id = voice.id;
+        clearTimeout(voice.timer);
+        voice.timer  = 0;
+        voice.id     = 0;
+        voice.phase  = null;
+        voice.clip   = null;
+        voice.paused = false;
+        try {
+            voiceElement.pause();
+            voiceElement.removeAttribute("src");
+            voiceElement.load();
+        } catch (e) {
+            // Ignore
+        }
+        duckMusic(false);
+        notifyVoice(id, "stopped");
+    }
+
+    // name: clip file name (the Unity passage name); which: "female" | "male"; leadIn: thunder first.
+    // Returns the request id, or 0 when nothing starts (audio not unlocked by a user gesture yet).
+    function voicePlay(name, which, leadIn) {
+        endVoice();
+        if (!unlocked || !name) return 0;
+
+        voice.id   = ++voice.counter;
+        voice.clip = "audio/vo/" + (which === "male" ? "male" : "female") + "/" + name + ".mp3";
+        duckMusic(true);
+
+        if (leadIn) {
+            voice.phase = "leadin";
+            startVoiceSource(THUNDER);
+            voice.timer = setTimeout(startClip, LEAD_IN_MS);
+        } else {
+            startClip();
+        }
+
+        return voice.id;
+    }
+
+    voiceElement.addEventListener("playing", () => {
+        if (voice.phase === "clip") notifyVoice(voice.id, "speaking");
+    });
+    voiceElement.addEventListener("ended", () => {
+        if (voice.phase === "clip") endVoice();
+        else if (voice.phase === "leadin") startClip(); // lead-in clip shorter than LEAD_IN_MS
+    });
+    voiceElement.addEventListener("error", () => {
+        // Missing or unsupported file (not the src removal in endVoice)
+        if (voice.phase && voiceElement.getAttribute("src")) endVoice();
+    });
+
+    function voicePause() {
+        if (!voice.phase || voice.paused) return;
+        voice.paused = true;
+        clearTimeout(voice.timer);
+        voice.timer = 0;
+        try {
+            voiceElement.pause();
+        } catch (e) {
+            // Ignore
+        }
+    }
+
+    function voiceResume() {
+        if (!voice.paused) return;
+        voice.paused = false;
+        if (voice.phase === "leadin") {
+            startClip();
+            return;
+        }
+        if (voice.phase === "clip") {
+            const id = voice.id;
+            try {
+                const promise = voiceElement.play();
+                if (promise && promise.catch) promise.catch(() => { if (voice.id === id && !voice.paused) endVoice(); });
+            } catch (e) {
+                endVoice();
+            }
+        }
     }
 
     // ---- Unlock on the first user gesture -------------------------------------------------------------------------
@@ -230,6 +414,24 @@
             writeSetting(KEY_MUSIC, settings.music);
             applyMusic();
         },
+        isUnlocked: () => unlocked,
+        // Voice-over
+        getVoice: () => voice.setting,
+        setVoice: which => {
+            voice.setting = VOICES.indexOf(which) >= 0 ? which : VOICE_DEFAULT;
+            try {
+                localStorage.setItem(KEY_VOICE, voice.setting);
+            } catch (e) {
+                // Storage unavailable: keep the setting for this session only
+            }
+            endVoice(); // a change stops the current narration, it does not start a new one
+        },
+        voicePlay: voicePlay,
+        voiceStop: endVoice,
+        voicePause: voicePause,
+        voiceResume: voiceResume,
+        voiceSubscribe: listener => { voice.listener = listener || null; },
+        voiceUnsubscribe: () => { voice.listener = null; },
         // Read-only snapshot for debugging
         state: () => ({
             unlocked: unlocked,
@@ -238,7 +440,17 @@
             wantedMusic: wanted ? wanted.name : null,
             currentMusic: currentName,
             musicPaused: music.paused,
-            musicLoop: music.loop
+            musicLoop: music.loop,
+            musicVolume: music.volume,
+            musicGain: musicGain,
+            voice: voice.setting,
+            voiceId: voice.id,
+            voicePhase: voice.phase,
+            voicePaused: voice.paused,
+            voiceClip: voice.clip,
+            voiceSrc: voiceElement.getAttribute("src"),
+            voiceElementPaused: voiceElement.paused,
+            voiceTime: voiceElement.currentTime
         })
     };
 })();

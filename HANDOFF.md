@@ -14,13 +14,17 @@ Next steps:
   Love / bribe / policy vote, Isolation smuggling trial outcomes, Foreigners Wall "Acceptance" + caravan visits,
   Creature cure accepted path, Gen I fates other than Creature, 2- and 4-player games.
 
-## Music, sound effects and screen transitions (October 2026)
+## Music, sound effects, voice-over and screen transitions (October 2026)
 
-Implemented (uncommitted at time of writing); mapping from the Unity app in `docs/AUDIO_TRANSITIONS_MAP.md`.
+Implemented and deployed; mapping from the Unity app in `docs/AUDIO_TRANSITIONS_MAP.md`.
 `wwwroot/audio/*.mp3` (12 clips, ~9.3 MB, LFS), `wwwroot/js/audio.js` + `Shared/AudioService.cs`, `wwwroot/js/transitions.js`,
 toggles in `Shared/AudioToggles.razor`. Sounds and transitions are derived in `Pages/Gameplay.razor` (`DetectScreenChange`);
 scenario code only sets `GameplayWindow.SetCue` / `MarkFinalEnding` - never call audio from scenario code (mirror sandbox, undo, load).
 
 Next steps:
 - Test on a real iPhone/iPad (Safari autoplay unlock, MP3 playback) and at the table (volume of the effects vs music).
-- Not ported (deliberate): voice-over, Unity bidding/reveal screen, clips the shipped app never played (map 2.3).
+- Voice-over: 17 narrated passages (map section 8), Female/Male/Off (default Male as in Unity), "Narrated" pill on those windows.
+  Uncertain: the female `GloomyWolvesIntro` clip lives in Unity's male folder (judged female by pitch). Recordings follow the
+  English source text, so other text versions differ from the narration.
+- Not ported (deliberate): Unity bidding/reveal screen, clips the shipped app never played (map 2.3), A Time of War VO.
+- Version: `0.66.6.<revision>`, revision = first-parent commits on main since 3d78856 minus 1 (deploy workflow).

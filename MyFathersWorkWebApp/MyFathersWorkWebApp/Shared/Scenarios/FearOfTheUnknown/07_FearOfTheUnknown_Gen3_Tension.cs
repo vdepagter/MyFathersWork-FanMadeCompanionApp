@@ -98,6 +98,7 @@ public static partial class FearOfTheUnknown
         vars.Stole         = false;
 
         globalData.ActiveWindow = new GameplayWindow(globalData);
+        globalData.ActiveWindow.SetVoiceOver("TensionIntro");
         globalData.ActiveWindow.AddGameplayTitle(GlobalTags.Gameplay_Generation_III);
         globalData.ActiveWindow.AddDefaultSubtitle();
         globalData.ActiveWindow.AddDefaultContent(content => content.FormatWithReplacement(0, RandomPlayer(globalData)));

@@ -72,6 +72,7 @@ public static partial class FearOfTheUnknown
         Vars(globalData).Path = FearOfTheUnknownHubId.Isolation;
 
         globalData.ActiveWindow = new GameplayWindow(globalData);
+        globalData.ActiveWindow.SetVoiceOver("IsolationIntro");
         globalData.ActiveWindow.AddGameplayTitle(GlobalTags.Gameplay_Generation_III);
         globalData.ActiveWindow.AddDefaultSubtitle();
         globalData.ActiveWindow.AddDefaultContent(content => content.FormatWithReplacement(0, RandomPlayer(globalData)));

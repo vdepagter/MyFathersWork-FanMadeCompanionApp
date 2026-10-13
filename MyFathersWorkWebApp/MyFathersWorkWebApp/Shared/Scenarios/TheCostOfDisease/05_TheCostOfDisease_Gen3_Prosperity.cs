@@ -174,6 +174,7 @@ public static partial class TheCostOfDisease
         vars.HunterOrder = [string.Empty, string.Empty, string.Empty, string.Empty];
 
         globalData.ActiveWindow = new GameplayWindow(globalData);
+        globalData.ActiveWindow.SetVoiceOver("ProsperityHunterIntro");
         globalData.ActiveWindow.AddGameplayTitle(GlobalTags.Gameplay_Generation_III);
         globalData.ActiveWindow.AddDefaultSubtitle();
         globalData.ActiveWindow.AddDefaultContent();
@@ -184,6 +185,7 @@ public static partial class TheCostOfDisease
     {
         globalData.SaveToUndo();
         globalData.ActiveWindow = new GameplayWindow(globalData);
+        globalData.ActiveWindow.SetVoiceOver("ProsperityWolvesIntro");
         globalData.ActiveWindow.AddGameplayTitle(GlobalTags.Gameplay_Generation_III);
         globalData.ActiveWindow.AddDefaultSubtitle();
         globalData.ActiveWindow.AddDefaultContent();

@@ -14,7 +14,13 @@ public class GameplayWindow(GlobalData globalData)
     public SoundCue Cue           { get; private set; }
     public bool     IsFinalEnding { get; private set; }
 
+    // Voice-over clip of a narrated window: the Unity passage name, file wwwroot/audio/vo/<voice>/<VoiceOver>.mp3
+    // (docs/AUDIO_TRANSITIONS_MAP.md "Voice-over"). Null: no narration.
+    public string? VoiceOver { get; private set; }
+
     public void SetCue(SoundCue cue) => Cue = cue;
+
+    public void SetVoiceOver(string clip) => VoiceOver = clip;
 
     public void MarkFinalEnding() => IsFinalEnding = true;
 

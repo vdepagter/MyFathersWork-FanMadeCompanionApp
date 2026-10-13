@@ -55,9 +55,15 @@
 
 .dropdowns {
     display: flex;
+    flex-wrap: wrap;
     justify-content: space-between;
     margin-top: 1rem;
     gap: 1rem;
+}
+
+/* Two per row (language, scenario language), the narration select wraps to its own row instead of squeezing all three */
+.dropdowns > div {
+    flex: 1 1 8rem;
 }
 
 .dropdowns select {

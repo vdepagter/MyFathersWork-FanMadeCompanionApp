@@ -18,8 +18,11 @@
             {
                 <button class="pause-button"
                         @onclick="ShowSavePopup">@GlobalData!.GetLocalizedUITag(GlobalTags.Gameplay_LocalSaveGame)</button>
+            }
 
-                <div class="dropdowns">
+            <div class="dropdowns">
+                @if (IsThereAnySavedState)
+                {
                     <div>
                         <label>@GlobalData!.GetLocalizedUITag(GlobalTags.MainMenu_Language)</label>
                         <select value="@GlobalData.Language" @onchange="OnLanguageChanges">
@@ -39,8 +42,18 @@
                             }
                         </select>
                     </div>
+                }
+
+                @* Always shown (not only with a saved game); a change stops the current narration *@
+                <div>
+                    <label>@GlobalData!.GetLocalizedUITag(GlobalTags.Audio_Narration)</label>
+                    <select value="@Audio.Narration" @onchange="OnNarrationChanged">
+                        <option value="@NarrationVoice.Female">@GlobalData.GetLocalizedUITag(GlobalTags.Audio_NarrationFemale)</option>
+                        <option value="@NarrationVoice.Male">@GlobalData.GetLocalizedUITag(GlobalTags.Audio_NarrationMale)</option>
+                        <option value="@NarrationVoice.Off">@GlobalData.GetLocalizedUITag(GlobalTags.Audio_NarrationOff)</option>
+                    </select>
                 </div>
-            }
+            </div>
 
         </div>
     </div>
@@ -69,6 +82,11 @@
     {
         Audio.PlayClick();
         Nav.NavigateTo("");
+    }
+
+    private void OnNarrationChanged(ChangeEventArgs e)
+    {
+        if (Enum.TryParse(e.Value?.ToString(), out NarrationVoice narration)) Audio.SetNarration(narration);
     }
 
     private async Task OnLanguageChanges(ChangeEventArgs e)

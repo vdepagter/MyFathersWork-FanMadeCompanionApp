@@ -24,6 +24,7 @@ public static partial class TheCostOfDisease
     {
         globalData.SaveToUndo();
         globalData.ActiveWindow = new GameplayWindow(globalData);
+        globalData.ActiveWindow.SetVoiceOver("Scenario5Start");
         globalData.ActiveWindow.AddGameplayTitle( GlobalTags.Gameplay_Generation_I);
         globalData.ActiveWindow.AddDefaultSubtitle();
         globalData.ActiveWindow.AddDefaultContent();

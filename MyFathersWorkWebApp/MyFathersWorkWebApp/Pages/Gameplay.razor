@@ -4,6 +4,7 @@
 @inject NavigationManager Nav
 @inject HttpClient        Http
 @inject AudioService      Audio
+@implements IDisposable
 
 <div class="header-buttons" xmlns="http://www.w3.org/1999/html">
     <button class="back-button" disabled="@GlobalData.IsUndoDisabled" @onclick="GoBack">⬅</button>
@@ -45,6 +46,36 @@
         @if (GlobalData.ActiveWindow.Subtitle != string.Empty)
         {
             <h2>@GlobalData.ActiveWindow.Subtitle.InsertImages().AsMarkup()</h2>
+        }
+
+        @if (GlobalData.ActiveWindow.VoiceOver != null)
+        {
+            // Voice-over indicator, only on narrated windows (docs/AUDIO_TRANSITIONS_MAP.md "Voice-over")
+            bool          narrationOff = Audio.Narration == NarrationVoice.Off;
+            VoicePillState pillState    = VoicePillFor(GlobalData.ActiveWindow);
+
+            <div class="narration-pill">
+                <span>🎙 @GlobalData.GetLocalizedUITag(narrationOff ? GlobalTags.Narration_Available : GlobalTags.Narration_Narrated)</span>
+                @switch (pillState)
+                {
+                    case VoicePillState.Starting:
+                        <span>@GlobalData.GetLocalizedUITag(GlobalTags.Narration_Starting)</span>
+                        break;
+                    case VoicePillState.Speaking:
+                        <span class="narration-bars" aria-hidden="true"><i></i><i></i><i></i></span>
+                        <button class="narration-button"
+                                aria-label="@GlobalData.GetLocalizedUITag(GlobalTags.Narration_Stop)"
+                                title="@GlobalData.GetLocalizedUITag(GlobalTags.Narration_Stop)"
+                                @onclick="OnStopVoiceClicked">■</button>
+                        break;
+                    default:
+                        string playLabel = pillState == VoicePillState.Replay && !narrationOff
+                                               ? "↻ " + GlobalData.GetLocalizedUITag(GlobalTags.Narration_Replay)
+                                               : "▶ " + GlobalData.GetLocalizedUITag(GlobalTags.Narration_Play);
+                        <button class="narration-button" @onclick="OnPlayVoiceClicked">@playLabel</button>
+                        break;
+                }
+            </div>
         }
 
         <div class="parchment-box">
@@ -167,10 +198,17 @@
 
     private int CurrentRoundIndex => (int)GlobalData.Generation * 3 + (int)GlobalData.Years;
     
-    private void HidePauseMenu() => _ShowPauseMenu = false;
+    private void HidePauseMenu()
+    {
+        _ShowPauseMenu = false;
+        Audio.VoiceResume(); // Unity: the pause popup's confirm button resumes the voice-over (SoundManager.OnVOResume)
+    }
     
     protected override async Task OnInitializedAsync()
     {
+        _VoiceListener = DotNetObjectReference.Create(this);
+        Audio.VoiceSubscribe(_VoiceListener);
+
         await base.OnInitializedAsync();
 
         if (GlobalData.ActiveHub == null && GlobalData.ActiveWindow == null && GlobalData.ActivePopup == null && GlobalData.ActiveInputPopup == null)
@@ -187,6 +225,7 @@
 
         ScreenChangeInfo info = DetectScreenChange();
         PlayScreenSounds(info);
+        UpdateVoiceOver(info);
         PlayScreenTransition(info);
         UpdateMusic();
     }
@@ -312,6 +351,111 @@
     }
 
     #endregion
+
+    #region Voice-over (docs/AUDIO_TRANSITIONS_MAP.md "Voice-over")
+
+    // A narrated window (GameplayWindow.VoiceOver) that is newly presented by a click starts the narration: thunder
+    // lead-in, then the clip (audio.js). Undo, load and reload (Suppressed) never start it, nor does a window shown before
+    // the first user gesture (the browser would block it); the indicator then offers Play. Anything else on screen - a
+    // popup, another window, the hub, a mirror question - stops it, as Unity stops it on every passage change. Undo,
+    // leaving the page and a change of the narration setting stop it too.
+    private enum VoiceState { Idle, Starting, Speaking }
+
+    private enum VoicePillState { Play, Replay, Starting, Speaking }
+
+    private DotNetObjectReference<Gameplay>? _VoiceListener;
+    private GameplayWindow?                  _VoiceWindow;  // the narrated window the state below belongs to
+    private VoiceState                       _VoiceState;
+    private bool                             _VoicePlayed;  // the clip was heard on _VoiceWindow (Replay instead of Play)
+    private int                              _VoiceRequest; // request id in audio.js, 0 = none
+
+    private VoicePillState VoicePillFor(GameplayWindow window)
+    {
+        // Rendered before OnAfterRender registered this window: show what UpdateVoiceOver is about to do
+        if (!ReferenceEquals(window, _VoiceWindow)) return WillAutoplay(_SuppressScreenChange) ? VoicePillState.Starting : VoicePillState.Play;
+
+        return _VoiceState switch
+        {
+            VoiceState.Starting => VoicePillState.Starting,
+            VoiceState.Speaking => VoicePillState.Speaking,
+            _                   => _VoicePlayed ? VoicePillState.Replay : VoicePillState.Play
+        };
+    }
+
+    private bool WillAutoplay(bool suppressed) => !suppressed && Audio.Narration != NarrationVoice.Off && Audio.IsUnlocked;
+
+    private void UpdateVoiceOver(ScreenChangeInfo info)
+    {
+        // info.Presented is null while a mirror question is open
+        if (_VoiceState != VoiceState.Idle && !ReferenceEquals(info.Presented, _VoiceWindow)) StopVoice();
+
+        if (info.Presented is not GameplayWindow { VoiceOver: not null } window || ReferenceEquals(window, _VoiceWindow)) return;
+
+        _VoiceWindow = window;
+        _VoicePlayed = false;
+        _VoiceState  = VoiceState.Idle;
+        if (info.Change != ScreenChange.None && WillAutoplay(info.Suppressed)) StartVoice(true);
+        StateHasChanged();
+    }
+
+    private void StartVoice(bool leadIn)
+    {
+        if (_VoiceWindow?.VoiceOver == null) return;
+
+        // Off has no chosen voice: its Play button uses the female voice
+        NarrationVoice voice = Audio.Narration == NarrationVoice.Male ? NarrationVoice.Male : NarrationVoice.Female;
+        _VoiceRequest = Audio.VoicePlay(_VoiceWindow.VoiceOver, voice, leadIn);
+        _VoiceState   = _VoiceRequest != 0 ? VoiceState.Starting : VoiceState.Idle;
+    }
+
+    private void StopVoice()
+    {
+        _VoiceRequest = 0;
+        _VoiceState   = VoiceState.Idle;
+        Audio.VoiceStop();
+    }
+
+    // From audio.js: "speaking" (the clip plays) or "stopped" (finished, stopped, blocked or failed)
+    [JSInvokable]
+    public void OnVoiceState(int request, string state)
+    {
+        if (request == 0 || request != _VoiceRequest) return; // an earlier request
+
+        if (state == "speaking")
+        {
+            _VoiceState  = VoiceState.Speaking;
+            _VoicePlayed = true;
+        }
+        else
+        {
+            _VoiceState   = VoiceState.Idle;
+            _VoiceRequest = 0;
+        }
+
+        StateHasChanged();
+    }
+
+    // Play / Replay: the clip without the lead-in
+    private void OnPlayVoiceClicked()
+    {
+        Audio.PlayClick();
+        StartVoice(false);
+    }
+
+    private void OnStopVoiceClicked()
+    {
+        Audio.PlayClick();
+        StopVoice();
+    }
+
+    public void Dispose()
+    {
+        Audio.VoiceUnsubscribe();
+        StopVoice();
+        _VoiceListener?.Dispose();
+    }
+
+    #endregion
     
     private async Task TriggerSavePopup()
     {
@@ -332,6 +476,7 @@
     {
         Audio.PlayClick();
         _SuppressScreenChange = true;
+        StopVoice();
         GlobalData.Undo();
         StateHasChanged();
     }
@@ -342,6 +487,7 @@
         string? saveState = await Js.InvokeAsync<string?>("localStorage.getItem", "continue");
         _IsThereAnySavedState = !string.IsNullOrEmpty(saveState);
         _ShowPauseMenu        = true;
+        Audio.VoicePause(); // Unity: the pause button pauses the voice-over (SoundManager.OnVOPause)
         StateHasChanged();
     }
 

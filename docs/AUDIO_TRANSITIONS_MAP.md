@@ -1,6 +1,6 @@
 # Audio and screen transitions: Unity -> web app map
 
-Scope: music + sound effects + screen transitions. Voice-over (VO) is out of scope.
+Scope: music + sound effects + screen transitions (sections 1-7) and voice-over (VO, section 8).
 Sources: `UnityOriginalApp/Assets` (scene `Scenes/Main.unity` is the only scene in the build settings), clips resolved by GUID
 from the `.meta` files. Clip paths below are relative to `UnityOriginalApp/Assets/`. Web paths are relative to
 `MyFathersWorkWebApp/MyFathersWorkWebApp/`. "Uncertain" marks what could not be proven from the files.
@@ -19,7 +19,7 @@ source has `volume 1`, `playOnAwake 0`.
 | `EndGameAudioSource` | `SFX/New_8_April/My Fathers Work-OST/Chronicle Part  Three.ogg` | no | end of game (`ViewGenerationEnding.EnableDisableContinueBtn(true)`) |
 | `MayorSource` | `New SFX/Mayor selected.ogg` | no | **dead code** (see 2.3) |
 | `BankLibrarySource` | `New SFX/Build Bank or library.ogg` | no | **dead code** (see 2.3) |
-| `VOSource` | set per call (+ `thunderVoxStoryClip`) | no | VO - out of scope |
+| `VOSource` | set per call (+ `thunderVoxStoryClip`) | no | VO (section 8) |
 
 Besides these, almost every UI `Button` has its own AudioSource with `click-to-continue.ogg` wired to `onClick` (popup
 ACCEPT/CONFIRM, main menu, back/pause/continue buttons). Exceptions: the main menu **New Game** button also plays
@@ -58,7 +58,6 @@ scene: no sound.
 
 | Clip | Unity use | Why not needed |
 |---|---|---|
-| `SFX/New_8_April/Thunder-vox story.ogg` | `SoundManager.Delay`: 4.5 s thunder before every VO clip | only part of VO playback |
 | `SFX/New_8_April/select-Help tab.ogg` | `ViewHelp.OnOpenHelp` -> `PlayMusic` (loops as music while Help is open) | web app has no Help screen |
 | `SFX/UI Select.ogg` | AudioSources on inactive `LinkTemplate`/`ContinueButton` templates | never active |
 
@@ -122,7 +121,8 @@ EndOfRound; `ViewEndOfGeneration` = popup EndOfGeneration; `ViewPopupPanel` = `G
 = the special-event windows of 2.1; `ViewBiddingSystem` = none. Setup: `ViewMainMenu` = `Home`, `ViewGamePlayerCounts` =
 `PlayersSelect`, `ViewPlayerIntro` = `PlayersInitial` + `PlayersWelcome`, `ViewPlayerNameEnter` = `PlayersNameEntry`,
 `ViewEnterVillageName` = `PlayersVillage`, `ViewVillageIntro` = `PlayersVillageConfirm`, `ViewScenarios` = `PlayersScenario`;
-`PlayersScenarioLanguage` and `MirrorPopup` have no Unity counterpart (`ViewAudioTrack` = VO choice, dropped).
+`PlayersScenarioLanguage` and `MirrorPopup` have no Unity counterpart (`ViewAudioTrack` = VO choice: the Narration select on
+`PlayersScenarioLanguage`, section 8).
 
 ## 5. Hook design and suppression
 
@@ -210,3 +210,86 @@ Constraints:
 4. Where do music/effects volume (or mute) controls go (Unity: main-menu Settings and Pause popups)?
 5. Undo from the final ending: resume the scenario theme (recommended) or keep the end-game track?
 6. Mirror question popup: no sound (no Unity counterpart) or reuse the popup reveal?
+
+## 8. Voice-over
+
+### 8.1 How the Unity app plays it
+
+- Data: `Scripts/ScriptableObject/VOAudio.asset` (`VOAudioFileScriptable`: `MaleAudioDatas` / `FemaleAudioDatas`, each a list of
+  `PassageName` + clip), referenced by `PassageTracker.VOAudioFile` in `Main.unity`.
+- Trigger: `PassageTracker.OnPassageStatus` runs on **every passage enter** (`Story.OnPassageEnter`): first `s_OnStopVO`, then
+  0.1 s later `OnPlayVOAudioFile(passageName)`, which looks the passage up in the list of the chosen voice and, if found, raises
+  `s_OnPlayVO(clip)`. Voice: PlayerPrefs `AudioTrack`, 0 = male (default), 1 = female.
+- Playback (`SoundManager.OnVOPlayOneTime` -> `Delay`) on `VOSource` (volume 1, music not ducked): plays
+  `SFX/New_8_April/Thunder-vox story.ogg` (8.3 s file), after **4.5 s** stops it and plays the narration clip once. It also
+  starts `ViewGenerationEnding.S_OnScroll(clip length)`: the story text auto-scrolls from 7.5 s on (not ported).
+- Stop rules:
+  - every passage enter (`OnVOStop`): the next story passage, a hub passage, a passage that only shows a setup popup, the
+    story Back/Forward buttons (they enter a passage - a narrated one then plays again with the lead-in), Continue/load;
+  - pause button of the story or hub view: `OnVOPause` (pauses clip or lead-in); the pause popup's confirm button:
+    `OnVOResume` (during the lead-in it skips straight to the clip, otherwise unpauses); Go to Main: `OnVOStop`;
+  - nothing else stops it: end-of-round popups, setup popups and the special-event overlay are not passages. **None of the
+    narrated passages has a setup block of its own** (no `setupStyleEvnt`; all end with a link to the next passage), so VO never
+    continues under a setup popup: such a popup belongs to the next passage, whose enter stops the VO.
+  - Volume: the effects slider (`AudioListener.volume`, master) scales it; the music slider does not.
+- Voice choice: `ViewAudioTrack` (`UI/VoiceTrack`, shown after New Game): Male / Female toggles and Continue, preselected from
+  `AudioTrack`, so **Male by default**. Also `ViewMainMenu.OnChangeVoiceTrack` (main-menu Settings, `VoiceSetting` left/right
+  arrows). There is no "off" (only the master volume slider).
+- Unity plays the English recordings for every story language (no language check).
+
+### 8.2 Web app
+
+- Scenario code only marks a narrated window: `globalData.ActiveWindow.SetVoiceOver("<Unity passage name>")`
+  (`GameplayWindow.VoiceOver`). Mirror sandbox runs discard their windows, so they never narrate.
+- `Pages/Gameplay.razor` (`UpdateVoiceOver`, after `DetectScreenChange`): a narrated window newly presented by a click (not
+  `Suppressed`), narration not Off and audio unlocked -> `AudioService.VoicePlay(clip, voice, leadIn: true)`, plus the indicator
+  pill under the title. `wwwroot/js/audio.js` channel `voice`: one element, thunder for 4.5 s, then
+  `audio/vo/<female|male>/<clip>.mp3`; the music is ducked to 30 % from the lead-in until the narration ends or stops.
+- Stops: anything else presented (popup, input popup, another window, hub, mirror question), undo (`GoBack`), leaving
+  `/Gameplay` (`Dispose`), any change of the Narration setting. Pause menu: pause / resume as in Unity (resume during the
+  lead-in skips to the clip).
+- Deliberate deviations: undo, load and reload never autoplay (the pill offers Play / Replay); a narrated window shown before
+  the first user gesture does not play (browser autoplay rule, pill shows Play); an Off setting exists (pill "Narration
+  available" + Play, which plays the female voice without the lead-in); Play / Replay in the pill play the clip without the
+  lead-in; no auto-scroll; VO volume is independent of the music and effects toggles.
+- Setting: `localStorage` `audio.voice` = `female` | `male` | `off`, default `male` (the Unity default). UI: Narration select on
+  `Pages/PlayersScenarioLanguage.razor` and in `Shared/PauseMenu.razor`.
+
+### 8.3 Passage -> web window -> clips
+
+Clips under `UnityOriginalApp/Assets/SFX/`, resolved by GUID from `VOAudio.asset`. Web files
+`wwwroot/audio/vo/female/<Passage>.mp3` and `wwwroot/audio/vo/male/<Passage>.mp3` (mono, 64 kbps, 44.1 kHz). Lengths female /
+male in seconds.
+
+| Passage (Unity) | Web method | Female clip | Male clip | Notes |
+|---|---|---|---|---|
+| `Scenario5Start` | `TheCostOfDisease.ScenarioStart` (00_Setup) | `female Takes VO oggs/Scenario5Start.ogg` | `Male VO oggs/Scenario-5-start.ogg` | Gen I intro "Yellow Fever". 84 / 98 s |
+| `DevastationIntro` | `TheCostOfDisease.DevastationIntro` (02) | `female Takes VO oggs/DevastationIntro.ogg` | `Male VO oggs/DevestationIntro.ogg` | 100 / 109 s |
+| `Hospitalintro` | `TheCostOfDisease.HospitalIntro` (03) | `female Takes VO oggs/Hospitalintro.ogg` | `Male VO oggs/HospitalIntro.ogg` | 103 / 113 s |
+| `GloomyHunterIntro` | `TheCostOfDisease.GloomyHunterIntro` (04) | `female Takes VO oggs/GloomyHunterIntro.ogg` | `Male VO oggs/GloomyHunterIntro.ogg` | 111 / 132 s |
+| `GloomyWolvesIntro` | `TheCostOfDisease.GloomyWolvesIntro` (04) | `Male VO oggs/GloomeyWolvesIntro-The Order Revealed.ogg` | `Male VO oggs/GloomyWolvesIntro.ogg` | The female entry points into the **male** folder. Uncertain, but very likely a female take: median pitch ~145 Hz (female takes ~151 Hz, male ~113-118 Hz) and 14 % shorter than the male take, like the other female takes. 120 / 139 s |
+| `ProsperityHunterIntro` | `TheCostOfDisease.ProsperityHunterIntro` (05) | `female Takes VO oggs/ProsperityHunterIntro.ogg` | `Male VO oggs/ProsperityHunterIntro.ogg` | 113 / 133 s |
+| `ProsperityWolvesIntro` | `TheCostOfDisease.ProsperityWolvesIntro` (05) | `female Takes VO oggs/ProsperityWolvesIntro.ogg` | `Male VO oggs/ProsperityWolvesIntro.ogg` | 108 / 132 s |
+| `NoUniversityIntro` | `TheCostOfDisease.NoUniversityIntro` (06) | `female Takes VO oggs/NoUniversityIntro.ogg` | `Male VO oggs/NoUniversityIntro.ogg` | 91 / 104 s |
+| `UniversityIntro` | `TheCostOfDisease.UniversityIntro` (07) | `female Takes VO oggs/UniversityIntro.ogg` | `Male VO oggs/UniversityIntro.ogg` | 72 / 85 s |
+| `FearoftheUnknownStart` | `FearOfTheUnknown.ScenarioStart` (00_Setup) | `female Takes VO oggs/FearoftheUnknownStart.ogg` | `Male VO oggs/FearoftheUnknownStart.ogg` | Gen I intro. The letter header names a random player; what the recording says there is unverified. 108 / 120 s |
+| `ForeignIntro` | `FearOfTheUnknown.ForeignersIntro` (03) | `female Takes VO oggs/ForeignIntro.ogg` | `Male VO oggs/ForeignIntro.ogg` | 77 / 86 s |
+| `CreatureIntro` | `FearOfTheUnknown.CreatureIntro` (04) | `female Takes VO oggs/CreatureIntro.ogg` | `Male VO oggs/Creature intro-2.ogg` | 80 / 89 s |
+| `CreatureDemands` | `FearOfTheUnknown.CreatureDemands` (04) | `female Takes VO oggs/CreatureDemands.ogg` | `Male VO oggs/CreatureDemands.ogg` | Follows `CreatureIntro` directly (two narrated windows in a row). 61 / 74 s |
+| `IsolationIntro` | `FearOfTheUnknown.IsolationIntro` (06) | `female Takes VO oggs/IsolationIntro.ogg` | `Male VO oggs/IsolationIntro.ogg` | 76 / 87 s |
+| `TensionIntro` | `FearOfTheUnknown.TensionIntro` (07) | `female Takes VO oggs/TensionIntro.ogg` | `Male VO oggs/TensionIntro.ogg` | 81 / 89 s |
+| `PrivatizedIntro` | `FearOfTheUnknown.PrivatizedIntro` (08) | `female Takes VO oggs/PrivatizedIntro.ogg` | `Male VO oggs/PrivatizedIntro.ogg` | The web app shows 9 August (deliberate date fix); whether the recording reads the date is unverified. 81 / 91 s |
+| `LiberalIntro` | `FearOfTheUnknown.LiberalIntro` (09) | `female Takes VO oggs/LiberalIntro.ogg` | `Male VO oggs/Liberal-intro.ogg` | 82 / 88 s |
+
+Lead-in: `SFX/New_8_April/Thunder-vox story.ogg` -> `wwwroot/audio/sfx-vo-thunder.mp3` (mono, 96 kbps; only the first 4.5 s are
+heard).
+
+Not ported (A Time of War is not ported): `ATimeofWarIntro`, `IntroMartial-Monarchists`, `IntroMartial-Separatists`,
+`MonarchReignIntro`, `WarningIntro`, `ParadoxIntro` (same clip as `WarningIntro` in both voices), `PeaceIntro`, `WarningEvent`,
+`TimeTravelintro1`, `TimeTravelIntro2`, `TTIntro3`. No narrated passage is 5-player-only. No other Cost of Disease or Fear of
+the Unknown passage has VO (hubs, events, endings and scoring are silent).
+
+Size: 34 clips, female 12.4 MB + male 14.2 MB + thunder 0.1 MB = 26.6 MB, loaded on demand (`preload="none"`).
+
+Open points: the recordings read the English source text, so with another scenario language (`English_Simple`,
+`English_Short`, Italian) the narration differs from the text on screen (Unity also plays English VO for every language).

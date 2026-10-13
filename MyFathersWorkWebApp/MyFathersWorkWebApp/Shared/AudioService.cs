@@ -69,6 +69,50 @@ public sealed class AudioService(IJSRuntime js)
     public void SetEffectsOn(bool on) => InvokeVoid("mfwAudio.setEffectsOn", on);
     public void SetMusicOn(bool on)   => InvokeVoid("mfwAudio.setMusicOn",   on);
 
+    // True after the first user gesture; before it the browser blocks playback
+    public bool IsUnlocked => Invoke("mfwAudio.isUnlocked", false);
+
+    #region Voice-over (docs/AUDIO_TRANSITIONS_MAP.md "Voice-over")
+
+    private NarrationVoice? _Narration;
+
+    // Narration setting (localStorage via audio.js); read once, then cached
+    public NarrationVoice Narration => _Narration ??= Invoke("mfwAudio.getVoice", "male") switch
+    {
+        "female" => NarrationVoice.Female,
+        "off"    => NarrationVoice.Off,
+        _        => NarrationVoice.Male
+    };
+
+    // Stores the setting and stops the current narration (a change never starts one)
+    public void SetNarration(NarrationVoice narration)
+    {
+        _Narration = narration;
+        InvokeVoid("mfwAudio.setVoice", VoiceName(narration));
+    }
+
+    // Plays the clip of a narrated window (GameplayWindow.VoiceOver) in the given voice (Off plays the female voice),
+    // optionally after the thunder lead-in. Returns the request id reported to the listener, or 0 when nothing started.
+    public int VoicePlay(string clip, NarrationVoice voice, bool leadIn) =>
+        Invoke("mfwAudio.voicePlay", 0, clip, voice == NarrationVoice.Male ? "male" : "female", leadIn);
+
+    public void VoiceStop()   => InvokeVoid("mfwAudio.voiceStop");
+    public void VoicePause()  => InvokeVoid("mfwAudio.voicePause");
+    public void VoiceResume() => InvokeVoid("mfwAudio.voiceResume");
+
+    // One listener with a [JSInvokable] OnVoiceState(int id, string state) - "speaking" or "stopped"
+    public void VoiceSubscribe<T>(DotNetObjectReference<T> listener) where T : class => InvokeVoid("mfwAudio.voiceSubscribe", listener);
+    public void VoiceUnsubscribe()                                                     => InvokeVoid("mfwAudio.voiceUnsubscribe");
+
+    private static string VoiceName(NarrationVoice narration) => narration switch
+    {
+        NarrationVoice.Female => "female",
+        NarrationVoice.Off    => "off",
+        _                     => "male"
+    };
+
+    #endregion
+
     private void InvokeVoid(string identifier, params object?[] args)
     {
         try
@@ -82,11 +126,11 @@ public sealed class AudioService(IJSRuntime js)
         }
     }
 
-    private bool Invoke(string identifier, bool fallback)
+    private T Invoke<T>(string identifier, T fallback, params object?[] args)
     {
         try
         {
-            return js is IJSInProcessRuntime inProcess ? inProcess.Invoke<bool>(identifier) : fallback;
+            return js is IJSInProcessRuntime inProcess ? inProcess.Invoke<T>(identifier, args) : fallback;
         }
         catch (Exception exception)
         {
