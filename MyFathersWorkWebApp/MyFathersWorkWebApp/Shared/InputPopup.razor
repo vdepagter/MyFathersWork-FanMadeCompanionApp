@@ -1,4 +1,6 @@
-﻿<div class="popup-overlay">
+﻿@inject AudioService Audio
+
+<div class="popup-overlay">
     <div class="popup-box input-popup">
         <div class="popup-content input-content">
             <p>@GameplayPopUp.Message.InsertImages().AsMarkup()</p>
@@ -26,6 +28,7 @@
     
     private void OnAcceptClicked()
     {
+        Audio.PlayClick();
         if (!GameplayPopUp.Validate(_Value)) return;
         string value = _Value;
         GlobalData.RunScenarioAction(() =>

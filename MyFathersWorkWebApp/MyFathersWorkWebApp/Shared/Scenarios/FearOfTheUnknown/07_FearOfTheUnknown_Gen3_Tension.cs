@@ -337,6 +337,7 @@ public static partial class FearOfTheUnknown
     {
         globalData.SaveToUndo();
         globalData.ActiveWindow = new GameplayWindow(globalData);
+        globalData.ActiveWindow.SetCue(SoundCue.SpecialEvent);
         globalData.ActiveWindow.AddDefaultTitle();
         globalData.ActiveWindow.AddDefaultContent(content => content.FormatWithReplacement(0, ObsessionVp(globalData).ToString()));
         globalData.ActiveWindow.AddClickHereAfterBid(StealBidResolved);
@@ -357,6 +358,7 @@ public static partial class FearOfTheUnknown
     {
         globalData.SaveToUndo();
         globalData.ActiveWindow = new GameplayWindow(globalData);
+        globalData.ActiveWindow.SetCue(SoundCue.SpecialEvent);
         globalData.ActiveWindow.AddDefaultTitle();
         globalData.ActiveWindow.AddDefaultContent(content => content.FormatWithReplacement(0, ObsessionVp(globalData).ToString()));
         globalData.ActiveWindow.AddClickHereAfterVote(StealVoteResolved);

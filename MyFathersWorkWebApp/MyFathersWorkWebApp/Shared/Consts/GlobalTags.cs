@@ -70,6 +70,10 @@ public static class GlobalTags
     public const string Mirror_Nothing     = "Mirror_Nothing";
     public const string Mirror_Roll        = "Mirror_Roll";
 
+    // Audio Toggles
+    public const string Audio_SoundEffects = "Audio_SoundEffects";
+    public const string Audio_Music        = "Audio_Music";
+
     // Gameplay
     public const string Gameplay_Yes                        = "Gameplay_Yes";
     public const string Gameplay_No                         = "Gameplay_No";

@@ -1,5 +1,6 @@
 ﻿@page "/PlayersNameEntry/{PlayerIndex:int}"
 @inject NavigationManager Nav
+@inject AudioService      Audio
 
 <div class="back-button" @onclick="GoBack">
     ⬅ @GlobalData.GetLocalizedUITag(GlobalTags.MainMenu_Back)
@@ -53,11 +54,13 @@
 
     private void GoBack()
     {
+        Audio.PlayClick();
         Nav.NavigateTo(PlayerIndex == 0 ? "PlayersInitial" : $"PlayersWelcome/{PlayerIndex - 1}");
     }
 
     private void Continue()
     {
+        Audio.PlayClick();
         if (_PlayerName.Length < 2 || _PlayerName.Length > 15)
         {
             _ShowPopup = true;

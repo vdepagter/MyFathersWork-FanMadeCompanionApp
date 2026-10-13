@@ -1,4 +1,6 @@
-﻿<div class="popup-overlay">
+﻿@inject AudioService Audio
+
+<div class="popup-overlay">
     <div class="popup-box">
         <div class="popup-content">
             @if (!string.IsNullOrEmpty(GameplayPopUp.ImageSrc))
@@ -30,6 +32,7 @@
 
     private void OnAcceptClicked()
     {
+        Audio.PlayClick();
         GlobalData.RunScenarioAction(() =>
         {
             GlobalData.ActivePopup = null;

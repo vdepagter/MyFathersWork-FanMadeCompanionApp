@@ -1,5 +1,6 @@
 ﻿@page "/PlayersScenarioLanguage"
 @inject NavigationManager Nav
+@inject AudioService      Audio
 @inject HttpClient        Http
 
 <div class="back-button" @onclick="GoBack">⬅ @GlobalData.GetLocalizedUITag(GlobalTags.MainMenu_Back)</div>
@@ -37,7 +38,11 @@
 
     private bool _MirrorMode;
 
-    private void GoBack() => Nav.NavigateTo("PlayersScenario");
+    private void GoBack()
+    {
+        Audio.PlayClick();
+        Nav.NavigateTo("PlayersScenario");
+    }
 
     protected override async Task OnInitializedAsync()
     {
@@ -53,6 +58,7 @@
 
     private void SelectLanguage(string key)
     {
+        Audio.PlayClick();
         GlobalData.ScenarioLanguage               = key;
         GlobalData.Years                          = Years.Early;
         GlobalData.Generation                     = Generation.First;

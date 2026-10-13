@@ -286,6 +286,7 @@ public static partial class TheCostOfDisease
 
         globalData.SaveToUndo();
         globalData.ActiveWindow = new GameplayWindow(globalData);
+        globalData.ActiveWindow.SetCue(SoundCue.SpecialEvent);
         globalData.ActiveWindow.AddDefaultTitle();
         globalData.ActiveWindow.AddDefaultContent(content => content.FormatWithReplacement(0, player));
         globalData.ActiveWindow.AddNextContentWithLinks(1, [UniEvent2UltimateDisease2]);

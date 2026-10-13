@@ -319,6 +319,7 @@ public static partial class FearOfTheUnknown
     {
         globalData.SaveToUndo();
         globalData.ActiveWindow = new GameplayWindow(globalData);
+        globalData.ActiveWindow.SetCue(SoundCue.SpecialEvent);
         globalData.ActiveWindow.AddDefaultTitle();
         globalData.ActiveWindow.AddDefaultContent();
         globalData.ActiveWindow.AddClickHereAfterBid(ProgramFocus);
@@ -487,6 +488,7 @@ public static partial class FearOfTheUnknown
     {
         globalData.SaveToUndo();
         globalData.ActiveWindow = new GameplayWindow(globalData);
+        globalData.ActiveWindow.SetCue(SoundCue.SpecialEvent);
         globalData.ActiveWindow.AddDefaultTitle();
         globalData.ActiveWindow.AddDefaultContent(content => content.FormatWithReplacement(0, AsylumUpgradeName(globalData)));
         globalData.ActiveWindow.AddClickHereAfterBid(PolicyBidResolved);
@@ -507,6 +509,7 @@ public static partial class FearOfTheUnknown
     {
         globalData.SaveToUndo();
         globalData.ActiveWindow = new GameplayWindow(globalData);
+        globalData.ActiveWindow.SetCue(SoundCue.SpecialEvent);
         globalData.ActiveWindow.AddDefaultTitle();
         globalData.ActiveWindow.AddDefaultContent(content => content.FormatWithReplacement(0, AsylumUpgradeName(globalData)));
         globalData.ActiveWindow.AddClickHereAfterVote(PolicyVoteResolved);
@@ -544,6 +547,7 @@ public static partial class FearOfTheUnknown
     {
         globalData.SaveToUndo();
         globalData.ActiveWindow = new GameplayWindow(globalData);
+        globalData.ActiveWindow.SetCue(SoundCue.SpecialEvent);
         globalData.ActiveWindow.AddDefaultTitle();
         globalData.ActiveWindow.AddDefaultContent(content => content.FormatWithReplacement(0, BribeCost(globalData).ToString()));
         globalData.ActiveWindow.AddClickHereAfterBid(BribeResolved);

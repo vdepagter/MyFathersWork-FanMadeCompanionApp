@@ -472,6 +472,7 @@ public static partial class TheCostOfDisease
     {
         globalData.SaveToUndo();
         globalData.ActiveWindow = new GameplayWindow(globalData);
+        globalData.ActiveWindow.SetCue(SoundCue.SpecialEvent);
         globalData.ActiveWindow.AddDefaultTitle();
         globalData.ActiveWindow.AddDefaultContent(content => content.FormatWithReplacement(0, globalData.TownName));
         globalData.ActiveWindow.AddNextContentWithLinks(1, [EvilHunter1Event2]);
@@ -544,6 +545,7 @@ public static partial class TheCostOfDisease
         };
 
         globalData.ActiveWindow = new GameplayWindow(globalData);
+        globalData.ActiveWindow.SetCue(SoundCue.SpecialEvent);
         globalData.ActiveWindow.AddDefaultTitle();
         globalData.ActiveWindow.AddDefaultContent(content => content.FormatWithReplacement(0, vars.HuntNumber.ToString()));
         globalData.ActiveWindow.AddNextContentWithLinks(1, [HunterConf3]);
@@ -704,6 +706,7 @@ public static partial class TheCostOfDisease
     {
         globalData.SaveToUndo();
         globalData.ActiveWindow = new GameplayWindow(globalData);
+        globalData.ActiveWindow.SetCue(SoundCue.SpecialEvent);
         globalData.ActiveWindow.AddDefaultTitle();
         globalData.ActiveWindow.AddDefaultContent();
         globalData.ActiveWindow.AddNextContentWithLinks(1, [WolvesVote2]);

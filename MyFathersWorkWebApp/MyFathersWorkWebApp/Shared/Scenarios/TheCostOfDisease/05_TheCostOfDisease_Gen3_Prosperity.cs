@@ -424,6 +424,7 @@ public static partial class TheCostOfDisease
     {
         globalData.SaveToUndo();
         globalData.ActiveWindow = new GameplayWindow(globalData);
+        globalData.ActiveWindow.SetCue(SoundCue.SpecialEvent);
         globalData.ActiveWindow.AddDefaultTitle();
         globalData.ActiveWindow.AddDefaultContent();
         globalData.ActiveWindow.AddNextContentWithLinks(1, [FrenzyBid2]);
@@ -443,6 +444,7 @@ public static partial class TheCostOfDisease
     {
         globalData.SaveToUndo();
         globalData.ActiveWindow = new GameplayWindow(globalData);
+        globalData.ActiveWindow.SetCue(SoundCue.SpecialEvent);
         globalData.ActiveWindow.AddDefaultTitle();
         globalData.ActiveWindow.AddDefaultContent();
         globalData.ActiveWindow.AddNextContentWithLinks(1, [GoodFrenzyEvent2b]);

@@ -3,6 +3,7 @@
 @inject IJSRuntime        Js
 @inject NavigationManager Nav
 @inject HttpClient        Http
+@inject AudioService      Audio
 
 <div class="header-buttons" xmlns="http://www.w3.org/1999/html">
     <button class="back-button" disabled="@GlobalData.IsUndoDisabled" @onclick="GoBack">⬅</button>
@@ -171,9 +172,146 @@
     protected override async Task OnInitializedAsync()
     {
         await base.OnInitializedAsync();
-        if (GlobalData.ActiveHub != null || GlobalData.ActiveWindow != null || GlobalData.ActivePopup != null || GlobalData.ActiveInputPopup != null) return;
-        await GlobalData.LoadGameAsync(string.Empty, Nav, Http, Js);
+
+        if (GlobalData.ActiveHub == null && GlobalData.ActiveWindow == null && GlobalData.ActivePopup == null && GlobalData.ActiveInputPopup == null)
+        {
+            await GlobalData.LoadGameAsync(string.Empty, Nav, Http, Js);
+        }
+
+        _Initialized = true;
     }
+
+    protected override void OnAfterRender(bool firstRender)
+    {
+        if (!_Initialized) return;
+
+        ScreenChangeInfo info = DetectScreenChange();
+        PlayScreenSounds(info);
+        PlayScreenTransition(info);
+        UpdateMusic();
+    }
+
+    #region Screen change detection (audio and screen transitions)
+
+    // What changed on screen since the last detection:
+    //   BaseKind   - the base screen switched between a story window and a hub (popups in between do not count)
+    //   SameKind   - a new window replaced a window, or the hub was rebuilt
+    //   Popup      - a new GameplayPopup (setup, end of round, end of generation) is shown
+    //   InputPopup - a new GameplayInputPopup is shown
+    // Suppressed: the change comes from undo (GoBack) or from the first screen of this page (arrival after start, load
+    // or reload), so it should be shown without sound or transition.
+    public enum ScreenChange { None, BaseKind, SameKind, Popup, InputPopup }
+
+    public readonly record struct ScreenChangeInfo(ScreenChange Change, bool Suppressed, object? Presented);
+
+    private enum BaseScreenKind { None, Window, Hub }
+
+    private bool           _Initialized;
+    private bool           _SuppressScreenChange = true; // the first screen of the page is never announced
+    private object?        _LastPresented;
+    private BaseScreenKind _LastBaseKind;
+
+    // Compares the presented object (popup > input popup > window > hub, as rendered above) with the last one. While a
+    // mirror question is open nothing is recorded: the question is answered by a rerun whose result is compared with
+    // the screen the question was asked from. Screen models are rebuilt on every action, so references tell new screens apart.
+    private ScreenChangeInfo DetectScreenChange()
+    {
+        if (GlobalData.ActiveMirrorQuestion != null) return new ScreenChangeInfo(ScreenChange.None, _SuppressScreenChange, null);
+
+        object? presented = (object?)GlobalData.ActivePopup ?? (object?)GlobalData.ActiveInputPopup ?? (object?)GlobalData.ActiveWindow ?? GlobalData.ActiveHub;
+        if (presented == null) return new ScreenChangeInfo(ScreenChange.None, _SuppressScreenChange, null);
+
+        bool suppressed = _SuppressScreenChange;
+        _SuppressScreenChange = false;
+
+        if (suppressed && _LastBaseKind == BaseScreenKind.None)
+        {
+            // First screen: remember the base screen under a popup too, so closing that popup is not a base change
+            _LastBaseKind = GlobalData.ActiveWindow != null ? BaseScreenKind.Window : GlobalData.ActiveHub != null ? BaseScreenKind.Hub : BaseScreenKind.None;
+        }
+
+        if (ReferenceEquals(presented, _LastPresented)) return new ScreenChangeInfo(ScreenChange.None, suppressed, presented);
+        _LastPresented = presented;
+
+        ScreenChange change;
+
+        switch (presented)
+        {
+            case GameplayPopup:
+                change = ScreenChange.Popup;
+                break;
+            case GameplayInputPopup:
+                change = ScreenChange.InputPopup;
+                break;
+            default:
+            {
+                BaseScreenKind kind = presented is GameplayWindow ? BaseScreenKind.Window : BaseScreenKind.Hub;
+                change        = _LastBaseKind != BaseScreenKind.None && kind != _LastBaseKind ? ScreenChange.BaseKind : ScreenChange.SameKind;
+                _LastBaseKind = kind;
+                break;
+            }
+        }
+
+        return new ScreenChangeInfo(change, suppressed, presented);
+    }
+
+    private void PlayScreenSounds(ScreenChangeInfo info)
+    {
+        if (info.Suppressed || info.Change == ScreenChange.None) return;
+
+        switch (info.Change)
+        {
+            case ScreenChange.BaseKind:
+                Audio.Play(SoundCue.TransitionCover);
+                Audio.Play(SoundCue.TransitionReveal, _REVEAL_DELAY_MS);
+                break;
+            case ScreenChange.Popup when info.Presented is GameplayPopup popup:
+                Audio.Play(SoundCue.TransitionReveal);
+                Audio.Play(popup.PopUpTitle is PopUpTitle.EndOfRound or PopUpTitle.EndOfGeneration ? SoundCue.EndOfRound : SoundCue.Setup);
+                break;
+        }
+
+        if (info.Presented is GameplayWindow { Cue: not SoundCue.None } window) Audio.Play(window.Cue);
+    }
+
+    // Delay of the reveal sound after the cover sound on a base change: the ink overlay covers the screen this long before it
+    // recedes. Must match the hold in wwwroot/js/transitions.js / the mfw-ink-base keyframes in wwwroot/css/styles.css.
+    private const int _REVEAL_DELAY_MS = 200;
+
+    // CSS screen transitions (wwwroot/js/transitions.js): the ink overlay for a base change or a new setup / end of round
+    // popup, and entrance animations of the new screen. Undo, the first screen and mirror questions show no transition.
+    // Runs before the browser paints the new screen, so the overlay covers it from the first frame.
+    private void PlayScreenTransition(ScreenChangeInfo info)
+    {
+        if (info.Suppressed) return;
+
+        switch (info.Change)
+        {
+            case ScreenChange.BaseKind:
+                _ = Js.InvokeVoidAsync("mfwTransitions.run", "base");
+                break;
+            case ScreenChange.SameKind:
+                _ = Js.InvokeVoidAsync("mfwTransitions.enter", "same");
+                break;
+            case ScreenChange.Popup:
+                _ = Js.InvokeVoidAsync("mfwTransitions.run", "popup");
+                _ = Js.InvokeVoidAsync("mfwTransitions.enter", "popup");
+                break;
+            case ScreenChange.InputPopup:
+                _ = Js.InvokeVoidAsync("mfwTransitions.enter", "input");
+                break;
+        }
+    }
+
+    // Scenario theme, or the end-game track while the final ending is shown. Idempotent (AudioService and audio.js only
+    // switch when the track differs), so re-renders, undo and load never restart the music.
+    private void UpdateMusic()
+    {
+        if (GlobalData.ActiveHub == null && GlobalData.ActiveWindow == null && GlobalData.ActivePopup == null && GlobalData.ActiveInputPopup == null) return;
+        Audio.SetMusic(GlobalData.ActiveWindow?.IsFinalEnding == true ? MusicTrack.Ending : AudioService.ScenarioTheme(GlobalData.ScenarioId));
+    }
+
+    #endregion
     
     private async Task TriggerSavePopup()
     {
@@ -192,12 +330,15 @@
 
     private void GoBack()
     {
+        Audio.PlayClick();
+        _SuppressScreenChange = true;
         GlobalData.Undo();
         StateHasChanged();
     }
 
     private async void Pause()
     {
+        Audio.PlayClick();
         string? saveState = await Js.InvokeAsync<string?>("localStorage.getItem", "continue");
         _IsThereAnySavedState = !string.IsNullOrEmpty(saveState);
         _ShowPauseMenu        = true;
@@ -223,6 +364,7 @@
 
     private void InvokeWindowCallback(Action<GlobalData> nextCallback)
     {
+        Audio.PlayClick();
         GlobalData.RunScenarioAction(() =>
         {
             GlobalData.ActiveWindow = null;
