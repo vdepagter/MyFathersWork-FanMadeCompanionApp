@@ -53,7 +53,7 @@ public partial class GlobalData
             if (mirrorQuestion == null)
             {
                 // The value changes nothing - no need to ask
-                TheCostOfDiseaseVars.RandomArray[question.Index] = 0;
+                ScenarioVars.RandomArray[question.Index] = 0;
                 RunScenarioAction(action);
                 return;
             }
@@ -68,7 +68,7 @@ public partial class GlobalData
         if (question == null) return;
 
         ActiveMirrorQuestion                             = null;
-        TheCostOfDiseaseVars.RandomArray[question.Index] = value;
+        ScenarioVars.RandomArray[question.Index] = value;
         RunScenarioAction(question.Retry);
     }
 
@@ -178,14 +178,14 @@ public partial class GlobalData
     private (string text, string json) SimulateMirror(Action action, MirrorState state, int index, int value, int otherDraws)
     {
         RestoreMirrorState(state);
-        TheCostOfDiseaseVars.RandomArray[index] = value;
+        ScenarioVars.RandomArray[index] = value;
         MirrorSimulationValue                   = otherDraws;
         IsMirrorSimulating                      = true;
 
         try
         {
             action();
-            TheCostOfDiseaseVars.RandomArray[index] = -1;
+            ScenarioVars.RandomArray[index] = -1;
             return (MirrorScreenText(), JsonConvert.SerializeObject(this));
         }
         catch (Exception exception)

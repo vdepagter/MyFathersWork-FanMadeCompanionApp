@@ -102,6 +102,7 @@ public static class GlobalTags
     public const string Gameplay_EndOfRound_Title           = "Gameplay_EndOfRound_Title";
     public const string Gameplay_EndOfRound_Content         = "Gameplay_EndOfRound_Content";
     public const string Gameplay_ClickHereAfterBid          = "Gameplay_ClickHereAfterBid";
+    public const string Gameplay_ClickHereAfterVote         = "Gameplay_ClickHereAfterVote";
     public const string Gameplay_EndOfGeneration_Title      = "Gameplay_EndOfGeneration_Title";
     public const string Gameplay_ClickAtTheEndOfGeneration  = "Gameplay_ClickAtTheEndOfGeneration";
     public const string Gameplay_DrJr                       = "Gameplay_DrJr";

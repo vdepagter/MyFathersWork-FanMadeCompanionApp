@@ -5,13 +5,18 @@ namespace MyFathersWorkWebApp;
 public class GameplayHubSection(GlobalData globalData, bool main, string titleTag)
 {
     public bool                  Main       { get; }      = main;
-    public string                Title      { get; }      = titleTag.Contains(GlobalTags.GameplayStartTag) ? globalData.GetLocalizedUITag(titleTag) : globalData.GetScenarioLocalizedTag(titleTag);
+    public string                Title      { get; private set; } = titleTag.Contains(GlobalTags.GameplayStartTag) ? globalData.GetLocalizedUITag(titleTag) : globalData.GetScenarioLocalizedTag(titleTag);
     public List<GameplayElement> Elements   { get; }      = new();
     public Func<bool>            ShouldShow { get; set; } = () => true;
 
     public void ReplaceShouldShow(Func<bool> shouldShow)
     {
         ShouldShow = shouldShow;
+    }
+
+    public void FormatTitle(Func<string, string> titleProcessor)
+    {
+        Title = titleProcessor(Title);
     }
 
     public void AddDefaultContent(string subName, Func<string, string>? contentFormatter = null, [CallerMemberName] string callerName = "")

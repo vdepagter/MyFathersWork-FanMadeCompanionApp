@@ -85,6 +85,14 @@ public static class Extensions
         return text;
     }
 
+    // Removes the line breaks after the last row of text assembled from several rows
+    public static string TrimTrailingBreaks(this string text)
+    {
+        text = text.TrimEnd();
+        while (text.EndsWith("<br />")) text = text[..^"<br />".Length].TrimEnd();
+        return text;
+    }
+
     public static string FormatWithCondition(this string text, int id, Func<bool> condition)
     {
         string pattern = @"\{\{(";

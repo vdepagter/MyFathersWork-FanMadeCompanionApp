@@ -4,13 +4,16 @@ Blazor WebAssembly (.NET) re-implementation of the official *My Father's Work* c
 stories were written in Twine/Harlowe and compiled to C# by Cradle). Players make choices on a phone/tablet next to the
 board game; the app tells them what to set up and narrates the story over 3 Generations x 3 rounds.
 
-## Status (September 2026)
+## Status (October 2026)
+
+**Active work, open tasks and next steps are in [`HANDOFF.md`](HANDOFF.md) - read it first and keep it current.**
+When a piece of work is finished, move its section to [`HANDOFF_ARCHIVE.md`](HANDOFF_ARCHIVE.md) so the handoff stays short.
 
 | Scenario | Web app | Notes |
 |---|---|---|
-| The Cost of Disease (`ScenarioId.CostOfDisease`) | **Complete** - Gen I, II, III, final scoring, all 8 endings | Only English text. |
-| Fear of the Unknown (`FearOfUnknown`) | **Not started** | Selecting it bounces back to the main menu. |
-| A Time of War (`TimeOfWar`) | **Not started** | Same. |
+| The Cost of Disease (`ScenarioId.CostOfDisease`) | **Complete, play testing** - Gen I, II, III, final scoring, all 8 endings | Only English text. Menu description starts with "PLAY TESTING". |
+| Fear of the Unknown (`FearOfUnknown`) | **Ported, browser play test done** - all branches, battle, asylum assessment, scoring, 8 endings | Not merged to `main` yet. Menu description starts with "WORK IN PROGRESS". See the section below. |
+| A Time of War (`TimeOfWar`) | **Not started** | Selecting it bounces back to the main menu. |
 
 ## Repository layout
 
@@ -18,11 +21,14 @@ board game; the app tells them what to set up and narrates the story over 3 Gene
   - `Pages/` - menu/setup flow (`Home`, `PlayersSelect` ... `PlayersScenarioLanguage`) and `Gameplay.razor` (renders the active window / hub / popup).
   - `Shared/GlobalData.cs` - all game state (serialized to JSON for save/load/undo), localization lookup, undo stack, end-of-round popup.
   - `Shared/Scenarios/Gameplay*.cs` - UI model: `GameplayWindow`, `GameplayHub` + `GameplayHubSection`, `GameplayPopup`, `GameplayInputPopup`.
+  - `Shared/Scenarios/ScenarioVars.cs` - abstract base of every scenario Vars class: `RandomArray` + draw helpers, flavor randomness (`Flavor`, `FlavorElement`), final scoring state. `Shared/Scenarios/FinalScoring.cs` - shared score entry, tie-breakers and rankings (tags live in each scenario's CSV).
   - `Shared/Scenarios/TheCostOfDisease/` - one `static partial class TheCostOfDisease`, split per generation/branch (`00_Setup`, `01_Gen1_Fever`, ..., `08_Scoring`) + `TheCostOfDiseaseVars.cs` (scenario state). The `.txt` files next to Gen I/II are old copies, not compiled.
-  - `wwwroot/localization/` - `UI_Localization.csv` (English + Polish), `TheCostOfDisease_Localization.csv` (story text) and `TheCostOfDisease_Gameplay_Localization.csv` (rules/setup text). `*-copy.csv` are old copies.
+  - `Shared/Scenarios/FearOfTheUnknown/` - `static partial class FearOfTheUnknown` (`00_Setup`, `01_Gen1_WitchHunt`, `02_Gen2_Obsessions`, `03_Gen2_Foreigners`, `04_Gen2_Creature`, `05_Gen3_Shared`, `06_Isolation`, `07_Tension`, `08_Privatized`, `09_Liberal`) + `FearOfTheUnknownVars.cs`. Hub ids: `Shared/Enums/FearOfTheUnknownHubId.cs`.
+  - `wwwroot/localization/` - `UI_Localization.csv` (English + Polish), per scenario `<Scenario>_Localization.csv` (story text) and `<Scenario>_Gameplay_Localization.csv` (rules/setup text). `*-copy.csv` are old copies.
   - `wwwroot/images/setup/` (popup images, referenced by `Shared/Consts/PopUpIcon.cs`) and `wwwroot/images/gameplay/` (inline `<icon=...>`). S2_*/S3_* images for the other scenarios already exist. Images are **Git LFS** - a worktree without `git lfs pull` shows broken icons.
 - `MyFathersWorkConsole/` - porting aid. `Processor/*.txt` are the decompiled Cradle story classes for all three scenarios (the only source for Fear of the Unknown and A Time of War). `TheStoryProcessor.Run()` converts a `.txt` into readable console C# under `Processor/Scenario/ScenarioPart_*.cs` (currently holds the Cost of Disease Gen III passages; they are fully ported now).
-- `tools/` - `passage_dump.py` (read passages), `tagcheck.py` (verify localization tags), `test-save-helpers.js` (play-test from crafted saves).
+- `tools/` - `cradle_dump.py` (decompiled Cradle `.txt` -> readable pseudo-Twine with link labels; `--graph <Passage>` BFS from a passage, `--html` CSV-ready text - the preferred way to read a scenario), `passage_dump.py` (older passage reader), `tagcheck.py` (verify localization tags; `--scenario=FearOfTheUnknown`), `test-save-helpers.js` (play-test from crafted saves).
+- `UnityOriginalApp/` - the original Unity project is also in the repo (same content as the path below).
 - Original Unity project (outside the repo, owner's machine): `C:\Users\ValentijndePagter\Downloads\my-fathers-work-master-4-20260622T163118Z-3-001\my-fathers-work-master-4`. Useful parts: `Assets/Scripts/OldStory/TheCostofDisease*.cs` (Cradle output, Cost of Disease only), `Assets/Scripts/UI/View*.cs` (score entry, tie breaker, ranking, endings UI flow), `Assets/Resources/setupImages`.
 
 ## How a scenario is written (conventions - follow them exactly)
@@ -47,17 +53,18 @@ private static void Changes_0(GlobalData globalData)       // setup popup
 ```
 
 - **Localization tags come from `[CallerMemberName]`**: `Method_Title`, `Method_SubTitle`, `Method_Content`, `Method_Content{n}` (`AddNextContent(n)` / `AddNextContentWithLinks(n, [...])`), popups `Method_Content`. `AddDefaultBaseTitle` uses the part before the first `_`. Hubs: `Hub_Title`, `Hub_{Section}_Title/_Content/_Content{n}/_ClickHere`. Calls inside lambdas still use the enclosing method name. Use `AddCustomContent(string)` for text built in code.
-- **Undo** (`GlobalData.SaveToUndo`) finds the caller by name via reflection on `typeof(TheCostOfDisease)`: every method that calls it must be unique by name, `static`, and take exactly `(GlobalData)`. Call it before mutating state; methods that only route (no screen) must not call it. Undo restores the JSON snapshot, rebuilds the hub (`GetHubMethod`) and re-invokes the method.
+- **Undo** (`GlobalData.SaveToUndo`) finds the caller by name via reflection on the scenario class (`GlobalData.ScenarioType`), then `FinalScoring`: every method that calls it must be unique by name, `static`, and take exactly `(GlobalData)`. Call it before mutating state; methods that only route (no screen) must not call it. Undo restores the JSON snapshot, rebuilds the hub (`GetHubMethod`) and re-invokes the method.
 - **Hubs** (`GameplayHub`) are the per-generation round screens. One hub method per branch (e.g. `GloomyGothic`), sections switched by `ReplaceShouldShow(() => globalData.Years ...)` plus state flags. Set `HubId` and register the hub in `GlobalData.GetHubMethod()` (used by load and undo). End the round with a section calling `globalData.ShowEndOfRoundPopUp(nextEvent)`; the last round uses `AddEndOfGenerationSection`. Rebuild the hub (call the hub method) at the end of every event chain instead of `_ => { }` when the hub content depends on state.
 - **`ShowEndOfRoundPopUp` advances `Years` (and `Generation` after Late) *before* calling the next event** - events after the Early round run with `Years == Middle`. At the generation change `ActiveHub` becomes null, so a callback of `_ => { }` then renders a **blank page** (this was the old "blank after Gen II" bug).
-- **Randomness** must use the pre-rolled `TheCostOfDiseaseVars.RandomArray` (`RandomElement`, `RandomBool`, `RandomInRange`) with a fixed index per decision so undo/load replay identically. Never read `RandomArray` directly. Indices in use for Cost of Disease: 0-58 (Gen I/II) and 59-203 (`_RND_*` constants in the Gen III files). For events that can repeat, use `base + min(counter, 9)`. Shuffles are drawn one position at a time from the remaining items (`HunterAt`, `HuntRewardAt`).
+- **Randomness** must use the pre-rolled `ScenarioVars.RandomArray` (`RandomElement`, `RandomBool`, `RandomInRange`) with a fixed index per decision so undo/load replay identically. Never read `RandomArray` directly. Indices in use for Cost of Disease: 0-58 (Gen I/II) and 59-203 (`_RND_*` constants in the Gen III files). Fear of the Unknown: `_RND_*` constants in `00_FearOfTheUnknown_Setup.cs` (0-164, battle 400-899). For events that can repeat, use `base + min(counter, 9)`. Shuffles are drawn one position at a time from the remaining items (`HunterAt`, `HuntRewardAt`).
+- **Flavor randomness** (who writes a letter, dates, alternative sentences that change nothing in the game) uses `vars.Flavor(key, count)` / `FlavorElement` - a hash of `FlavorSeed` and a unique key. Deterministic for undo/load and never asked in mirror mode. Anything players act on (setup, VP, money, branches) must use `RandomArray`.
 - **Mirror mode** ("Play along with the official app" on the scenario language screen, `GlobalData.MirrorMode`, `Shared/GlobalData.Mirror.cs`, `Shared/MirrorPopup.razor`): `RandomArray` starts at -1 (not drawn). The first draw of an unanswered slot throws `MirrorQuestionException`; `GlobalData.RunScenarioAction` restores the state, replays the action in a sandbox once per value, shows the players the text that differs, and reruns the action with their answer. Rules for scenario code:
   - Every entry into scenario code (links, popup buttons, undo, load, start) goes through `RunScenarioAction`.
   - **Draw a random value on the screen where it becomes visible**, not earlier. Otherwise mirror mode asks before the official app shows it ("not visible on the current screen" in the console, shown as a guess-or-roll question). Examples: `Gen2Building`, `HuntVp`, `DrawFeverReward`, `MasterworkCost`, `DrawAffiliations` (which faction is evil is drawn on first use), the Symposium target.
   - A random next screen is chosen inside the callback: `data => vars.RandomElement([A, B], i).Invoke(data)`, not `AddClickHereToContinue(RandomBool(i) ? A : B)`.
   - Hub sections are built even while hidden - don't draw in a hidden section's text (guard with the section's condition, see `SuspicionBuilding`).
   - Answers live in `RandomArray`, so undo past the screen that asked forgets them and asks again (that is how a wrong answer is corrected).
-- **State** lives in the scenario Vars class (serialized). Use arrays, not `List<T>` (Newtonsoft `ObjectCreationHandling.Reuse` appends to lists on load/undo). Add every field to `Reset()`. Per-player dictionaries are keyed by player name and filled in `Reset()`. `GlobalData.TmpValues` is cleared whenever a hub is displayed - only use it inside one event chain.
+- **State** lives in the scenario Vars class (derives from `ScenarioVars`; only the active scenario's Vars are saved, via `GlobalData.ShouldSerialize*`). Use arrays, not `List<T>` (Newtonsoft `ObjectCreationHandling.Reuse` appends to lists on load/undo). Add every field to `Reset()`. Per-player dictionaries are keyed by player name and filled in `Reset()`. `GlobalData.TmpValues` is cleared whenever a hub is displayed - only use it inside one event chain.
 - **Placeholders** in CSV text (`Shared/Extensions.cs`):
   - `{{0=...|Oliver|James|...}}` + `FormatWithReplacement(0, value)` (the text after `=` is only a preview),
   - `{{1=|option0|option1|...}}` + `FormatWithIndex(1, index)` (enums starting at `None = 0` use `{{1=| |First|Second}}`),
@@ -68,29 +75,43 @@ private static void Changes_0(GlobalData globalData)       // setup popup
 - **CSV rules**: `Tag;Text` per line, `;` is the separator, so source semicolons become ` - `. Lines starting with `//` are comments. Duplicate tags throw at load. Trailing spaces are significant when a link follows inline (`... they may ` + `[click here]`) - some editors strip them. HTML is allowed (`<b>`, `<i>`, `<br />`, `<icon=Name>`, `<sprite=Name>`). Story text goes to `*_Localization.csv`, rules/setup text to `*_Gameplay_Localization.csv`. Both are searched.
 - UI strings shared by all scenarios are in `UI_Localization.csv` + `Shared/Consts/GlobalTags.cs` and need an English **and** Polish value.
 
-## Porting workflow (what worked for Cost of Disease Gen III)
+## Porting workflow (what worked for Cost of Disease Gen III and Fear of the Unknown)
 
-1. Produce readable passages: in `TheStoryProcessor.cs` point `path` at the scenario `.txt` (it is hardcoded to `TheCostofDisease.txt`) and run it, or read `.txt` directly. The console output loses link labels (`OPT("Name", MethodName)`); `tools/passage_dump.py` restores them from the `.txt` (set `MFW_SOURCE=FearOfTheUnknown.txt`).
-2. Build the passage graph from the scenario start / generation intros (BFS over `Method*` references) to know what belongs to each generation.
+1. Produce readable passages: `python tools/cradle_dump.py <scenario .txt>` (add `--html` for CSV-ready text). Older route: `TheStoryProcessor.cs` (hardcoded to `TheCostofDisease.txt`) + `tools/passage_dump.py`.
+2. Build the passage graph from the scenario start / generation intros (`cradle_dump.py --graph <Passage>`) to know what belongs to each generation.
 3. Map Twine concepts: a passage with text + `<hook>` "Click to continue" + `setupStyleEvnt` block -> window + setup popup. `$PrintEndOfTheRoundText(tag, next)` -> hub end-of-round section. `_SetupImage` -> `PopUpIcon`. `either(...)`/`GetRandom` -> `RandomArray` index. `$nameA..E` / `allyA..E` ifs -> loops over `GetActivePlayers()` (the web app supports 2-4 players, drop 5-player branches). `(display:)` / abort chains -> direct method calls.
 4. Write code, then the CSV rows, then run `python tools/tagcheck.py` (0 missing) and play-test.
 5. Keep source bugs visible: several Twine passages have dead or always-true conditions. Decide deliberately and note it (see Cost of Disease notes below).
 
-## Adding Fear of the Unknown / A Time of War - what must be generalized
+## Adding a scenario (A Time of War) - checklist
 
-The engine is currently hardwired to Cost of Disease in these places:
+The engine was generalized while porting Fear of the Unknown. A new scenario needs:
 
-- `GlobalData.SaveToUndo` - `switch (ScenarioId)` with `typeof(TheCostOfDisease)`; add a case per scenario class.
-- `GlobalData.GetHubMethod` - only Cost of Disease hub ids.
-- `GlobalData.LoadScenarioLanguagesOptionsAsync` - CSV paths per scenario (unknown scenarios navigate home - this is why they currently bounce to the menu).
-- `Pages/PlayersScenarioLanguage.razor` - `switch` calling `TheCostOfDisease.Init`; also calls `TheCostOfDiseaseVars.Reset`.
-- `GlobalData.TheCostOfDiseaseVars` - add a Vars class per scenario (reset + save), or introduce a common base.
-- `08_TheCostOfDisease_Scoring.cs` (score entry, tie breakers, rankings, endings) - the score/tie/ranking part is scenario-independent and should move to shared code; only the endings text is per scenario. Its state (`Scores`, `TiedPlayers`, ...) lives in `TheCostOfDiseaseVars`.
-- `tools/tagcheck.py` - paths point at the Cost of Disease folder/CSVs.
-- `Pages/Home.razor` `Test()` shortcut sets `ScenarioId.CostOfDisease`.
-- `Shared/Enums/Generation.cs` has 3 values; after the last round `Generation` becomes 3 (harmless, the round tracker shows nothing as current).
+- A Vars class deriving from `ScenarioVars(randomCount)` whose `Reset(GlobalData)` calls `ResetBase`; a property on `GlobalData` with `ShouldSerialize*`, and cases in `GlobalData.ScenarioVars`, `ScenarioType`, `ResetScenarioVars`, `StartScenario`, `ShowFinalEnding`, `GetHubMethod` and `LoadScenarioLanguagesOptionsAsync` (CSV paths; unknown scenarios navigate home).
+- A hub id enum in `Shared/Enums/`, mapped in `GetHubMethod`.
+- After the last generation link to `FinalScoring.Start`; provide `public static void FinalEnding(GlobalData)` and the shared scoring tags (`ScoreEntry_Content`, `TieBreaker1_*`, `TieBreaker2_Content`, `Rankings_*`) in the scenario CSV.
+- A `tools/tagcheck.py --scenario=` entry and `test-save-helpers.js` support.
+- `Shared/Enums/Generation.cs` has 3 values; after the last round `Generation` becomes 3 (guard like `EndedYears()` in Fear of the Unknown). `Pages/Home.razor` `Test()` still sets `ScenarioId.CostOfDisease`.
 
-Source size for reference: `FearOfTheUnknown.txt` 378 passages, `ATimeOfWar.txt` 297 passages (Cost of Disease: 361). Both are English. Fear of the Unknown has a battle mini-game (`BattleStart`) and A Time of War has time-travel/paradox mechanics - look at the Unity `View*` scripts (`ViewBiddingSystem`, etc.) for UI the Twine text relies on.
+Source size: `ATimeOfWar.txt` 297 passages, English. It has time-travel/paradox mechanics - look at the Unity `View*` scripts (`ViewBiddingSystem`, etc.) for UI the Twine text relies on.
+
+## Fear of the Unknown - notes and deliberate deviations
+
+- Branches: Gen I Witch Hunt -> Gen II Foreigners or Creature (+ Obsessions) -> Gen III Isolation / Tension (after Foreigners) or Privatized / Liberal (after Creature).
+- The shipped app's once-per-game random "stickiness" (`nextpsg`) is replaced by one index per occurrence (`base + min(count, 9)`).
+- End-of-generation popups are shown before the random next branch is drawn (drawn in the popup close callback) so mirror mode asks at the right moment.
+- `IsoBricksRes` / `WallCheck` dead "witch" branches are skipped, as in the shipped app.
+- TenseConfirm at the end of the Early Years without overtake shows the "move mob to Romani" branch directly (source needed a second click).
+- Obsession penalty is tied to `Stole` (source used inverted tension checks).
+- AsylumMeet checks the visiting player's own visit count (source checked any player).
+- Battle: only alive warriors fight, the last one standing wins; stalemate / 250-step guard -> most HP. The official battle is buggy, so in mirror mode the battle can differ.
+- Salts, everybody refuses: 50% "Risk Too Great", else the story continues (source could jump to the Liberal round 3 hub, skipping events).
+- ExpNo after the last round uses the "return tokens" text.
+- TownHallDestroyed gives no bonus when nobody verified (source gave it to player A). SmugConsequence letter header says "name illegible" (source showed a stale name).
+- One-time events per player (Bloodsmith reward `CreepReward`, crossroads `CrossroadVisited`, verification `Verified`) only list players who have not had them, and the hub link disappears once everybody had it (source always listed everybody).
+- After the last round `Generation` is 3; `RandomDate` then uses the Gen III Late years.
+- Mirror mode: the witch identity is asked via the hex location.
+- 5-player branches dropped.
 
 ## Cost of Disease - known deviations / open questions
 
@@ -105,4 +126,4 @@ Source size for reference: `FearOfTheUnknown.txt` 378 passages, `ATimeOfWar.txt`
 
 - `dotnet build MyFathersWorkWebApp/MyFathersWorkWebApp.sln`
 - `dotnet run --project MyFathersWorkWebApp/MyFathersWorkWebApp/MyFathersWorkWebApp.csproj` (http://localhost:5166; use `--no-launch-profile --urls http://localhost:5199` if 5166 is taken).
-- There are no automated tests. Play-test with `tools/test-save-helpers.js`: craft a save at a late-round hub, reload `/Gameplay`, and drive the flow with `run([...])`. Check the browser console for exceptions and run `python tools/tagcheck.py`. To test mirror mode, pass `mirror: true` to `mkSave`; random click-throughs that report `Mirror:` console lines find draws made too early.
+- There are no automated tests. Play-test with `tools/test-save-helpers.js`: craft a save at a late-round hub, reload `/Gameplay`, and drive the flow with `run([...])`. Check the browser console for exceptions and run `python tools/tagcheck.py` (and `--scenario=FearOfTheUnknown`). Fear of the Unknown saves: `mkSaveFotU(hubId, {...})`; `auto([...])` / `autoFirst()` click through screens. Static files are served from a build-time snapshot, so inject the helpers with the JS console (or keep them in `localStorage.helpers` and `eval` after reloads) instead of copying them into `wwwroot`. To test mirror mode, pass `mirror: true` to `mkSave`; random click-throughs that report `Mirror:` console lines find draws made too early.

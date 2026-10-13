@@ -34,6 +34,28 @@ window.mkSave = (hub, opts = {}) => {
   return "ok";
 };
 
+// Fear of the Unknown: hubId = FearOfTheUnknownHubId (1 WitchHunt, 2 Foreigners, 3 Creature, 4 Isolation, 5 Tension,
+// 6 Privatized, 7 Liberal). Path is the branch of the current Generation (set it to the hub id for Gen II/III).
+window.mkSaveFotU = (hub, opts = {}) => {
+  const n = opts.n || 3; const ps = ["Anna", "Bob", "Cleo", "Dan"].slice(0, n);
+  const d = v => Object.fromEntries(ps.map(p => [p, JSON.parse(JSON.stringify(v))]));
+  const v = Object.assign({
+    HubId: hub, Path: hub, Tracker: 8, Milestones: [false, false, false, false],
+    Fate: d(1), FamilyPlot: d(false), Hex1: { ...d(0), "#Suspect": 0 }, Hex2: { ...d(0), "#Suspect": 0 },
+    AsylumVisits: d(0), Debt: d(0), Crossroad: d(false), CrossroadVisited: d(false), Verified: d(false), CreepReward: d(false),
+    Agility: d(0), Strength: d(0), Life: d(0), Hp: d(0), WarriorName: d(""), Scores: d(0),
+    AsylumQuestions: [-1, -1, -1, -1],
+    ...(opts.mirror ? { RandomArray: Array(900).fill(-1) } : {})
+  }, opts.vars || {});
+  const g = {
+    Language: "English", ScenarioLanguage: "English_Source", ScenarioId: 2, PlayersNum: n, MirrorMode: !!opts.mirror,
+    PlayerAName: "Anna", PlayerBName: "Bob", PlayerCName: n > 2 ? "Cleo" : "", PlayerDName: n > 3 ? "Dan" : "",
+    TownName: "Testville", Years: opts.years ?? 2, Generation: opts.gen ?? 2, TmpValues: {}, FearOfTheUnknownVars: v
+  };
+  localStorage.setItem("continue", btoa(JSON.stringify(g)));
+  return "ok";
+};
+
 window.clickText = t => {
   const els = [...document.querySelectorAll("a,button")].filter(e => e.innerText.includes(t));
   if (!els.length) return "NOTFOUND: " + t;
@@ -63,6 +85,52 @@ window.run = async (steps, len = 250) => {
       continue;
     }
     out.push("> " + t + "\n" + (await step(t)).slice(0, len));
+  }
+  return out.join("\n=====\n");
+};
+
+// links() lists the links/buttons of the popup (or the page when no popup is open).
+// auto(picks, max) clicks through: a single link is clicked, several links take the next entry of picks
+// (substring), "type:X" fills the next input popup. Stops at a choice without a pick or a Blazor error.
+// autoFirst(max) always clicks the first link and stops at a hub that only offers "next round"/"end of the Generation".
+window.links = () => {
+  const root = document.querySelector(".popup-box") ? ".popup-box " : ".gameplay-container ";
+  return [...document.querySelectorAll(root + "a, " + root + "button")].map(e => e.innerText.trim()).filter(x => x && !["⬅", "⏸"].includes(x));
+};
+
+window.blazorError = () => { const e = document.querySelector("#blazor-error-ui"); return !!e && getComputedStyle(e).display !== "none"; };
+
+window.auto = async (picks = [], max = 30, len = 300) => {
+  const out = [];
+  for (let i = 0; i < max; i++) {
+    const L = links();
+    if (!L.length) { out.push("NOLINKS"); break; }
+    const input = document.querySelector(".input-field");
+    if (input) {
+      input.value = picks.length && picks[0].startsWith("type:") ? picks.shift().slice(5) : "5";
+      input.dispatchEvent(new Event("input", { bubbles: true }));
+      await new Promise(res => setTimeout(res, 150));
+    }
+    let want = null;
+    if (L.length === 1) want = L[0];
+    else if (picks.length && !picks[0].startsWith("type:")) {
+      const p = picks.shift(); want = L.find(x => x.includes(p));
+      if (!want) { out.push("PICK NOT FOUND " + p + " in " + L.join(" | ")); break; }
+    } else { out.push("CHOICE: " + L.join(" | ")); break; }
+    out.push("> " + want + "\n" + (await step(want)).slice(0, len));
+    if (blazorError()) { out.push("BLAZOR ERROR"); break; }
+  }
+  return out.join("\n=====\n");
+};
+
+window.autoFirst = async (max = 30, len = 400) => {
+  const out = [];
+  for (let i = 0; i < max; i++) {
+    const L = links();
+    if (!L.length) { out.push("NOLINKS"); break; }
+    if (!document.querySelector(".popup-box") && L.some(x => /next round|end of the Generation/i.test(x)) && L.length <= 2) { out.push("HUB: " + L.join(" | ")); break; }
+    out.push("> " + L[0] + "\n" + (await step(L[0])).slice(0, len));
+    if (blazorError()) { out.push("BLAZOR ERROR"); break; }
   }
   return out.join("\n=====\n");
 };

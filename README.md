@@ -14,16 +14,19 @@ The official app for *My Father's Work* lacks essential features, contains error
 
 | Scenario | Status |
 |---|---|
-| **The Cost of Disease** | ✅ Playable from setup to the final ending: all 3 Generations, every story branch, final scoring, tie-breakers and all 8 endings |
-| **Fear of the Unknown** | ❌ Not started (selecting it returns to the main menu) |
+| **The Cost of Disease** | ✅ Play testing: playable from setup to the final ending, all 3 Generations, every story branch, final scoring, tie-breakers and all 8 endings |
+| **Fear of the Unknown** | 🚧 Work in progress: every branch is ported (including the battle and the asylum assessment) and played through in the browser; waiting for a real game at the table |
 | **A Time of War** | ❌ Not started |
 
+What is being worked on right now is tracked in [`HANDOFF.md`](HANDOFF.md).
+
 **Still to do**
-- Port **Fear of the Unknown** and **A Time of War**. Their story text is available (in `MyFathersWorkConsole/.../Processor/*.txt`), but parts of the app are still hard-wired to The Cost of Disease and need generalizing first. Both also rely on extra mechanics, such as a battle and time travel.
-- Share the final scoring and tie-breaker screens between scenarios (they currently live inside The Cost of Disease).
+- Play-test **Fear of the Unknown** at the table.
+- Port **A Time of War** (its story text is in `MyFathersWorkConsole/.../Processor/ATimeOfWar.txt`; it relies on time-travel mechanics).
 - Abridged (TL;DR) story option.
 - More languages: the menus exist in English and Polish, the story text only in English.
 - Possible source flaw kept as-is in The Cost of Disease: the Generation III evil branch puts back building tiles that were exposed by a single vote.
+- Fear of the Unknown fixes several bugs of the original story (for example the battle); the full list is in `CLAUDE.md`.
 - Nice-to-haves from the official app: endings and achievements gallery, sharing, voice-over.
 
 ### 🎲 Using the app

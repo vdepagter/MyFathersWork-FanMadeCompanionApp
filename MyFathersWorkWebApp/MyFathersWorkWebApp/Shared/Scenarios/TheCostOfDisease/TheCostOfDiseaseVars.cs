@@ -1,17 +1,12 @@
-﻿using System.Security.Cryptography;
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 
 // ReSharper disable AutoPropertyCanBeMadeGetOnly.Global
 
 namespace MyFathersWorkWebApp;
 
-public class TheCostOfDiseaseVars
+// RandomArray indices: 0 - 58 (Gen I & II), Gen III uses 59 - 203 (see _RND_ constants in the Gen III files)
+public class TheCostOfDiseaseVars() : ScenarioVars(300 + 1)
 {
-    // globalData.TheCostOfDiseaseVars.RandomElement([
-    // ], x) Current: 58 (Gen I & II), Gen III uses 59 - 203 (see _RND_ constants in the Gen III files)
-    // -1 = not drawn yet (mirror mode asks the players what the official app shows)
-    public int[] RandomArray { get; set; } = new int[300 + 1];
-
     public CostOfDiseaseHubId HubId   { get; set; }
     // Which faction is evil is drawn when a screen first depends on it, so mirror mode asks once the official app reveals it
     [JsonIgnore] public Affiliation Wolves  { get { DrawAffiliations(); return _Wolves; }  set => _Wolves = value; }
@@ -120,25 +115,9 @@ public class TheCostOfDiseaseVars
     public Dictionary<string, string>               MwName          { get; set; } = new();
     public Dictionary<string, int>                  MwAdjective     { get; set; } = new();
 
-    // Final Scoring
-    public Dictionary<string, int> Scores           { get; set; } = new();
-    public int                     ScoreIndex       { get; set; }
-    public string[]                TiedPlayers      { get; set; } = [];
-    public string[]                TieMasterworks   { get; set; } = [];
-    public int                     TieIndex         { get; set; }
-    public int[]                   TieUpgrades      { get; set; } = []; // Estate Upgrades per TieMasterworks entry
-    public bool                    FamilyWinner     { get; set; }
-    public string                  Winner           { get; set; } = string.Empty;
 
     public const string WOLVES_EVIL_TOWN_NAME  = "Rage";
     public const string HUNTERS_EVIL_TOWN_NAME = "Kraven";
-
-    private GlobalData _GlobalData = null!;
-
-    public bool RandomBool(int index)
-    {
-        return RandomSlot(index, 2, value => value == 1 ? "true" : "false") == 1;
-    }
 
     public void DrawAffiliations()
     {
@@ -149,52 +128,9 @@ public class TheCostOfDiseaseVars
         _Hunters            = swap ? Affiliation.Good : Affiliation.Evil;
     }
 
-    public T RandomElement<T>(List<T> list, int index)
-    {
-        return list[RandomSlot(index, list.Count, value => MirrorValueLabel(list[value]))];
-    }
-
-    public T RandomElement<T>(List<T> list, string playerName, int startIndex)
-    {
-        int index                                        = startIndex;
-        if (playerName == _GlobalData.PlayerBName) index += 1;
-        if (playerName == _GlobalData.PlayerCName) index += 2;
-        if (playerName == _GlobalData.PlayerDName) index += 3;
-
-        return RandomElement(list, index);
-    }
-
-    public int RandomInRange(int min, int max, int index)
-    {
-        return min + RandomSlot(index, max - min + 1, value => (min + value).ToString(), min);
-    }
-
-    // Returns RandomArray[index] % count. In mirror mode an unanswered slot (-1) asks the players what the official app shows.
-    private int RandomSlot(int index, int count, Func<int, string> valueLabel, int? numericMin = null)
-    {
-        if (count <= 1) return 0;
-
-        int value = RandomArray[index];
-        if (value >= 0) return value % count;
-
-        if (!_GlobalData.MirrorMode)
-        {
-            RandomArray[index] = RandomNumberGenerator.GetInt32(int.MaxValue);
-            return RandomArray[index] % count;
-        }
-
-        if (_GlobalData.IsMirrorSimulating) return _GlobalData.MirrorSimulationValue % count;
-        throw new MirrorQuestionException(index, count, valueLabel, numericMin);
-    }
-
-    private static string MirrorValueLabel<T>(T value)
-    {
-        return value is Delegate callback ? callback.Method.Name : value?.ToString() ?? string.Empty;
-    }
-
     public void Reset(GlobalData globalData)
     {
-        _GlobalData = globalData;
+        ResetBase(globalData);
 
         _Wolves              = Affiliation.Good;
         _Hunters             = Affiliation.Evil;
@@ -267,13 +203,6 @@ public class TheCostOfDiseaseVars
         BarCount        = 0;
         NewMasterIndex  = 0;
         MasterworkCheck = string.Empty;
-        ScoreIndex      = 0;
-        TiedPlayers     = [];
-        TieMasterworks  = [];
-        TieIndex        = 0;
-        TieUpgrades     = [];
-        FamilyWinner    = false;
-        Winner          = string.Empty;
 
         string[] players = [globalData.PlayerAName, globalData.PlayerBName, globalData.PlayerCName, globalData.PlayerDName];
 
@@ -289,18 +218,8 @@ public class TheCostOfDiseaseVars
             MwCost[player]               = 0;
             MwName[player]               = string.Empty;
             MwAdjective[player]          = 0;
-            Scores[player]               = 0;
         }
 
         for (int x = 0; x < 6; ++x) Letter[x] = string.Empty;
-
-        RandomNumberGenerator rng = RandomNumberGenerator.Create();
-
-        for (int x = 0; x < RandomArray.Length; ++x)
-        {
-            byte[] box = new byte[4];
-            rng.GetBytes(box);
-            RandomArray[x] = globalData.MirrorMode ? -1 : BitConverter.ToInt32(box, 0) & int.MaxValue;
-        }
     }
 }
