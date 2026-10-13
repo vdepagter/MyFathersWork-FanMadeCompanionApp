@@ -70,6 +70,22 @@ public static class GlobalTags
     public const string Mirror_Nothing     = "Mirror_Nothing";
     public const string Mirror_Roll        = "Mirror_Roll";
 
+    // Audio Toggles
+    public const string Audio_SoundEffects = "Audio_SoundEffects";
+    public const string Audio_Music        = "Audio_Music";
+
+    // Voice-over: setting (scenario language screen, pause menu) and the indicator on narrated windows
+    public const string Audio_Narration       = "Audio_Narration";
+    public const string Audio_NarrationFemale = "Audio_NarrationFemale";
+    public const string Audio_NarrationMale   = "Audio_NarrationMale";
+    public const string Audio_NarrationOff    = "Audio_NarrationOff";
+    public const string Narration_Narrated    = "Narration_Narrated";
+    public const string Narration_Available   = "Narration_Available";
+    public const string Narration_Starting    = "Narration_Starting";
+    public const string Narration_Play        = "Narration_Play";
+    public const string Narration_Replay      = "Narration_Replay";
+    public const string Narration_Stop        = "Narration_Stop";
+
     // Gameplay
     public const string Gameplay_Yes                        = "Gameplay_Yes";
     public const string Gameplay_No                         = "Gameplay_No";

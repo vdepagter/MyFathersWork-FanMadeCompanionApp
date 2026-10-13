@@ -1,6 +1,7 @@
 ﻿@using Newtonsoft.Json
 @inject NavigationManager Nav
 @inject IJSRuntime        Js
+@inject AudioService      Audio
 
 @if (Visible)
 {
@@ -9,7 +10,7 @@
             <h2>@GlobalData!.GetLocalizedUITag(GlobalTags.Gameplay_PauseMenu)</h2>
 
             <button class="pause-button"
-                    @onclick="OnResume">@GlobalData!.GetLocalizedUITag(GlobalTags.Gameplay_Resume)</button>
+                    @onclick="Resume">@GlobalData!.GetLocalizedUITag(GlobalTags.Gameplay_Resume)</button>
             <button class="pause-button"
                     @onclick="OnReturnToMainMenu">@GlobalData!.GetLocalizedUITag(GlobalTags.Gameplay_ReturnToMainMenu)</button>
 
@@ -17,8 +18,11 @@
             {
                 <button class="pause-button"
                         @onclick="ShowSavePopup">@GlobalData!.GetLocalizedUITag(GlobalTags.Gameplay_LocalSaveGame)</button>
+            }
 
-                <div class="dropdowns">
+            <div class="dropdowns">
+                @if (IsThereAnySavedState)
+                {
                     <div>
                         <label>@GlobalData!.GetLocalizedUITag(GlobalTags.MainMenu_Language)</label>
                         <select value="@GlobalData.Language" @onchange="OnLanguageChanges">
@@ -38,8 +42,18 @@
                             }
                         </select>
                     </div>
+                }
+
+                @* Always shown (not only with a saved game); a change stops the current narration *@
+                <div>
+                    <label>@GlobalData!.GetLocalizedUITag(GlobalTags.Audio_Narration)</label>
+                    <select value="@Audio.Narration" @onchange="OnNarrationChanged">
+                        <option value="@NarrationVoice.Female">@GlobalData.GetLocalizedUITag(GlobalTags.Audio_NarrationFemale)</option>
+                        <option value="@NarrationVoice.Male">@GlobalData.GetLocalizedUITag(GlobalTags.Audio_NarrationMale)</option>
+                        <option value="@NarrationVoice.Off">@GlobalData.GetLocalizedUITag(GlobalTags.Audio_NarrationOff)</option>
+                    </select>
                 </div>
-            }
+            </div>
 
         </div>
     </div>
@@ -52,11 +66,27 @@
     [Parameter] public GlobalData?   GlobalData           { get; set; }
     [Parameter] public bool          IsThereAnySavedState { get; set; }
 
-    private Task ShowSavePopup() => OnShowSavePopup.InvokeAsync();
+    private Task Resume()
+    {
+        Audio.PlayClick();
+        return OnResume.InvokeAsync();
+    }
+
+    private Task ShowSavePopup()
+    {
+        Audio.PlayClick();
+        return OnShowSavePopup.InvokeAsync();
+    }
 
     private void OnReturnToMainMenu()
     {
+        Audio.PlayClick();
         Nav.NavigateTo("");
+    }
+
+    private void OnNarrationChanged(ChangeEventArgs e)
+    {
+        if (Enum.TryParse(e.Value?.ToString(), out NarrationVoice narration)) Audio.SetNarration(narration);
     }
 
     private async Task OnLanguageChanges(ChangeEventArgs e)

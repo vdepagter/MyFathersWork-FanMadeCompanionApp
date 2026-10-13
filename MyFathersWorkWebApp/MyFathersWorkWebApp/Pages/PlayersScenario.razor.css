@@ -88,3 +88,10 @@
     color: #e0d3b8;
     line-height: 1.4;
 }
+
+/* Keep the title clear of the fixed audio toggles (Shared/AudioToggles.razor) on narrow screens */
+@media (max-width: 640.98px) {
+    .scenario-selection-container {
+        padding-top: 4.5rem;
+    }
+}

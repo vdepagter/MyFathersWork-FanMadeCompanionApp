@@ -1,5 +1,6 @@
 ﻿@page "/PlayersScenarioLanguage"
 @inject NavigationManager Nav
+@inject AudioService      Audio
 @inject HttpClient        Http
 
 <div class="back-button" @onclick="GoBack">⬅ @GlobalData.GetLocalizedUITag(GlobalTags.MainMenu_Back)</div>
@@ -14,6 +15,15 @@
             <b>@GlobalData.GetLocalizedUITag(GlobalTags.ScenarioLanguage_Mirror)</b><br/>
             @GlobalData.GetLocalizedUITag(GlobalTags.ScenarioLanguage_MirrorDesc)
         </span>
+    </label>
+
+    <label class="narration-option">
+        <b>@GlobalData.GetLocalizedUITag(GlobalTags.Audio_Narration)</b>
+        <select value="@Audio.Narration" @onchange="OnNarrationChanged">
+            <option value="@NarrationVoice.Female">@GlobalData.GetLocalizedUITag(GlobalTags.Audio_NarrationFemale)</option>
+            <option value="@NarrationVoice.Male">@GlobalData.GetLocalizedUITag(GlobalTags.Audio_NarrationMale)</option>
+            <option value="@NarrationVoice.Off">@GlobalData.GetLocalizedUITag(GlobalTags.Audio_NarrationOff)</option>
+        </select>
     </label>
 
     <div class="language-options">
@@ -37,7 +47,16 @@
 
     private bool _MirrorMode;
 
-    private void GoBack() => Nav.NavigateTo("PlayersScenario");
+    private void GoBack()
+    {
+        Audio.PlayClick();
+        Nav.NavigateTo("PlayersScenario");
+    }
+
+    private void OnNarrationChanged(ChangeEventArgs e)
+    {
+        if (Enum.TryParse(e.Value?.ToString(), out NarrationVoice narration)) Audio.SetNarration(narration);
+    }
 
     protected override async Task OnInitializedAsync()
     {
@@ -53,6 +72,7 @@
 
     private void SelectLanguage(string key)
     {
+        Audio.PlayClick();
         GlobalData.ScenarioLanguage               = key;
         GlobalData.Years                          = Years.Early;
         GlobalData.Generation                     = Generation.First;

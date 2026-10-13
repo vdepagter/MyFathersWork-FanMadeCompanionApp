@@ -465,6 +465,7 @@ public static partial class FearOfTheUnknown
 
         globalData.SaveToUndo();
         globalData.ActiveWindow = new GameplayWindow(globalData);
+        globalData.ActiveWindow.MarkFinalEnding();
         globalData.ActiveWindow.AddDefaultTitle(content => content
                                                            .FormatWithReplacement(1, globalData.TownName)
                                                            .FormatWithReplacement(2, Warden(globalData))

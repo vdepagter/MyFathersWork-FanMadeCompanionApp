@@ -9,6 +9,21 @@ public class GameplayWindow(GlobalData globalData)
     public string                Subtitle { get; private set; } = string.Empty;
     public List<GameplayElement> Elements { get; }              = new();
 
+    // Audio hints read by Pages/Gameplay.razor when this window is shown. Scenario code only marks the window, it never
+    // plays audio itself (it also runs in mirror simulations, undo and load). Not saved: the window is rebuilt on load/undo.
+    public SoundCue Cue           { get; private set; }
+    public bool     IsFinalEnding { get; private set; }
+
+    // Voice-over clip of a narrated window: the Unity passage name, file wwwroot/audio/vo/<voice>/<VoiceOver>.mp3
+    // (docs/AUDIO_TRANSITIONS_MAP.md "Voice-over"). Null: no narration.
+    public string? VoiceOver { get; private set; }
+
+    public void SetCue(SoundCue cue) => Cue = cue;
+
+    public void SetVoiceOver(string clip) => VoiceOver = clip;
+
+    public void MarkFinalEnding() => IsFinalEnding = true;
+
     public void AddDefaultTitle(Func<string, string>? contentProcessor = null, [CallerMemberName] string callerName = "")
     {
         string title                        = globalData.GetScenarioLocalizedTag(callerName + "_Title");

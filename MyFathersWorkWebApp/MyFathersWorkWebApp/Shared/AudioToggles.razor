@@ -1,0 +1,42 @@
+﻿@inject AudioService Audio
+
+<div class="audio-toggles">
+    <button class="audio-toggle"
+            aria-pressed="@(_EffectsOn ? "true" : "false")"
+            aria-label="@GlobalData.GetLocalizedUITag(GlobalTags.Audio_SoundEffects)"
+            title="@GlobalData.GetLocalizedUITag(GlobalTags.Audio_SoundEffects)"
+            @onclick="ToggleEffects">@(_EffectsOn ? "🔊" : "🔇")</button>
+    <button class="audio-toggle"
+            aria-pressed="@(_MusicOn ? "true" : "false")"
+            aria-label="@GlobalData.GetLocalizedUITag(GlobalTags.Audio_Music)"
+            title="@GlobalData.GetLocalizedUITag(GlobalTags.Audio_Music)"
+            @onclick="ToggleMusic"><span class="music-glyph @(_MusicOn ? "" : "off")">♪</span></button>
+</div>
+
+@code
+{
+    [Parameter] public GlobalData GlobalData { get; set; } = null!;
+
+    private bool _EffectsOn = true;
+    private bool _MusicOn   = true;
+
+    protected override void OnInitialized()
+    {
+        _EffectsOn = Audio.EffectsOn;
+        _MusicOn   = Audio.MusicOn;
+    }
+
+    private void ToggleEffects()
+    {
+        _EffectsOn = !_EffectsOn;
+        Audio.SetEffectsOn(_EffectsOn);
+        if (_EffectsOn) Audio.PlayClick();
+    }
+
+    private void ToggleMusic()
+    {
+        Audio.PlayClick();
+        _MusicOn = !_MusicOn;
+        Audio.SetMusicOn(_MusicOn);
+    }
+}

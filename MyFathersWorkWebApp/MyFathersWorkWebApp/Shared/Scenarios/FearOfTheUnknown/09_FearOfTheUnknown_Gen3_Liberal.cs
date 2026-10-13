@@ -85,6 +85,7 @@ public static partial class FearOfTheUnknown
         vars.AsylumCount = 0; // from now on the number of admissions to the Asylum
 
         globalData.ActiveWindow = new GameplayWindow(globalData);
+        globalData.ActiveWindow.SetVoiceOver("LiberalIntro");
         globalData.ActiveWindow.AddGameplayTitle(GlobalTags.Gameplay_Generation_III);
         globalData.ActiveWindow.AddDefaultSubtitle();
         globalData.ActiveWindow.AddDefaultContent(content => content.FormatWithReplacement(0, RandomPlayer(globalData)));
@@ -319,6 +320,7 @@ public static partial class FearOfTheUnknown
     {
         globalData.SaveToUndo();
         globalData.ActiveWindow = new GameplayWindow(globalData);
+        globalData.ActiveWindow.SetCue(SoundCue.SpecialEvent);
         globalData.ActiveWindow.AddDefaultTitle();
         globalData.ActiveWindow.AddDefaultContent();
         globalData.ActiveWindow.AddClickHereAfterBid(ProgramFocus);
@@ -487,6 +489,7 @@ public static partial class FearOfTheUnknown
     {
         globalData.SaveToUndo();
         globalData.ActiveWindow = new GameplayWindow(globalData);
+        globalData.ActiveWindow.SetCue(SoundCue.SpecialEvent);
         globalData.ActiveWindow.AddDefaultTitle();
         globalData.ActiveWindow.AddDefaultContent(content => content.FormatWithReplacement(0, AsylumUpgradeName(globalData)));
         globalData.ActiveWindow.AddClickHereAfterBid(PolicyBidResolved);
@@ -507,6 +510,7 @@ public static partial class FearOfTheUnknown
     {
         globalData.SaveToUndo();
         globalData.ActiveWindow = new GameplayWindow(globalData);
+        globalData.ActiveWindow.SetCue(SoundCue.SpecialEvent);
         globalData.ActiveWindow.AddDefaultTitle();
         globalData.ActiveWindow.AddDefaultContent(content => content.FormatWithReplacement(0, AsylumUpgradeName(globalData)));
         globalData.ActiveWindow.AddClickHereAfterVote(PolicyVoteResolved);
@@ -544,6 +548,7 @@ public static partial class FearOfTheUnknown
     {
         globalData.SaveToUndo();
         globalData.ActiveWindow = new GameplayWindow(globalData);
+        globalData.ActiveWindow.SetCue(SoundCue.SpecialEvent);
         globalData.ActiveWindow.AddDefaultTitle();
         globalData.ActiveWindow.AddDefaultContent(content => content.FormatWithReplacement(0, BribeCost(globalData).ToString()));
         globalData.ActiveWindow.AddClickHereAfterBid(BribeResolved);

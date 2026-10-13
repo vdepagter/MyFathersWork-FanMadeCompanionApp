@@ -27,6 +27,7 @@ public static partial class TheCostOfDisease
 
         globalData.SaveToUndo();
         globalData.ActiveWindow = new GameplayWindow(globalData);
+        globalData.ActiveWindow.MarkFinalEnding();
         globalData.ActiveWindow.AddDefaultTitle(content => content.FormatWithIndex(0, (int)vars.Ending));
         globalData.ActiveWindow.AddNextContent((int)vars.Ending, false, content => content
                                                                                   .FormatWithReplacement(0, globalData.TownName)

@@ -58,6 +58,19 @@ Mirror_Number;Continue in the official app. Which number does it show?;Kontynuuj
 Mirror_NumberError;Enter a number from {{0=...|1}} to {{1=...|999}}.;Wpisz liczbę od {{0=...|1}} do {{1=...|999}}.
 Mirror_Nothing;(no extra text);(brak dodatkowego tekstu)
 Mirror_Roll;Roll for me;Losuj za mnie
+//====== Audio ======;;
+Audio_SoundEffects;Sound effects;Efekty dźwiękowe
+Audio_Music;Music;Muzyka
+Audio_Narration;Narration;Narracja
+Audio_NarrationFemale;Female voice;Głos kobiecy
+Audio_NarrationMale;Male voice;Głos męski
+Audio_NarrationOff;Off;Wyłączona
+Narration_Narrated;Narrated;Z narracją
+Narration_Available;Narration available;Narracja dostępna
+Narration_Starting;starting…;rozpoczyna się…
+Narration_Play;Play;Odtwórz
+Narration_Replay;Replay;Powtórz
+Narration_Stop;Stop narration;Zatrzymaj narrację
 //====== Scenario Settings ======;;
 ScenarioLang_English_Source;English - Source;Angielski - Źródłowy
 ScenarioLang_English_Simple;English - Simple;Angielski - Prostrzy

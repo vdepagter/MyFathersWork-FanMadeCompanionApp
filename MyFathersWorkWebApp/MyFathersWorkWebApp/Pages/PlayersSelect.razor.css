@@ -75,3 +75,10 @@
 .back-button:active {
     transform: scale(0.95);
 }
+
+/* Keep the title clear of the fixed audio toggles (Shared/AudioToggles.razor) on narrow screens */
+@media (max-width: 640.98px) {
+    .player-select-container {
+        padding-top: 4.5rem;
+    }
+}

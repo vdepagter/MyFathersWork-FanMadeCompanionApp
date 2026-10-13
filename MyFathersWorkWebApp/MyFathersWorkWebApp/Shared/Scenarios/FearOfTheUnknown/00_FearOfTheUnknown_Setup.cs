@@ -76,6 +76,7 @@ public static partial class FearOfTheUnknown
     {
         globalData.SaveToUndo();
         globalData.ActiveWindow = new GameplayWindow(globalData);
+        globalData.ActiveWindow.SetVoiceOver("FearoftheUnknownStart");
         globalData.ActiveWindow.AddGameplayTitle(GlobalTags.Gameplay_Generation_I);
         globalData.ActiveWindow.AddDefaultSubtitle();
         globalData.ActiveWindow.AddDefaultContent(content => content.FormatWithReplacement(0, RandomPlayer(globalData)));

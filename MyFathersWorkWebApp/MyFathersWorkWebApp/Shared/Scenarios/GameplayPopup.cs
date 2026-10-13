@@ -6,6 +6,9 @@ public class GameplayPopup
 {
     public string Title { get; }
 
+    // Kind of popup; Pages/Gameplay.razor derives the popup sound from it
+    public PopUpTitle PopUpTitle { get; }
+
     public string ImageSrc { get; }
 
     public string ButtonText { get; }
@@ -22,7 +25,8 @@ public class GameplayPopup
             PopUpTitle.EndOfGeneration => globalData.GetLocalizedUITag(GlobalTags.Gameplay_EndOfGeneration_Title),
             _                          => globalData.GetLocalizedUITag(GlobalTags.Gameplay_Setup)
         };
-        ImageSrc = imageSrc;
+        PopUpTitle = title;
+        ImageSrc   = imageSrc;
         ButtonText = button switch
         {
             PopUpButton.Confirm => globalData.GetLocalizedUITag(GlobalTags.Gameplay_Confirm),
@@ -48,7 +52,8 @@ public class GameplayPopup
             PopUpTitle.EndOfGeneration => globalData.GetLocalizedUITag(GlobalTags.Gameplay_EndOfGeneration_Title),
             _                          => globalData.GetLocalizedUITag(GlobalTags.Gameplay_Setup)
         };
-        ImageSrc = imageSrc;
+        PopUpTitle = title;
+        ImageSrc   = imageSrc;
         ButtonText = button switch
         {
             PopUpButton.Confirm => globalData.GetLocalizedUITag(GlobalTags.Gameplay_Confirm),

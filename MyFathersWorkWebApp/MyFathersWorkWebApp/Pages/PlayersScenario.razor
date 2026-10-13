@@ -1,5 +1,6 @@
 ﻿@page "/PlayersScenario"
 @inject NavigationManager Nav
+@inject AudioService      Audio
 
 <div class="back-button" @onclick="GoBack">
     ⬅ @GlobalData.GetLocalizedUITag(GlobalTags.MainMenu_Back)
@@ -42,11 +43,13 @@
 
     private void GoBack()
     {
+        Audio.PlayClick();
         Nav.NavigateTo("PlayersVillageConfirm");
     }
 
     private void SelectScenario(int id)
     {
+        Audio.PlayClick();
         GlobalData.ScenarioId = (ScenarioId)id;
 
         Nav.NavigateTo("PlayersScenarioLanguage");

@@ -1,5 +1,6 @@
 ﻿@page "/PlayersVillage"
 @inject NavigationManager Nav
+@inject AudioService      Audio
 
 <div class="back-button" @onclick="GoBack">
     ⬅ @GlobalData.GetLocalizedUITag(GlobalTags.MainMenu_Back)
@@ -38,11 +39,13 @@
 
     private void GoBack()
     {
+        Audio.PlayClick();
         Nav.NavigateTo($"PlayersWelcome/{GlobalData.PlayersNum - 1}");
     }
 
     private void Continue()
     {
+        Audio.PlayClick();
         if (GlobalData.TownName.Length < 2 || GlobalData.TownName.Length > 20)
         {
             _ShowPopup = true;

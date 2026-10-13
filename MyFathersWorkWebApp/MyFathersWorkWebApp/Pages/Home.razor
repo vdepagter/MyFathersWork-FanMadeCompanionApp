@@ -3,6 +3,7 @@
 @inject NavigationManager Nav
 @inject IJSRuntime        Js
 @inject HttpClient        Http
+@inject AudioService      Audio
 
 <PageTitle>Home @GlobalData.Language</PageTitle>
 
@@ -53,11 +54,23 @@
         IsContinueAvailable = await GlobalData.IsContinueAvailableAsync(Js);
     }
 
-    private void ShowLoadPopup() => _ShowLoadGame = true;
+    protected override void OnAfterRender(bool firstRender)
+    {
+        if (firstRender) Audio.PlayWelcomeOnce();
+    }
+
+    private void ShowLoadPopup()
+    {
+        Audio.PlayClick();
+        _ShowLoadGame = true;
+    }
+
     private void HideLoadPopup() => _ShowLoadGame = false;
 
     private async Task OnNewGameClick()
     {
+        Audio.PlayClick();
+        Audio.Play(SoundCue.Footsteps);
         await Js.InvokeAsync<string>("localStorage.removeItem", "continue");
         GlobalData.ScenarioId  = ScenarioId.None;
         GlobalData.PlayersNum  = 0;
@@ -86,6 +99,7 @@
 
     private async void OnContinue()
     {
+        Audio.PlayClick();
         await GlobalData.LoadGameAsync(string.Empty, Nav, Http, Js);
         Nav.NavigateTo("Gameplay");
     }

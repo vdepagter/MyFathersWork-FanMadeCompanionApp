@@ -1,5 +1,6 @@
 ﻿@page "/PlayersWelcome/{PlayerIndex:int}"
 @inject NavigationManager Nav
+@inject AudioService      Audio
 
 <div class="back-button" @onclick="GoBack">
     ⬅ @GlobalData.GetLocalizedUITag(GlobalTags.MainMenu_Back)
@@ -44,11 +45,13 @@
     
     private void Continue()
     {
+        Audio.PlayClick();
         Nav.NavigateTo(PlayerIndex == GlobalData.PlayersNum - 1 ? "PlayersVillage" : $"PlayersNameEntry/{PlayerIndex + 1}");
     }
     
     private void GoBack()
     {
+        Audio.PlayClick();
         Nav.NavigateTo($"PlayersNameEntry/{PlayerIndex}");
     }
 }
