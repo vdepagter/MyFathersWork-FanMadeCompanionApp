@@ -33,6 +33,23 @@ public partial class GlobalData
     // Every entry point into scenario code (links, popups, undo, load, start) goes through here
     public void RunScenarioAction(Action action)
     {
+        RunScenarioActionCore(() =>
+        {
+            action();
+            RefreshShownHub();
+        });
+    }
+
+    // Hub text is formatted when the hub is built. When an event chain ends on the hub (no window or popup left), build
+    // it again so text that depends on state changed during the chain (Years, drawn buildings, ...) is current.
+    private void RefreshShownHub()
+    {
+        if (ActiveHub == null || ActiveWindow != null || ActivePopup != null || ActiveInputPopup != null) return;
+        GetHubMethod()?.Invoke(this);
+    }
+
+    private void RunScenarioActionCore(Action action)
+    {
         if (!MirrorMode)
         {
             action();
@@ -54,7 +71,7 @@ public partial class GlobalData
             {
                 // The value changes nothing - no need to ask
                 ScenarioVars.RandomArray[question.Index] = 0;
-                RunScenarioAction(action);
+                RunScenarioActionCore(action);
                 return;
             }
 
@@ -69,7 +86,7 @@ public partial class GlobalData
 
         ActiveMirrorQuestion                             = null;
         ScenarioVars.RandomArray[question.Index] = value;
-        RunScenarioAction(question.Retry);
+        RunScenarioActionCore(question.Retry);
     }
 
     public void RollMirrorQuestion()
@@ -83,9 +100,9 @@ public partial class GlobalData
         if (question.NumericMin != null && question.Count > MirrorQuestion.MaxOptions)
         {
             // Too many values to list (e.g. 1 - 999): show where the number appears and let the players type it
-            (string text0, _) = PreviewMirror(action, state, question.Index, 0);
-            (string text1, _) = PreviewMirror(action, state, question.Index, 1);
-            (string before, _, string after) = DiffMirrorTexts([text0, text1]);
+            MirrorPreview preview0 = PreviewMirror(action, state, question.Index, 0);
+            MirrorPreview preview1 = PreviewMirror(action, state, question.Index, 1);
+            (string before, _, string after) = DiffMirrorTexts([preview0.Text, preview1.Text]);
 
             return new MirrorQuestion
             {
@@ -95,21 +112,23 @@ public partial class GlobalData
                 Options    = [],
                 Before     = before,
                 After      = after,
-                NumericMin = question.NumericMin
+                NumericMin = question.NumericMin,
+                Heading    = MirrorHeading([preview0, preview1])
             };
         }
 
-        List<(int value, string text)> outcomes = new();
-        HashSet<string>                effects  = new();
+        List<(int value, string text, MirrorPreview preview)> outcomes = new();
+        HashSet<string>                                       effects  = new();
 
         for (int value = 0; value < question.Count; ++value)
         {
-            (string text, string json) = PreviewMirror(action, state, question.Index, value);
-            outcomes.Add((value, text));
-            effects.Add(text + json);
+            MirrorPreview preview = PreviewMirror(action, state, question.Index, value);
+            outcomes.Add((value, preview.Text, preview));
+            effects.Add(preview.Text + preview.Json);
         }
 
-        List<(int value, string text)> distinct = outcomes.DistinctBy(outcome => outcome.text).ToList();
+        List<(int value, string text, MirrorPreview preview)> distinct = outcomes.DistinctBy(outcome => outcome.text).ToList();
+        string                                                heading  = MirrorHeading(distinct.Select(outcome => outcome.preview).ToList());
 
         if (distinct.Count > 1)
         {
@@ -126,7 +145,8 @@ public partial class GlobalData
                     Retry   = action,
                     Options = distinct.Select((outcome, x) => new MirrorOption(outcome.value, changed[x])).ToList(),
                     Before  = before,
-                    After   = after
+                    After   = after,
+                    Heading = heading
                 };
             }
 
@@ -147,7 +167,8 @@ public partial class GlobalData
                 Index   = question.Index,
                 Count   = question.Count,
                 Retry   = action,
-                Options = options
+                Options = options,
+                Heading = heading
             };
         }
 
@@ -162,20 +183,43 @@ public partial class GlobalData
             Count   = question.Count,
             Retry   = action,
             Options = Enumerable.Range(0, question.Count).Select(value => new MirrorOption(value, question.ValueLabel(value))).DistinctBy(option => option.Changed).ToList(),
-            Hidden  = true
+            Hidden  = true,
+            Heading = outcomes[0].preview.Headings.FirstOrDefault(title => title != string.Empty) ?? string.Empty
         };
     }
 
+    // Text: the screen shown for one value of the asked draw, with the words of other unanswered draws masked.
+    // Words / Headings: the unmasked words and, per word, the title of the part of the screen it is in.
+    private record MirrorPreview(string Text, string Json, string[] Words, string[] Headings);
+
     // Screen text for one value of the asked draw. Other unanswered draws on the same screen are filled in twice with
     // different values; words that change between the two runs belong to those draws and are masked with "…"
-    private (string text, string json) PreviewMirror(Action action, MirrorState state, int index, int value)
+    private MirrorPreview PreviewMirror(Action action, MirrorState state, int index, int value)
     {
-        (string text, string json) = SimulateMirror(action, state, index, value, 0);
-        (string other, _)          = SimulateMirror(action, state, index, value, 1);
-        return (text == other ? text : MaskMirrorText(text, other), json);
+        (List<(string word, string heading)> words, string json) = SimulateMirror(action, state, index, value, 0);
+        (List<(string word, string heading)> other, _)           = SimulateMirror(action, state, index, value, 1);
+
+        string text      = string.Join(" ", words.Select(word => word.word));
+        string otherText = string.Join(" ", other.Select(word => word.word));
+        return new MirrorPreview(text == otherText ? text : MaskMirrorText(text, otherText), json,
+            words.Select(word => word.word).ToArray(), words.Select(word => word.heading).ToArray());
     }
 
-    private (string text, string json) SimulateMirror(Action action, MirrorState state, int index, int value, int otherDraws)
+    // Title of the part of the screen (window/popup title, hub section title) where the options start to differ, so the
+    // players know which page of the official app to look at. Empty when the title itself differs (it is then in the options).
+    private static string MirrorHeading(List<MirrorPreview> previews)
+    {
+        if (previews.Count == 0 || previews.Any(preview => preview.Words.Length == 0)) return string.Empty;
+
+        int minLength = previews.Min(preview => preview.Words.Length);
+        int prefix    = 0;
+        while (prefix < minLength && previews.All(preview => preview.Words[prefix] == previews[0].Words[prefix])) ++prefix;
+
+        string heading = previews[0].Headings[Math.Min(prefix, previews[0].Words.Length - 1)];
+        return previews.All(preview => preview.Headings[Math.Min(prefix, preview.Words.Length - 1)] == heading) ? heading : string.Empty;
+    }
+
+    private (List<(string word, string heading)> words, string json) SimulateMirror(Action action, MirrorState state, int index, int value, int otherDraws)
     {
         RestoreMirrorState(state);
         ScenarioVars.RandomArray[index] = value;
@@ -186,12 +230,12 @@ public partial class GlobalData
         {
             action();
             ScenarioVars.RandomArray[index] = -1;
-            return (MirrorScreenText(), JsonConvert.SerializeObject(this));
+            return (MirrorScreenWords(), JsonConvert.SerializeObject(this));
         }
         catch (Exception exception)
         {
             Console.WriteLine($"Mirror: preview of random slot {index} = {value} failed: {exception}");
-            return ($"#{value}", string.Empty);
+            return ([($"#{value}", string.Empty)], string.Empty);
         }
         finally
         {
@@ -237,41 +281,49 @@ public partial class GlobalData
         return string.Join(" ", result);
     }
 
-    // What Gameplay.razor would show, as plain text
-    private string MirrorScreenText()
+    // What Gameplay.razor would show, as plain words, each with the title of the part of the screen it is in
+    private List<(string word, string heading)> MirrorScreenWords()
     {
-        List<string> parts = new();
+        List<(string heading, string text)> parts = new();
+
+        void Add(string heading, IEnumerable<string> texts)
+        {
+            foreach (string text in texts) parts.Add((heading, text));
+        }
+
+        IEnumerable<string> Elements(List<GameplayElement> elements) => elements.Select(element => element.Callback == null ? element.Content : $"[{element.Content}]");
 
         if (ActivePopup != null)
         {
-            parts.Add(ActivePopup.Title);
-            parts.Add(ActivePopup.Description);
+            Add(ActivePopup.Title, [ActivePopup.Title, ActivePopup.Description]);
         }
         else if (ActiveInputPopup != null)
         {
-            parts.Add(ActiveInputPopup.Message);
+            Add(string.Empty, [ActiveInputPopup.Message]);
         }
         else if (ActiveWindow != null)
         {
-            parts.Add(ActiveWindow.Title);
-            parts.Add(ActiveWindow.Subtitle);
-            parts.AddRange(ActiveWindow.Elements.Select(element => element.Callback == null ? element.Content : $"[{element.Content}]"));
+            Add(ActiveWindow.Title, [ActiveWindow.Title, ActiveWindow.Subtitle]);
+            Add(ActiveWindow.Title, Elements(ActiveWindow.Elements));
         }
         else if (ActiveHub != null)
         {
-            parts.Add(ActiveHub.Title);
-            parts.Add(ActiveHub.Subtitle);
+            Add(ActiveHub.Title, [ActiveHub.Title, ActiveHub.Subtitle]);
 
             foreach (GameplayHubSection section in ActiveHub.Sections.Where(section => section.ShouldShow()))
             {
-                parts.Add(section.Title);
-                parts.AddRange(section.Elements.Select(element => element.Callback == null ? element.Content : $"[{element.Content}]"));
+                string heading = section.Title != string.Empty ? section.Title : ActiveHub.Title;
+                Add(heading, [section.Title]);
+                Add(heading, Elements(section.Elements));
             }
         }
 
-        string text = string.Join(" ", parts);
-        text = Regex.Replace(text, "<[^>]+>", " ");
-        return WebUtility.HtmlDecode(text);
+        return parts.SelectMany(part => Words(part.text).Select(word => (word, string.Join(" ", Words(part.heading))))).ToList();
+    }
+
+    private static string[] Words(string text)
+    {
+        return WebUtility.HtmlDecode(Regex.Replace(text, "<[^>]+>", " ")).Split((char[]?)null, StringSplitOptions.RemoveEmptyEntries);
     }
 
     // Word-level common prefix / suffix; returns the shared context around the change and the changed words per text

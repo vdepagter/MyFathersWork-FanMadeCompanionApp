@@ -885,7 +885,7 @@ public static partial class TheCostOfDisease
     private static void DiseaseEffectA_0(GlobalData globalData)
     {
         globalData.SaveToUndo();
-        globalData.ActivePopup = new GameplayPopup(globalData, PopUpTitle.SpecialSetup, PopUpIcon.MaladjustmentBack, PopUpButton.Confirm, DevastationFate1);
+        globalData.ActivePopup = new GameplayPopup(globalData, PopUpTitle.SpecialSetup, PopUpIcon.MaladjustmentBack, PopUpButton.Confirm, DevastationEndOfGeneration);
     }
 
     private static void DiseaseEffectB(GlobalData globalData)
@@ -900,7 +900,14 @@ public static partial class TheCostOfDisease
     private static void DiseaseEffectB_0(GlobalData globalData)
     {
         globalData.SaveToUndo();
-        globalData.ActivePopup = new GameplayPopup(globalData, PopUpTitle.SpecialSetup, PopUpIcon.S1_DiseaseExperiment, PopUpButton.Confirm, DevastationFate1);
+        globalData.ActivePopup = new GameplayPopup(globalData, PopUpTitle.SpecialSetup, PopUpIcon.S1_DiseaseExperiment, PopUpButton.Confirm, DevastationEndOfGeneration);
+    }
+
+    // The official app shows the end of generation text on its own screen (ViewEndOfGeneration)
+    private static void DevastationEndOfGeneration(GlobalData globalData)
+    {
+        globalData.SaveToUndo();
+        globalData.ActivePopup = new GameplayPopup(globalData, PopUpTitle.EndOfGeneration, PopUpIcon.MFWlogo, PopUpButton.Confirm, DevastationFate1);
     }
 
     private static void DevastationFate1(GlobalData globalData)
@@ -936,7 +943,6 @@ public static partial class TheCostOfDisease
 
         globalData.ActiveWindow = new GameplayWindow(globalData);
         globalData.ActiveWindow.AddDefaultTitle();
-        globalData.ActiveWindow.AddDefaultContent();
         globalData.ActiveWindow.AddNextContent(1);
         globalData.ActiveWindow.AddNextContent(2, false, content => content
                                                                    .FormatWithIndex(0, globalData.LocalizedPlayerNumberIndex())

@@ -620,7 +620,8 @@ public static partial class TheCostOfDisease
             content => content
                       .FormatWithIndex(0, HuntRewardAt(globalData, hunt * 4))
                       .FormatWithIndex(1, HuntRewardAt(globalData, hunt * 4 + 1))
-                      .FormatWithIndex(2, HuntRewardAt(globalData, hunt * 4 + 2)));
+                      .FormatWithIndex(2, HuntRewardAt(globalData, hunt * 4 + 2))
+                      .FormatWithIndex(3, HuntRewardAt(globalData, hunt * 4 + 3)));
     }
 
     private static void HuntersChoice_North(GlobalData globalData) => HuntersChoiceDirection(0, globalData);

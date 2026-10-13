@@ -47,6 +47,13 @@
     line-height: 1.5;
 }
 
+.mirror-heading {
+    margin: 0;
+    font-family: 'Georgia', serif;
+    font-weight: bold;
+    text-align: center;
+}
+
 .mirror-context {
     margin: 0;
     font-family: 'Georgia', serif;

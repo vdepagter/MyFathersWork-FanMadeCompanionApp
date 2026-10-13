@@ -2,6 +2,13 @@
 
 Finished work moved out of [`HANDOFF.md`](HANDOFF.md), newest first. Kept short: what was done and where it is documented.
 
+## Cost of Disease playtest findings (October 2026)
+
+- Findings, causes and a recurrence checklist in [`PLAYTEST_FINDINGS.md`](PLAYTEST_FINDINGS.md); new `tools/sourcecheck.py`.
+- Fixed: hub text formatted with stale state (shared hub refresh in `RunScenarioAction`), Gen II end-of-generation
+  text now in separate popups, truncated "South" hunt choice, mirror-mode questions show the screen heading.
+- Same checks run against Fear of the Unknown: nothing to fix.
+
 ## Merge + small fixes (October 2026)
 
 - Fear of the Unknown merged to the fork's `main` (`e18a535`).

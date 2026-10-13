@@ -2,6 +2,11 @@
     <div class="popup-box mirror-popup">
         <h2>@GlobalData.GetLocalizedUITag(GlobalTags.Mirror_Title)</h2>
 
+        @if (Question.Heading != string.Empty)
+        {
+            <p class="mirror-heading">@Question.Heading</p>
+        }
+
         @if (Question.IsNumeric)
         {
             <p class="mirror-question">@GlobalData.GetLocalizedUITag(GlobalTags.Mirror_Number)</p>

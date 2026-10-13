@@ -910,7 +910,6 @@ public static partial class TheCostOfDisease
         globalData.SaveToUndo();
         globalData.ActiveWindow = new GameplayWindow(globalData);
         globalData.ActiveWindow.AddDefaultTitle();
-        globalData.ActiveWindow.AddDefaultContent();
         globalData.ActiveWindow.AddNextContent(1);
         globalData.ActiveWindow.AddClickHereToContinue(NoHospitalCons_0);
     }
@@ -918,8 +917,7 @@ public static partial class TheCostOfDisease
     private static void NoHospitalCons_0(GlobalData globalData)
     {
         globalData.SaveToUndo();
-        globalData.ActivePopup = new GameplayPopup(globalData, PopUpTitle.SpecialSetup, PopUpIcon.AdvanceJournalTrack, PopUpButton.Confirm,
-            data => data.TheCostOfDiseaseVars.RandomElement([S5HospA1, S5HospA2, S5HospA3], 39).Invoke(data), string.Empty);
+        globalData.ActivePopup = new GameplayPopup(globalData, PopUpTitle.SpecialSetup, PopUpIcon.AdvanceJournalTrack, PopUpButton.Confirm, HospitalEndOfGeneration, string.Empty);
 
         string content = "";
 
@@ -930,6 +928,14 @@ public static partial class TheCostOfDisease
         }
 
         globalData.ActivePopup.ReplaceDescription(content);
+    }
+
+    // The official app shows the end of generation text on its own screen (ViewEndOfGeneration) when the Gen III intro starts
+    private static void HospitalEndOfGeneration(GlobalData globalData)
+    {
+        globalData.SaveToUndo();
+        globalData.ActivePopup = new GameplayPopup(globalData, PopUpTitle.EndOfGeneration, PopUpIcon.MFWlogo, PopUpButton.Confirm,
+            data => data.TheCostOfDiseaseVars.RandomElement([S5HospA1, S5HospA2, S5HospA3], 39).Invoke(data));
     }
 
     private static void S5HospA1(GlobalData globalData)

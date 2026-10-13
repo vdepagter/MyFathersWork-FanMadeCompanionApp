@@ -7,7 +7,7 @@ end when porting Fear of the Unknown and A Time of War.
 
 Path: Gen I Library -> Gen II Devastation -> Gen III Prosperity (Fraternity of Hunters, good).
 
-### 1. Middle Years Suspicion shows "Investigate" three times without a building name - OPEN (bug)
+### 1. Middle Years Suspicion shows "Investigate" three times without a building name - FIXED
 
 - **Cause:** hub text is formatted when the hub is *built*, not when it is shown. `Devastation()` is built once in the
   Early Years (from `PreDevastation`). `SuspicionBuilding` returns `None` outside Middle/Late (the mirror-mode guard), so
@@ -20,11 +20,12 @@ Path: Gen I Library -> Gen II Devastation -> Gen III Prosperity (Fraternity of H
   hub is built. Hospital formats `Sci3` (chosen before the hub is built), GloomyGothic/Prosperity/University rebuild the
   hub at the end of every chain (their only `_ => { }` is the unused `default` of the end-of-round switch). Gen I and
   Hospital also have many `_ => { }` endings but their hub text is static.
-- **Fix:** end the Devastation event chains with `Devastation` instead of `_ => { }` (at least `PreDevastation2`,
-  `Diseases2A_0`, the creepy/concealed-building popups and the Building Signin confirmations), or let the end of a chain
-  rebuild the active hub in one place (e.g. in `Gameplay.razor` when a popup/window closes onto a hub).
+- **Fix (both scenarios):** `GlobalData.RunScenarioAction` now rebuilds the shown hub (`RefreshShownHub`, via
+  `GetHubMethod`) whenever a scenario action ends with no window or popup open. An event chain ending in `_ => { }`
+  therefore always returns to an up-to-date hub. Hub methods must stay free of side effects (they are rebuilt after
+  every action) - all current ones are: the only assignment is Fear of the Unknown's idempotent `vars.Path`.
 
-### 2. III-1 "Strong Alliance" contains "END OF GENERATION SETUP ..." inline - OPEN (bug)
+### 2. III-1 "Strong Alliance" contains "END OF GENERATION SETUP ..." inline - FIXED
 
 - **Cause:** in the official app the passage calls `ViewEndOfGeneration.S_OnEndOfGeneration(text, n)`, a Unity screen
   that shows the end-of-generation instructions on their own page. The port put that text into the story window
@@ -38,10 +39,13 @@ Path: Gen I Library -> Gen II Devastation -> Gen III Prosperity (Fraternity of H
   `S_OnEndOfGeneration2` - `S4Jail1/2`), A Time of War 4 passages (`TowardsWar`, `TimeEnd1/2`, `TowardsDev`) plus 6 passages
   with `S_OnSetSpecialSetup` (`Martial1/2`, `ResistEnd`, `ResistEnd2`, `ResistEnd3`), which is the same idea for setup text.
   `python tools/sourcecheck.py <Scenario>` lists them.
-- **Fix:** show the text as an `EndOfGeneration` popup (like `FeverHeart2_1`) before the story window, and drop it from
-  the window content.
+- **Fix:** `DevastationEndOfGeneration` popup before "Strong Alliance"; `HospitalEndOfGeneration` popup after "A Steady
+  Focus" and before the Gen III intro (where the source shows it; the random `S5HospA*` intro is drawn when it closes).
+  The text was removed from both windows.
+- **Fear of the Unknown:** already correct - `Gen1End`, `Gen2ForeignersEnd` (both `S4Foreign` variants) and
+  `Gen2CreatureEnd` are separate End of Generation popups.
 
-### 3. First / Second Night of the Hunt - "South" choice has no text - OPEN (bug)
+### 3. First / Second Night of the Hunt - "South" choice has no text - FIXED
 
 - **Cause:** `HuntersChoice_Content1` ends with `<link=3>South</link>`; the source label is
   "South, back to the town. Both players gain 2 {reward4}." North/East/West are complete. Because the South reward is
@@ -51,17 +55,21 @@ Path: Gen I Library -> Gen II Devastation -> Gen III Prosperity (Fraternity of H
   South links (both hunts) are truncated. Other hits are intentional: title-screen player counts and debug start menu
   (UI pages), and `S5Fate2`, whose "Succeeded in / Failed to Build the Hospital" links became "Click here to continue"
   (harmless).
-- **Fix:** add the South text with `{{3=|...}}` and format index 3 with `HuntRewardAt(globalData, hunt * 4 + 3)`.
+- **Fix:** South text with `{{3=|...}}`, formatted with `HuntRewardAt(globalData, hunt * 4 + 3)`, so mirror mode now
+  asks for the South reward on this screen.
+- **Fear of the Unknown:** no truncated labels. The only unmatched source links are the title screen, the debug start
+  menu and unreachable note passages (`4Notes`, `Extracodes`, `LowestJournalEvent` - nothing links to them).
 
-### 4. Mirror mode question lacks the screen heading - OPEN (improvement)
+### 4. Mirror mode question lacks the screen heading - FIXED
 
 - **Cause:** `MirrorPopup` shows at most 8 words before and after the changing part (`_MIRROR_CONTEXT_WORDS`). The
   window/popup title (e.g. "A Town Encounter") is part of the compared text but usually falls outside that window, so
   the players see a fragment without knowing which page of the official app to look at.
 - **Elsewhere:** every mirror question (`MirrorScreenText`); worst on long story windows and hubs.
-- **Fix:** keep the title of the screen that is being asked about (window title, popup title, or the hub section title
-  that contains the change) and show it as a heading in `MirrorPopup`. When the title itself is what differs, it is
-  already in the option text.
+- **Fix (both scenarios):** `MirrorScreenWords` tags every word with the title of the part of the screen it is in
+  (window title, popup title, or hub section title / hub title). `MirrorQuestion.Heading` is the title where the options
+  start to differ and `MirrorPopup` shows it above the question. It is empty when the title itself differs (the options
+  are different screens and each starts with its own title); "not visible" questions use the current screen's title.
 
 ### 5. "Stunning Success!" - "Gain a Knowledge of your choice" - NOT A BUG
 
@@ -84,12 +92,24 @@ word. The head icon is the Creepiness token (`Creepy_Icon`).
 - **Next time:** note the Yes/No answer of both hunt votes in both apps. If they really were both "Yes." in the official
   app, this needs another look.
 
+## Checks against Fear of the Unknown (October 2026)
+
+Run after the port was merged; no changes to Fear of the Unknown were needed.
+
+- #1 hub text: its event chains already end by calling the hub method (the only `_ => { }` per file is the unused
+  `default` of the end-of-round switch); the shared hub refresh now covers it anyway. Browser run in mirror mode through
+  Gen II Foreigners Early -> Middle -> Late: no errors, hubs current.
+- #2 end-of-generation screens: all three are separate popups (see #2).
+- #3 link labels: nothing truncated (see #3).
+- #4 mirror heading: shared code; checked on Foreigners questions ("Blame it on the Foreigners", "Town Strength",
+  "Death and Resolution").
+
 ## Checklist for porting / reviewing a scenario
 
-1. **Hub text vs. state** - any hub text built with a formatter (`AddSpecialClickHere(..., content => ...)`,
-   `AddDefaultContent(..., content => ...)`, `SetDefaultTitle(content => ...)`) must be rebuilt when that state changes.
-   End every event chain that returns to a state-dependent hub with the hub method, not `_ => { }`. Play-test the round
-   transitions themselves, not only crafted saves (load and undo rebuild the hub and hide this).
+1. **Hub text vs. state** - hub text is formatted when the hub is built. `RunScenarioAction` rebuilds the shown hub
+   after every action, so this is automatic as long as hub methods have no side effects (no state changes, no
+   `SaveToUndo`, no windows/popups) and only draw random values for sections that are shown. Still play-test round
+   transitions themselves, not only crafted saves.
 2. **Unity-only screens** - run `python tools/sourcecheck.py <Scenario> <CsvPrefix>`. Every `S_OnEndOfGeneration`,
    `S_OnEndOfGeneration2` and `S_OnSetSpecialSetup` text becomes its own popup (`PopUpTitle.EndOfGeneration` /
    `SpecialSetup`), never part of the story window.

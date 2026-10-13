@@ -27,6 +27,7 @@ public class MirrorQuestion
     public          string             After      { get; init; } = string.Empty; // Text shared by all options, after the change (short options)
     public          int?               NumericMin { get; init; }
     public          bool               Hidden     { get; init; } // Every value gives the same screen, the official app shows it later
+    public          string             Heading    { get; init; } = string.Empty; // Title of the screen part the question is about
 
     public bool IsNumeric   => NumericMin != null && Count > MaxOptions;
     public bool ShortLabels => Options.All(option => option.Changed.Length <= ShortLabelLength && option.Before == string.Empty && option.After == string.Empty);
