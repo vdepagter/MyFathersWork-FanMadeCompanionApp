@@ -47,6 +47,8 @@ public static class FinalScoring
 
         if (tied.Length == 1)
         {
+            vars.TiedPlayers    = [];
+            vars.TieMasterworks = [];
             DeclareWinner(tied[0], globalData);
             return;
         }
@@ -144,12 +146,21 @@ public static class FinalScoring
         globalData.ActiveWindow = new GameplayWindow(globalData);
         globalData.ActiveWindow.AddDefaultTitle();
 
-        string[] ranking = globalData.GetActivePlayers().OrderByDescending(player => vars.Scores[player]).ThenByDescending(player => player == vars.Winner).ToArray();
+        // Tie-breakers only separate the tied top scorers: Masterwork first, then Estate Upgrades (when that was asked)
+        bool upgradesAsked = vars.TieMasterworks.Length > 1 && vars.TieUpgrades.Length == vars.TieMasterworks.Length;
+
+        (int score, int masterwork, int upgrades) Key(string player)
+        {
+            int masterworkIndex = Array.IndexOf(vars.TieMasterworks, player);
+            return (vars.Scores[player], masterworkIndex >= 0 ? 1 : 0, upgradesAsked && masterworkIndex >= 0 ? vars.TieUpgrades[masterworkIndex] : 0);
+        }
+
+        string[] ranking = globalData.GetActivePlayers().OrderByDescending(Key).ToArray();
 
         for (int x = 0; x < ranking.Length; ++x)
         {
             string player = ranking[x];
-            int    place  = x;
+            int    place  = ranking.Count(other => Key(other).CompareTo(Key(player)) > 0); // equal players share the place
             globalData.ActiveWindow.AddNextContent(1, false, content => content
                                                                        .FormatWithIndex(0, place)
                                                                        .FormatWithReplacement(1, player)

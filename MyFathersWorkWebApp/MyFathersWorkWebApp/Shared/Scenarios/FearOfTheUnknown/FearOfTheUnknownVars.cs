@@ -94,12 +94,18 @@ public class FearOfTheUnknownVars() : ScenarioVars(900)
     public int    AsylumOutcome    { get; set; } // originally outcome
     public int[]  AsylumQuestions  { get; set; } = [-1, -1, -1, -1];
 
+    // Flavor dates (see RandomDate)
+    public int DateRound { get; set; } // first year of the round the last date was made for
+    public int DateDays  { get; set; } // days after 1 January of that year
+
     public const string SUSPECT = "#Suspect"; // the Apprentice who can be the witch with 2 or 3 players
 
     public void Reset(GlobalData globalData)
     {
         ResetBase(globalData);
 
+        DateRound       = 0;
+        DateDays        = 0;
         HubId           = FearOfTheUnknownHubId.None;
         Path            = FearOfTheUnknownHubId.None;
         Tracker         = 0;

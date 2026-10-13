@@ -2,6 +2,12 @@
 
 Finished work moved out of [`HANDOFF.md`](HANDOFF.md), newest first. Kept short: what was done and where it is documented.
 
+## Merge + small fixes (October 2026)
+
+- Fear of the Unknown merged to the fork's `main` (`e18a535`).
+- Letter dates move forward within a round; "Conducting Business" dated August to match its text.
+- Rankings: equal players share a place unless a tie-breaker separated them (both scenarios).
+
 ## Fear of the Unknown - browser play test (October 2026)
 
 - Played with crafted saves (`mkSaveFotU` in `tools/test-save-helpers.js`, auto-drivers `auto`/`autoFirst`): menu

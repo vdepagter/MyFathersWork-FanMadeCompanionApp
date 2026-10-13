@@ -12,7 +12,7 @@ When a piece of work is finished, move its section to [`HANDOFF_ARCHIVE.md`](HAN
 | Scenario | Web app | Notes |
 |---|---|---|
 | The Cost of Disease (`ScenarioId.CostOfDisease`) | **Complete, play testing** - Gen I, II, III, final scoring, all 8 endings | Only English text. Menu description starts with "PLAY TESTING". |
-| Fear of the Unknown (`FearOfUnknown`) | **Ported, browser play test done** - all branches, battle, asylum assessment, scoring, 8 endings | Not merged to `main` yet. Menu description starts with "WORK IN PROGRESS". See the section below. |
+| Fear of the Unknown (`FearOfUnknown`) | **Ported, browser play test done** - all branches, battle, asylum assessment, scoring, 8 endings | Waiting for a table play test. Menu description starts with "WORK IN PROGRESS". See the section below. |
 | A Time of War (`TimeOfWar`) | **Not started** | Selecting it bounces back to the main menu. |
 
 ## Repository layout
@@ -109,7 +109,8 @@ Source size: `ATimeOfWar.txt` 297 passages, English. It has time-travel/paradox 
 - ExpNo after the last round uses the "return tokens" text.
 - TownHallDestroyed gives no bonus when nobody verified (source gave it to player A). SmugConsequence letter header says "name illegible" (source showed a stale name).
 - One-time events per player (Bloodsmith reward `CreepReward`, crossroads `CrossroadVisited`, verification `Verified`) only list players who have not had them, and the hub link disappears once everybody had it (source always listed everybody).
-- After the last round `Generation` is 3; `RandomDate` then uses the Gen III Late years.
+- Random letter dates (`RandomDate`) move forward within a round (cursor `DateRound`/`DateDays` in the Vars, 1-10 months per date); the source drew each date independently, so they jumped back and forth. After the last round `Generation` is 3; `RandomDate` then uses the Gen III Late years. Dates written into the CSV text are fixed and can still be out of order with the random ones.
+- "Conducting Business" (`PrivatizedIntro`) is dated 9 August, 1892 (source: 9 February while the letter says "it is August").
 - Mirror mode: the witch identity is asked via the hex location.
 - 5-player branches dropped.
 
@@ -117,7 +118,7 @@ Source size: `ATimeOfWar.txt` 297 passages, English. It has time-travel/paradox 
 
 - Gen III building tiles: Gloomy Gothic uses `BuildingsExposeValue <= 1`, Prosperity `> 0`. Looks inconsistent, but `<= 1` appears identically in every story version in the Unity project (earlier English edit, latest English, Spanish), so it was kept as the developer shipped it. The owner decided to keep it, but suspects it may be flawed.
 - "Still Wary" popup lists Wolves allies only (source always appended the first player due to an always-true condition).
-- Ties follow the rulebook (End of the Game): most points, then completed Masterwork, then most Estate Upgrades, else the family shares the win. Tie-breakers pick the winner without changing scores (the original app added +1 / the entered number to the score).
+- Ties follow the rulebook (End of the Game): most points, then completed Masterwork, then most Estate Upgrades, else the family shares the win. Tie-breakers pick the winner without changing scores (the original app added +1 / the entered number to the score). Rankings (shared `FinalScoring`) give equal players the same place: the score, then Masterwork, then Estate Upgrades (when asked) separate them, so a shared win shows several "1st".
 - "A Return to Evil" keeps the end-of-generation prompt (source jumped straight to scoring).
 - Gen II Hospital: when everybody visited the Hospital the source skips "A Steady Focus"; the web app shows it.
 - Not ported: endings/achievements gallery, sharing, voice audio, 5-player games.

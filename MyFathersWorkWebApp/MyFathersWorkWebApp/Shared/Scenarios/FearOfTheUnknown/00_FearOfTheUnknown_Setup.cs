@@ -115,7 +115,8 @@ public static partial class FearOfTheUnknown
         return content => content.FormatWithIndex(id, Vars(globalData).Flavor(key + "#" + id, count));
     }
 
-    // Flavor: a date within the years of the current round (originally date1a)
+    // Flavor: a date within the years of the current round (originally date1a). Each date of a round is later than the
+    // previous one: the round starts at a random day early in its first year and every date moves 1 to 10 months on.
     private static string RandomDate(GlobalData globalData, string key, string tag = "Flavor_Date")
     {
         FearOfTheUnknownVars vars = Vars(globalData);
@@ -136,10 +137,23 @@ public static partial class FearOfTheUnknown
 
         int last = first + (first is 1831 or 1852 or 1881 or 1912 ? 10 : first is 1863 or 1872 ? 8 : 9);
 
+        if (vars.DateRound != first)
+        {
+            vars.DateRound = first;
+            vars.DateDays  = vars.Flavor(key + "#start", 120);
+        }
+
+        vars.DateDays += 30 + vars.Flavor(key + "#step", 271);
+
+        DateTime start = new(first, 1, 1);
+        DateTime end   = new(last, 12, 31);
+        DateTime date  = start.AddDays(vars.DateDays);
+        if (date > end) date = end;
+
         return Tag(globalData, tag)
-              .FormatWithReplacement(0, (1 + vars.Flavor(key + "#day", 29)).ToString())
-              .FormatWithIndex(1, vars.Flavor(key + "#month", 12))
-              .FormatWithReplacement(2, (first + vars.Flavor(key + "#year", last - first + 1)).ToString());
+              .FormatWithReplacement(0, date.Day.ToString())
+              .FormatWithIndex(1, date.Month - 1)
+              .FormatWithReplacement(2, date.Year.ToString());
     }
 
     // Bold letter / journal header: "<prefix> <author> - <date>." Prefix tags hold alternatives ({{0=|Letter from |...}})
