@@ -174,6 +174,32 @@ ready, click here to reveal your secret conversation" in one passage: port as a 
 | `TowardsWar` | `TowardsWar_0` eog popup **then** `TowardsWar` win | eog text "Remove all player pieces ... Return any unused Sickle/Shield/Wooden Figure tokens to the Scenario box." -> win "A Town Fully Defended" (text by `Barracks`) -> `IntroMartialSeparatists` if `WarWinner == Separatists` else `IntroMartialMonarchists` | R `Barracks` | | eog inline `S3_SickleToken`, `S3_ShieldToken`, `S3_WoodenFigureToken` | Unity `S_OnEndOfGeneration` overlay (finding #2). Name the popup e.g. `GenerationOneWarEnd`. Text bug with `Barracks == False` (see 7, B4). |
 | `TowardsDev` | `TowardsDev_0` eog popup then `TowardsDev` win | eog "Perform the End of the Generation as normal, but do NOT discard your completed Experiments..." -> win "Under Unfortunate Circumstances" (by `Barracks`) -> `TimeTravelIntro` | R `Barracks` | | as above | |
 
+**Ported (October 2026).** Implementation notes and deviations from the table above:
+- Hub sections: `TownHall` (main), `Pledge` (Early, holds the end-of-round link), `PledgeMiddle`, `Bonus`, `MilitaryDemands`,
+  and the untitled `EndMiddle` / `EndLate` link sections (source labels; their `_Title` tags are empty). The end-of-round
+  router is `TakingSides_0` (FotU `WitchHunt_0` pattern). The Late money text says "money tokens" as in the source.
+- End of Gen I: `GenerationOneEnd` (route) -> `TSBarracksPenalty` / `SeedGUNS` / `GenerationOneWar`. `GenerationOneWar`
+  (route) applies the town-name override and draws `_RND_WAR` if still undrawn, so the draw happens in the click that
+  shows `Warwarn` or the end-of-generation popup (mirror mode), not already in the end-of-round popup when
+  `TSBarracksPenalty`/`SeedGUNS` come first. The end-of-generation popups are `GenerationOneWarEnd` (before `TowardsWar`)
+  and `GenerationOneDevEnd` (before `TowardsDev`).
+- `RumorD3Revealed`: the quartering sentence needs `Quarter` yes **and** `War` 2. With `War` undrawn, `Quarter` is drawn
+  first (4.1 said "if `War()==2`"): mirror mode cannot preview a sentence that depends on two undrawn values, so it asks
+  `Quarter` as a hidden value (sentence shown = yes; no sentence = no, which is only wrong with War 1, where Quarter
+  never matters) and then asks `War` visibly. With `War` known, `Quarter` is drawn (visibly) only for War 2. This is the
+  only expected `Mirror: ... not visible` console line in Gen I.
+- `RumorD5`: `WoodenFigures++` on the hand-over screen (source: on entering the passage). `RumorD1`/`D3`/`D4` set their
+  flags on the hand-over screen, `RumorD2` (`MetGentleman`) on the revealed screen (Unity).
+- `TakeEventb`: link label "Nay. We voted against." without the source bold (window links render as plain text).
+- The `RumorD`/`TownHallS1` option "A distinguished gentleman near the stage - his whiskers well-waxed." uses " - " for the
+  source ";" (CSV separator) - `sourcecheck.py` lists it, as it lists the "''against''" label.
+- B1 (`GunsAnnouncement`) skipped as shipped, B4 text kept, B29 override applied in `GenerationOneWar`.
+- Extra enum `Shared/Enums/MartialBuilding.cs` (`None, Barracks, LaborersUnion`) for `SabotagedBuilding` (section 3).
+- Temporary: `IntroMartialMonarchists`, `IntroMartialSeparatists` (file 02), `TimeTravelIntro` (file 04) and
+  `FinalEnding` (file 09) are `// TODO ATOW` stubs showing the `NotYetPorted` text (Gameplay CSV) without a link; the
+  shared helper `NotYetPorted` (file 00) and that CSV row go away when the last stub is replaced. `GetHubMethod` maps only
+  `TakingSides` so far.
+
 ### 2.2 Gen II "Martial" (files 02, 03) - 63 passages
 
 Intro, hub and generation end (file 02):

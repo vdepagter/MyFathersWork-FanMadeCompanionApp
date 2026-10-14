@@ -13,7 +13,7 @@ When a piece of work is finished, move its section to [`HANDOFF_ARCHIVE.md`](HAN
 |---|---|---|
 | The Cost of Disease (`ScenarioId.CostOfDisease`) | **Complete, play testing** - Gen I, II, III, final scoring, all 8 endings | Only English text. Menu description starts with "PLAY TESTING". |
 | Fear of the Unknown (`FearOfUnknown`) | **Ported, browser play test done** - all branches, battle, asylum assessment, scoring, 8 endings | Waiting for a table play test. Menu description starts with "WORK IN PROGRESS". See the section below. |
-| A Time of War (`TimeOfWar`) | **Not started** | Selecting it bounces back to the main menu. |
+| A Time of War (`TimeOfWar`) | **Gen I ported** - scaffold, setup, Taking Sides, end of Gen I | Gen II/III and endings are `// TODO ATOW` stubs ("not yet ported" screen). Menu description starts with "WORK IN PROGRESS". Spec: `docs/ATOW_PORT_MAP.md`. |
 
 ## Repository layout
 

@@ -1,0 +1,31 @@
+﻿Tag;English
+//====== Setup ======;
+Init_Content;Complete the standard setup for {{0=|two|three|four}} players as shown in the rulebook. <i>Note that the <icon=AngryMob_Icon> Track and starting player will be set by the Storybook in the coming pages.</i><br /><sprite=ScenarioBox3D_War>Then, retrieve the <b>A Time of War</b> Scenario box, which will contain all components needed for this story. As the Storybook progresses, it will ask you to put items into play from this box. Be sure to keep it nearby.
+//====== Gen1 - Taking Sides ======;
+IntroConflict_0_Content;Place the {{0=...|Separatists|...}} Flag card face-up near the Village Chronicle.
+TakingSidesEarlySetup_Content;Turn to the <b>A Time of War</b> section of the Village Chronicle. Then, turn to page <b>1</b><i> (this is noted by the matching A Time of War symbol: </i><icon=S3_ScenarioIcon>). Retrieve the <b>Flag</b> tokens. Retrieve the <icon=S3_WoodenFigureToken>, <icon=S3_ShieldToken>, and <icon=S3_SickleToken> tokens.<br /><br />Place the Suspicion Marker on space <b>{{0=...|7|...}}</b> and the <icon=AngryMob_Icon> Marker one space to the left. Give the <b>Start Player</b> marker to <b>{{1=...|Oliver|James|Olivia|...}}</b>.
+TakingSidesLateSetup_Content;{{0=?|Turn to page <b>2</b> of the Village Chronicle.<br /><br />Each player takes a Caretaker of their color from Lost and places it on the <b>Barracks</b>. <i>If you do not have a Caretaker available in Lost, you may forgo this action.</i>|Turn to page <b>3</b> of the Village Chronicle.}}
+RumorD1_0_Content;<b>Gain the {{0=...|Sickle|...}} token.</b>
+RumorD2_0_Content;Gain the {{0=...|Shield|...}} token.
+RumorD5_0_Content;Gain a <icon=S3_WoodenFigureToken> token.
+RumorIngredient_0_Content;<b>Gain 1 Ingredient of your choice.</b> <i>If it is a <icon=Bodies_Icon>, gain 1 <icon=Creepy_Icon>.</i>
+RumorKnowledge_0_Content;<b>Gain 1 Knowledge of your choice.</b> <i>If it is "Occult", gain 1 <icon=Creepy_Icon>.</i>
+RumorPitch_0_Content;<b>Move the <icon=AngryMob_Icon> Marker one space to the right</b> and <b>gain 1VP</b>.
+RumorCreep_0_Content;<b>Gain 1VP</b> and <b>gain 1 <icon=Creepy_Icon></b>.
+ResolutionofEvent_0_Content;All players who voted to build the Barracks receive a Flag token and flip it {{0=...|Separatists|...}} side up{{2=?| and <b>gain 2VP</b>}}{{3=?| and <b>gain 2 Resources of their choice</b>}}.<br /><br />All players who voted against building the Barracks receive a Flag token and flip it {{1=...|Unified Monarchists|...}} side up{{4=?| and <b>gain 2 Resources of their choice</b>}}{{5=?| and <b>gain 2VP</b>}}.
+TSBarracksPenalty_Content;If any player's Caretaker remains on the Barracks at the End of the Generation, they immediately <b>lose 5VP</b>.
+SeedGUNS_Content;All players count up the total number of {{0=| |Knowledge cubes|Ingredients|money}} remaining in their possession. The player(s) with the most {{0=| |cubes|Ingredients|money}} immediately gains a <b><icon=StorybookToken> token</b> and places it in their Quarters.
+SeedGUNS_0_Content;Any player with a <b><icon=StorybookToken> token</b> immediately gains <b>{{0=...|2|...}}VP.</b>
+Warwarn_Content;Remove all player pieces from the board when performing the End of the Generation as normal, but do <b>NOT</b> discard your completed Experiments. You will still choose a completed Experiment to Store, but keep all your other completed Experiments nearby.
+GenerationOneWarEnd_Content;Remove all player pieces from the board and perform the End of the Generation. Return any unused <icon=S3_SickleToken>, <icon=S3_ShieldToken>, and <icon=S3_WoodenFigureToken> tokens to the Scenario box.
+GenerationOneDevEnd_Content;Perform the End of the Generation as normal, but do <b>NOT</b> discard your completed Experiments. Remove all player pieces from the board. Return any unused <icon=S3_SickleToken>, <icon=S3_ShieldToken>, and <icon=S3_WoodenFigureToken> tokens to the Scenario box.
+//====== Not ported yet (temporary, remove with the stubs) ======;
+NotYetPorted;<b>WORK IN PROGRESS</b><br /><br />This part of <b>A Time of War</b> has not been ported to the web app yet. Use the pause menu to return to the main menu.
+//====== Scoring ======;
+ScoreEntry_Content;Please enter the final score for <b>{{0=...|Oliver|James|Olivia|...}}</b>.
+TieBreaker1_Title;Tie Breaker
+TieBreaker1_Content;The highest score is tied. Did <b>{{0=...|Oliver|James|Olivia|...}}</b> complete their Masterwork?
+TieBreaker2_Content;More than one tied player completed their Masterwork. Please enter the number of <b>Estate Upgrades</b> owned by <b>{{0=...|Oliver|James|Olivia|...}}</b>. <i>(The player with the most Estate Upgrades wins. If still tied, the family shares the win.)</i>
+Rankings_Title;Rankings
+Rankings_Content1;<b>{{0=|1st|2nd|3rd|4th}}</b> - {{1=...|Oliver|James|Olivia|...}} ({{2=...|40|...}}VP)<br />
+Rankings_Content2;{{0=?|<b>The family is victorious!</b>|<b>{{1=...|Oliver|James|Olivia|...}} is victorious!</b>}}

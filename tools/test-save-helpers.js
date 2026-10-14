@@ -56,6 +56,27 @@ window.mkSaveFotU = (hub, opts = {}) => {
   return "ok";
 };
 
+// A Time of War: hubId = ATimeOfWarHubId (1 TakingSides, 2 Martial, 3 TimeTravel, 4 MonarchReign, 5 Peace, 6 Warning,
+// 7 Paradox). Enums: WarWinner 1 Separatists / 2 Monarchists, War 0 undrawn / 1 Time Travel / 2 Martial,
+// ExtendedBool (Barracks, Quarter, ...) 0 None / 1 False / 2 True. Defaults: Gen I (gen 0), Late Years, Barracks built.
+window.mkSaveATOW = (hub, opts = {}) => {
+  const n = opts.n || 3; const ps = ["Anna", "Bob", "Cleo", "Dan"].slice(0, n);
+  const d = v => Object.fromEntries(ps.map(p => [p, JSON.parse(JSON.stringify(v))]));
+  const v = Object.assign({
+    HubId: hub, Tracker: 7, WarWinner: 1, War: 0, Quarter: 0, Barracks: 2, Showcase: 0,
+    DecreeUsed: Array(9).fill(false),
+    BlameVotes: d(0), Silent: d(false), DecreesGood: d(0), DecreesEvil: d(0), Titles: d(""), Released: d(false), Scores: d(0),
+    ...(opts.mirror ? { RandomArray: Array(300).fill(-1) } : {})
+  }, opts.vars || {});
+  const g = {
+    Language: "English", ScenarioLanguage: "English_Source", ScenarioId: 3, PlayersNum: n, MirrorMode: !!opts.mirror,
+    PlayerAName: "Anna", PlayerBName: "Bob", PlayerCName: n > 2 ? "Cleo" : "", PlayerDName: n > 3 ? "Dan" : "",
+    TownName: opts.town || "Testville", Years: opts.years ?? 2, Generation: opts.gen ?? 0, TmpValues: {}, ATimeOfWarVars: v
+  };
+  localStorage.setItem("continue", btoa(JSON.stringify(g)));
+  return "ok";
+};
+
 window.clickText = t => {
   const els = [...document.querySelectorAll("a,button")].filter(e => e.innerText.includes(t));
   if (!els.length) return "NOTFOUND: " + t;

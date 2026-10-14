@@ -33,18 +33,21 @@ public partial class GlobalData
     public Generation                 Generation           { get; set; } = Generation.First;
     public TheCostOfDiseaseVars       TheCostOfDiseaseVars { get; }      = new();
     public FearOfTheUnknownVars       FearOfTheUnknownVars { get; }      = new();
+    public ATimeOfWarVars             ATimeOfWarVars       { get; }      = new();
     public Dictionary<string, object> TmpValues            { get; }      = new();
 
     // The active scenario's random values and final scoring state
     [JsonIgnore] public ScenarioVars ScenarioVars => ScenarioId switch
     {
         ScenarioId.FearOfUnknown => FearOfTheUnknownVars,
+        ScenarioId.TimeOfWar     => ATimeOfWarVars,
         _                        => TheCostOfDiseaseVars
     };
 
     // Only the active scenario's state is saved (keeps saves and undo snapshots small)
-    public bool ShouldSerializeTheCostOfDiseaseVars() => ScenarioId != ScenarioId.FearOfUnknown;
+    public bool ShouldSerializeTheCostOfDiseaseVars() => ScenarioId is not (ScenarioId.FearOfUnknown or ScenarioId.TimeOfWar);
     public bool ShouldSerializeFearOfTheUnknownVars() => ScenarioId == ScenarioId.FearOfUnknown;
+    public bool ShouldSerializeATimeOfWarVars()       => ScenarioId == ScenarioId.TimeOfWar;
 
     [JsonIgnore] public GameplayHub?        ActiveHub        { get; set; }
     [JsonIgnore] public GameplayWindow?     ActiveWindow     { get; set; }
@@ -66,6 +69,7 @@ public partial class GlobalData
     {
         TheCostOfDiseaseVars.Reset(this);
         FearOfTheUnknownVars.Reset(this);
+        ATimeOfWarVars.Reset(this);
     }
 
     // Static class holding the active scenario's screens (SaveToUndo looks methods up by name)
@@ -73,6 +77,7 @@ public partial class GlobalData
     {
         ScenarioId.CostOfDisease => typeof(TheCostOfDisease),
         ScenarioId.FearOfUnknown => typeof(FearOfTheUnknown),
+        ScenarioId.TimeOfWar     => typeof(ATimeOfWar),
         _                        => null
     };
 
@@ -299,6 +304,7 @@ public partial class GlobalData
         {
             ScenarioId.CostOfDisease => "localization/TheCostOfDisease_Localization.csv",
             ScenarioId.FearOfUnknown => "localization/FearOfTheUnknown_Localization.csv",
+            ScenarioId.TimeOfWar     => "localization/ATimeOfWar_Localization.csv",
             _                        => string.Empty
         };
 
@@ -306,6 +312,7 @@ public partial class GlobalData
         {
             ScenarioId.CostOfDisease => "localization/TheCostOfDisease_Gameplay_Localization.csv",
             ScenarioId.FearOfUnknown => "localization/FearOfTheUnknown_Gameplay_Localization.csv",
+            ScenarioId.TimeOfWar     => "localization/ATimeOfWar_Gameplay_Localization.csv",
             _                        => string.Empty
         };
 
@@ -329,6 +336,7 @@ public partial class GlobalData
         {
             ScenarioId.CostOfDisease => TheCostOfDisease.Init,
             ScenarioId.FearOfUnknown => FearOfTheUnknown.Init,
+            ScenarioId.TimeOfWar     => ATimeOfWar.Init,
             _                        => null
         };
 
@@ -351,6 +359,11 @@ public partial class GlobalData
                 FearOfTheUnknown.FinalEnding(this);
                 break;
             }
+            case ScenarioId.TimeOfWar:
+            {
+                ATimeOfWar.FinalEnding(this);
+                break;
+            }
         }
     }
 
@@ -368,6 +381,16 @@ public partial class GlobalData
                 FearOfTheUnknownHubId.Privatized => FearOfTheUnknown.Privatized,
                 FearOfTheUnknownHubId.Liberal    => FearOfTheUnknown.Liberal,
                 _                                => null
+            };
+        }
+
+        if (ScenarioId == ScenarioId.TimeOfWar)
+        {
+            // TODO ATOW: add the Gen II / III hubs (Martial, TimeTravel, MonarchReign, Peace, Warning, Paradox) when ported
+            return ATimeOfWarVars.HubId switch
+            {
+                ATimeOfWarHubId.TakingSides => ATimeOfWar.TakingSides,
+                _                           => null
             };
         }
 
