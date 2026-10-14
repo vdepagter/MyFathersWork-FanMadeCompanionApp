@@ -370,6 +370,37 @@ duels). `GetHubMethod` maps `ATimeOfWarHubId.Martial`. Implementation notes and 
 | `TimeEnd2` | `TimeEnd2_0` eog popup then `TimeEnd2` win | `TimeMachineRepaired`: "Fully Repaired" -> `Paradoxical`; else "Rusty, But Worth a Try": how many Repairs? "Zero." / "One." / "Two." -> `TimeEnd2b` | W `RepairsDone` | | | |
 | `TimeEnd2b` | `TimeEnd2b` win | "An Unsettling Time" (zero vs {one piece/two pieces}) -> `WarningIntro` | R `RepairsDone` | | | |
 
+**Ported (October 2026).** File `04_ATimeOfWar_Gen2_TimeTravel.cs`; `GetHubMethod` maps `ATimeOfWarHubId.TimeTravel`.
+Implementation notes and deviations from the table above:
+- Method names: `TimeTravel_0` (hub end-link router: Early -> `FixIt`, Middle -> `TownHallOpposite`, Late -> `BlameOut3`
+  if `AllSilent` else `SecretParadoxBonus`), `TimeTravelYears()` (as `MartialYears`: Late after the Gen II Late popup, so
+  the hub rebuilt by undo on the end-of-Generation screens shows the Late sections), `MilitarytokenRevealed`,
+  `Blame` / `BlameRevealed` (= `Blame1..4`, player `BlameIndex`), `BlameNext` (route), `BlameResolve_0` (flag popup) and
+  `BlameResolveNext` (route), `TimeTravelLateSetup` (route) + `TimeTravelLateSetup_0` (page 14 popup),
+  `TTBarracksPenaltyCheck` (route part of `TTBarracksPenalty`), `TimeEnd2Repairs` (link helper, no screen).
+- Hub sections: `MilitaryDemands` (Late, `Barracks == False`), `Repair` (Middle/Late, not repaired), `ParadoxExplanation`
+  (all rounds, the only main panel), `Mending` (not claimed), untitled `End` (Early/Middle) and `EndLate` (Late, "Click
+  here to determine the Fate of the Town."). Inline links as in the source (content ends with a space, then the link).
+  `$late = 0` (set on every render of the Early hub) is set once in `TimeTravelIntro1`; the `$pg13` / `$pg14` guards are
+  dropped: page 13 is shown once before the Early hub (`TimeTravelEarlySetup`), page 14 once before the Late hub.
+- End of Generation: `TimeEnd1` and `TimeEnd2` have the identical `S_OnEndOfGeneration` text, so one popup
+  `TimeTravelGenerationEnd` is shown after `TTBarracksPenalty` / `SecretParadoxBonus`, and `_RND_TIME_END` is drawn in its
+  close callback (FotU pattern; mirror mode asks after the overlay). `$dox` (`_RND_DOX`) is drawn on `TimeEnd1`.
+- `TimeEnd1` keeps the two source link labels "Click here to continue" (-> `WarningIntro`) and "Click here to
+  continue..." (-> `Paradoxical`).
+- `BlameResolve`: blamed = unique maximum of `BlameVotes`; nobody blamed at all -> `AllSilent` (-> page 14 / hub);
+  otherwise `BlameOut2`. The flag popup comes first when `FlagsBought > 0` (singular text for 1). `BlameOut2_0` lists the
+  silent players in turn order (tag `BlameOut2_0_Silent`), then "All other players ...". Hand-overs use the shared
+  `AddDoNotOtherPlayersToSee` text (named player); the military token hand-over keeps the source text ({crest} holder).
+- `SeedResolution`: Showcase 0 shows the money text (B11, as shipped). Its popup keeps the source typo "gains <b>gains
+  $2</b>" (owner question). The popup has no SETUP header in the source and is shown as a Setup popup.
+- `TownHallOpposite`: one sentence with `{{0=?|not built|built}}` (the source had two sentences differing in that word).
+- `Paradoxical` belongs to 2.7: `WarningIntro` (file 07) and `Paradoxical` (file 08) are `// TODO ATOW Gen III` stubs
+  showing `NotYetPorted`.
+- `$parasecret` dropped (B13); `$takereact` swap in `TimeTravelintro1` dropped (B2); `Blame5` / 5-player text dropped (B28).
+- Mirror mode: a 4-player run printed no `Mirror: ... not visible` line (questions: `SeedGUNS` VP, mending VP,
+  `TimeEnd1`/`TimeEnd2`, `$dox`).
+
 ### 2.4 Gen III "Heavy is the Crown" (Reign, file 05) - 44 passages + `ATOW-Church`
 
 Reached when the Unified Monarchists win the war at the end of Gen II Martial.

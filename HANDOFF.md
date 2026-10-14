@@ -6,7 +6,7 @@ Only work in progress lives here. When a section is finished, move it to [`HANDO
 ## A Time of War port (October 2026)
 
 Spec: [`docs/ATOW_PORT_MAP.md`](docs/ATOW_PORT_MAP.md) (one task per section 2.x). Status: **scaffold + Gen I "Taking
-Sides" + Gen II "Martial" done** (map 1.3/1.4, 2.1 and 2.2), branch `claude/port-a-time-of-war-132617`.
+Sides" + Gen II "Martial" + Gen II "Time Travel" done** (map 1.3/1.4, 2.1, 2.2 and 2.3), branch `claude/port-a-time-of-war-132617`.
 
 - Engine: `Shared/Scenarios/ATimeOfWar/` (`ATimeOfWarVars` with every section-3 field, all `_RND_*` constants of 4.1 in
   `00_ATimeOfWar_Setup.cs`), `ATimeOfWarHubId`, `WarFaction`, `MartialBuilding`, `PopUpIcon` S3 constants, all `GlobalData`
@@ -27,10 +27,21 @@ Sides" + Gen II "Martial" done** (map 1.3/1.4, 2.1 and 2.2), branch `claude/port
   sabotage/messenger/duel/tea/quartering/bribe branch, all three `ResistEnd*` into both Gen III stubs, undo on many
   screens, reload on the hub in every round, two mirror-mode runs (no `Mirror: ... not visible` lines, no exceptions).
 
+- Gen II Time Travel (file 04): intro, Time Machine question/update card, Paradox tokens, `TimeTravel` hub (3 rounds:
+  Paradox explanation, mending reward, Time Machine repairs, Military Demands), military token (followed / not), Barracks
+  vote reversed, showcase resolution, Blame game (2-player rules, secret interrogation per player, $2 Flag offer,
+  silent / blame), `BlameOut1/2/3`, Chaos Theory, Barracks penalty, one End of Generation popup -> `TimeEnd1` (dox) /
+  `TimeEnd2` (repaired / zero / one / two) -> Gen III stubs `WarningIntro` (file 07) / `Paradoxical` (file 08).
+  Deviations: map 2.3 "Ported" notes.
+- Browser play test of Time Travel: from the end of Gen I into Time Travel and through all rounds with 2, 3 and 4
+  players (both military token answers, repairs, mending, every Blame outcome incl. the 2-player rules, flags bought
+  singular/plural, both Barracks states), `TimeEnd1` both links, `TimeEnd2` repaired and zero/one/two into the Gen III
+  stubs, undo on many screens, reload on the hub in every round, one 4-player mirror-mode run (no `Mirror: ... not
+  visible` lines, no exceptions).
+
 Next steps:
-- Gen II Time Travel (2.3): replace the `// TODO ATOW Gen II` stub `TimeTravelIntro` (file 04); add its hub to
-  `GlobalData.GetHubMethod`.
-- Gen III (2.4-2.7): replace the stubs `MonarchReignIntro` (file 05) and `PeaceIntro` (file 06) and add the rest, then
+- Gen III (2.4-2.7): replace the stubs `MonarchReignIntro` (file 05), `PeaceIntro` (file 06), `WarningIntro` (file 07)
+  and `Paradoxical` (file 08) and add the rest, then
   Scoring + endings (2.8, replaces the `FinalEnding` stub in file 09; remove `NotYetPorted`).
 - Owner questions in map section 7 (B1 GunsAnnouncement text, B4 TowardsWar wording, B9 figure-token holder, B10 duel
   death odds, ...).
