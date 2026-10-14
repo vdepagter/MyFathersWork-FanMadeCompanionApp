@@ -386,10 +386,11 @@ public partial class GlobalData
 
         if (ScenarioId == ScenarioId.TimeOfWar)
         {
-            // TODO ATOW: add the Gen II / III hubs (Martial, TimeTravel, MonarchReign, Peace, Warning, Paradox) when ported
+            // TODO ATOW: add the remaining hubs (TimeTravel, MonarchReign, Peace, Warning, Paradox) when ported
             return ATimeOfWarVars.HubId switch
             {
                 ATimeOfWarHubId.TakingSides => ATimeOfWar.TakingSides,
+                ATimeOfWarHubId.Martial     => ATimeOfWar.Martial,
                 _                           => null
             };
         }

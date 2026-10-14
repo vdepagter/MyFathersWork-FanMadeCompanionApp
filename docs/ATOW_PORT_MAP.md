@@ -195,7 +195,7 @@ ready, click here to reveal your secret conversation" in one passage: port as a 
   source ";" (CSV separator) - `sourcecheck.py` lists it, as it lists the "''against''" label.
 - B1 (`GunsAnnouncement`) skipped as shipped, B4 text kept, B29 override applied in `GenerationOneWar`.
 - Extra enum `Shared/Enums/MartialBuilding.cs` (`None, Barracks, LaborersUnion`) for `SabotagedBuilding` (section 3).
-- Temporary: `IntroMartialMonarchists`, `IntroMartialSeparatists` (file 02), `TimeTravelIntro` (file 04) and
+- Temporary (the Martial intros were replaced in 2.2): `IntroMartialMonarchists`, `IntroMartialSeparatists` (file 02), `TimeTravelIntro` (file 04) and
   `FinalEnding` (file 09) are `// TODO ATOW` stubs showing the `NotYetPorted` text (Gameplay CSV) without a link; the
   shared helper `NotYetPorted` (file 00) and that CSV row go away when the last stub is replaced. `GetHubMethod` maps only
   `TakingSides` so far.
@@ -281,6 +281,51 @@ Sabotage, messengers and duels (file 03, all run between `MartialEndOfRound_0` a
 | `DuelResolution1sci` | `DuelResolution1sci` choice win | "{target} had the most." / "{saboteur} had the most." -> `DuelResolution1b`; "They both had the same." -> `ScienceDuelTiedRes` | W `DuelLoser` | | | Labels are `name + " had the most."`. |
 | `ScienceDuelTiedRes` | win + `_0` pop | "Stalemate" -> pop "both gain 1 Creepy" -> end of chain | | | `Creepy_Icon` | |
 | `DuelResolution1b` | `DuelResolution1b` win + `_0` pop | pistols: loser from the shot (1-2: saboteur loses, 3-5: target loses); death if the second roll is 1: "An Unfortunate Death" (text by type/field) -> pop "{loser} places their Self into Lost ... (Early only: gains their Caretaker from Lost) ... gains a Bodies" ; else "Wounded Pride" -> pop "{loser} loses 3VP" -> end of chain | W `DuelLoser` (pistols) | `_RND_DUEL_SHOT + Years`, `_RND_DUEL_DEATH + Years` | `Bodies_Icon` / `ScoreTrackMarker` | See 7, B10 (`$duelresult == "1"`). "End of chain" = `MartialEarlyEnd` / `MartialMiddleEnd` by `Years`. |
+
+**Ported (October 2026).** Files `02_ATimeOfWar_Gen2_Martial.cs` (intros, hub, setup popups, outpost, weapons bonus,
+Barracks penalty, quartering, bribe, tea, end of Gen II) and `03_ATimeOfWar_Gen2_Sabotage.cs` (sabotage, messengers,
+duels). `GetHubMethod` maps `ATimeOfWarHubId.Martial`. Implementation notes and deviations from the tables above:
+- Method names differ from the tables where a source passage is both a route and a screen: `Martial_0` (hub end link
+  router: Early/Middle -> `MartialEndOfRound_0`, Late -> end-of-round popup -> `BarracksPenaltyCheck`), `MartialEvents`
+  (route after the Special Setup popup), `MartialRoundEnd` (= `Martia1Pre2` / `MartialPre3`, the end-of-round popup ->
+  `MartialMiddleSetup` / `MartialLateSetup`), `BarracksPenaltyCheck` / `BarracksPenalty` / `BarracksPenalty_0` /
+  `BarracksPenaltyNext` (= `BarracksSimple1/2/3`), `SabotageCheck` (route part of `Sabotage1Now`; the window keeps the
+  name), `MessengerCheck` / `MessengerEnd` (route part of `AMessenger`), `SabotageNext` (Early -> messenger, Middle ->
+  quartering), `QuarteringNext`, `MartialChroniclePage` (the "turn to page" popup of `Martial2` / `Martial3`).
+  Secret conversations: `XRevealed` windows (`ATOWSabotageIntro1/2/2SepRevealed`, `AmessyesRevealed`,
+  `AMessenger2Revealed`, `AMessYes2bRevealed`, `Player1BeenSabotagedRevealed`, `AcceptDuel1Revealed`).
+- `MartialYears()`: the Gen II round; after the Late end-of-round popup (`Generation == Third`) it is Late, so
+  `BarracksSimple3` uses its own random index (`_RND_BARRACKS_PENALTY + 2`) and the hub rebuilt by undo on the
+  end-of-Generation screens shows the Late sections.
+- `MartialEndOfRound_0` resets `SabotageTarget`, `Saboteur`, `DuelType`, `DuelLoser` (source: `$sabotagee1 = "none"` on
+  entering `Martial2`/`Martial3` and in `ATOWSabotageIntro1`), so the hub stays side-effect free.
+- Hub: the Early/Middle end-of-round link sits in the Outpost section (`Martial_OutpostEnd_ClickHere`), as in the source;
+  the Late link is an untitled `EndLate` section. "Military Demands" uses one text for all rounds (the Middle source text
+  lacks a comma, the Late one has the period inside the bold value). Monarchists' Early section is shown regardless of
+  the Barracks (B27, as shipped). The Turn the Tide "Advanced Weaponry" is bold only in the Early Years (source).
+- Random draws where shown: `$sepinc1-3` / `$moninc3` in the hub section (only when shown), `$sepevent` in
+  `MartialSepEventYes_0`, `$wardetermine` in `AMessYes2bRevealed` or `ResistEnd`, `$defense` in `ResistEnd3`, the pistol
+  shot in `DuelResolution1b` (source: `DuelResolution1`), the duel field in `DuelResolution1a` (re-read by helper
+  `DuelField`), `$quarter` in the `ResistEvent_0` close callback (if Gen I did not draw it), the `ResistEnd*` choice in the
+  `ResistSides` click. Mirror mode runs of both factions printed no `Mirror: ... not visible` line.
+- Source bugs (section 7): B5, B6, B7 fixed in `AfternoonTeaYay` (page 7 after the Laborer's Union, the destroyed Barracks
+  becomes `SabotagedBuilding`, `ChroniclePageMiddle` set); B8 as shipped (no Middle Barracks penalty after a successful
+  tea); B9 as shipped (the {figure} holder may not exist); B10 death on 1 of 5, for both duel types; B2 dead `$takereact`
+  branches dropped. The quartering's Unified Monarchists branch (`BarracksSimple2`, unreachable) is kept in `QuarteringNext`.
+- Window layout: `DuelDenounce1` and `DuelResolution1` have no window title; their read-aloud line comes first and the
+  source title ("Firm Rebuke", "The Bloody Business") is a bold line in the content, in the source order. Hand-overs to a
+  named player (`Player1BeenSabotaged`, `AcceptDuel1`) use the shared `AddDoNotOtherPlayersToSee` text; hand-overs to
+  "the player with the ... token / fewest VP" keep the source text. `MartialSepEventa` title "BRIBE" + bold "The Region
+  Needs Convincing" line (the source glued both into one bold line), link "Click here to start the bribe..." (plain
+  link, no bidding screen). Tea vote / 2p bid: titles "VOTE" / "BID", `SetCue(SpecialEvent)`, `AddClickHereAfterVote` /
+  `AddClickHereAfterBid` (Gen I `TakeEvent` pattern).
+- `ATOWSabotageIntro2Sep` link "I chose to sabotage the Outpost." without the Harlowe `''` marks (`sourcecheck.py` lists
+  it, like Gen I's `''against''`). `AMessenger2Revealed` labels are fixed text ("Separatists." / "Unified Monarchists.")
+  because only the Unified Monarchists reach it. `ResistEnd` keeps "With 1 buildings destroyed" (source wording).
+- End of Generation popups after the `ResistEnd*` click: `MartialEndReign` -> `MonarchReignIntro`, `MartialEndPeace` ->
+  `PeaceIntro` (one text, `MartialGenerationEnd_Content`). Gen III is not ported: `MonarchReignIntro` (file 05) and
+  `PeaceIntro` (file 06) are `// TODO ATOW Gen III` stubs showing `NotYetPorted`.
+- Flavor keys per round: `Sabotage1Now#<Years>`, `AcceptDuel1b#<Years>`.
 
 ### 2.3 Gen II "Time Travel" (file 04) - 37 passages
 
