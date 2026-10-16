@@ -92,9 +92,10 @@ public sealed class AudioService(IJSRuntime js)
     }
 
     // Plays the clip of a narrated window (GameplayWindow.VoiceOver) in the given voice (Off plays the female voice),
-    // optionally after the thunder lead-in. Returns the request id reported to the listener, or 0 when nothing started.
-    public int VoicePlay(string clip, NarrationVoice voice, bool leadIn) =>
-        Invoke("mfwAudio.voicePlay", 0, clip, voice == NarrationVoice.Male ? "male" : "female", leadIn);
+    // or the AI recording (one voice, no lead-in), optionally after the thunder lead-in. Returns the request id reported
+    // to the listener, or 0 when nothing started.
+    public int VoicePlay(string clip, NarrationVoice voice, bool ai, bool leadIn) =>
+        Invoke("mfwAudio.voicePlay", 0, clip, ai ? "ai" : voice == NarrationVoice.Male ? "male" : "female", leadIn && !ai);
 
     public void VoiceStop()   => InvokeVoid("mfwAudio.voiceStop");
     public void VoicePause()  => InvokeVoid("mfwAudio.voicePause");

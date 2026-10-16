@@ -1,0 +1,6 @@
+# FearOfTheUnknown_Localization.csv Accusations_Content (witch hunt). Static text, no placeholders.
+Word travels quickly in these parts. For as distant I am from the civilized world, I am equidistant from any meaningful activity to gossip about. [somber] While I'm sure you have heard of the recent family tragedy, I wanted you to read it from my own words.
+
+As cousins, we frequently sup together when time and weather allows. But woefully, one occasion we chose a night where the wind howled remorselessly, and set the locust trees to rapping against the estate windows. [tense] Upon this uneasy evening, we spied a great light beaming from the forest... and soon a throng of townspeople rallied around the exterior walls, waving torches and brandishing pitchforks.
+
+The townspeople blamed us for bringing a blight of witchcraft upon their town. [urgent] Tonight, they demanded a sacrifice, and no amount of persuasion would slake their thirst for blood. [sighs] As the hounds kept them at bay, we were forced to make a sanguine decision... [quietly] that would haunt us for the remainder of our days.

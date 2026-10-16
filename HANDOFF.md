@@ -26,5 +26,10 @@ Next steps:
 - Voice-over: 17 narrated passages (map section 8), Female/Male/Off (default Male as in Unity), "Narrated" pill on those windows.
   Uncertain: the female `GloomyWolvesIntro` clip lives in Unity's male folder (judged female by pitch). Recordings follow the
   English source text, so other text versions differ from the narration.
+- AI narration (map 8.4, `tools/narration/`): ElevenLabs "Oliver Silk" narrates the windows right before and after each
+  scenario intro (4 clips). To be judged in the next playthrough. Remaining un-narrated story text ~250k characters
+  (~5.5 h); about half has placeholders (names, random dates) that need generic wording. Custom designed voices
+  (`voices.json` male/female) need tweaking: a bit sharp, slightly too slow. Local open-model route (Qwen3-TTS,
+  Chatterbox) in `tools/narration/local_tts.py`, tested on the laptop GPU only.
 - Not ported (deliberate): Unity bidding/reveal screen, clips the shipped app never played (map 2.3), A Time of War VO.
 - Version: `0.66.6.<revision>`, revision = first-parent commits on main since 3d78856 minus 1 (deploy workflow).

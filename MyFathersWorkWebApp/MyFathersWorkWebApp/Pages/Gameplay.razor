@@ -404,7 +404,7 @@
 
         // Off has no chosen voice: its Play button uses the female voice
         NarrationVoice voice = Audio.Narration == NarrationVoice.Male ? NarrationVoice.Male : NarrationVoice.Female;
-        _VoiceRequest = Audio.VoicePlay(_VoiceWindow.VoiceOver, voice, leadIn);
+        _VoiceRequest = Audio.VoicePlay(_VoiceWindow.VoiceOver, voice, _VoiceWindow.IsAiVoiceOver, leadIn);
         _VoiceState   = _VoiceRequest != 0 ? VoiceState.Starting : VoiceState.Idle;
     }
 

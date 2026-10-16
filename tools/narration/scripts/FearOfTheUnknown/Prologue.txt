@@ -1,0 +1,14 @@
+# FearOfTheUnknown_Localization.csv Prologue_Content ("A Note for my Sister"). Static text, fixed header read aloud.
+Roderick Tenderson. Nineteen thirty-two.
+
+I have made much progress in my research over these last months. My host has furnished me with appropriate accommodations, and the food is hearty, with a warmth that lifts the spirits. While I am gracious for their hospitality, I have yet to give my appreciation in person. The caretaker assures me that they are on extended holiday... [uneasy] but their absence is peculiar. Something about this arrangement unnerves me, though I cannot for the life of me determine its source.
+
+It is but a minor xenophobia, a fear of the unknown, that sets my eyes to dwelling on the dark corners of this unfamiliar, decaying, but immaculate estate. [hushed] At night, I perceive to hear the echoes of a distant hammering... the scraping of metal on metal... the rumble of thunder. Yet when I sash my nightgown tight and emerge upon the veranda, the misty countryside is spread wide under the moon, and I am greeted with nothing but the echo of cicadas, and the smell of tulips in the night air.
+
+[businesslike] The business at hand: included within the accompanying package is an extensive collection of clippings, journal entries, and letters, chronicling the storied history of this peculiar estate and its proprietors. Their contents are fascinating, and I have arranged them in a semblance of order which tells a vivid, extraordinary tale.
+
+I expect to return to London shortly, but I have posted this ahead of my arrival, so as to make the burden lighter for me. [tired] I fear I don't have the same fortitude that I once did. If perchance something were to happen to me, I trust you will ensure its publication in whatever form you see fit.
+
+[tenderly] As always, I think of you fondly. Give mother my warmest regards.
+
+Roderick.

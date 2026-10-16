@@ -293,3 +293,22 @@ Size: 34 clips, female 12.4 MB + male 14.2 MB + thunder 0.1 MB = 26.6 MB, loaded
 
 Open points: the recordings read the English source text, so with another scenario language (`English_Simple`,
 `English_Short`, Italian) the narration differs from the text on screen (Unity also plays English VO for every language).
+
+### 8.4 Fan-made AI narration (not in the Unity app)
+
+Windows the original app never narrated can get an AI recording: `GameplayWindow.SetAiVoiceOver("<Scenario>/<method>")`,
+file `wwwroot/audio/vo/ai/<Scenario>/<method>.mp3` (mono, 64 kbps). One voice (ElevenLabs library voice "Oliver Silk - Deep
+Gravel Narrative", model `eleven_v3`), played for Male and Female alike (Off: Play button only), **without** the thunder
+lead-in (it would repeat next to the narrated intros). Everything else (pill, stop rules, ducking) as in 8.2.
+
+Made with `tools/narration/elevenlabs.py render oliver <Scenario>/<method> --web` from narration scripts in
+`tools/narration/scripts/<Scenario>/<method>.txt`: the English source text with hand-placed v3 audio tags (`[dryly]`,
+`[hushed]`, ...), numbers written out, titles not read, random letter headers replaced by a generic one (no player name).
+Editing the CSV text does not update the recording - render it again.
+
+| Window | Clip | Length |
+|---|---|---|
+| `TheCostOfDisease.IntroImmortalitySetup` ("A Foreword", before `ScenarioStart`) | `ai/TheCostOfDisease/IntroImmortalitySetup.mp3` | 60 s |
+| `TheCostOfDisease.Dubious` (after `ScenarioStart`) | `ai/TheCostOfDisease/Dubious.mp3` | 38 s |
+| `FearOfTheUnknown.Prologue` ("A Note for my Sister", before `ScenarioStart`) | `ai/FearOfTheUnknown/Prologue.mp3` | 108 s |
+| `FearOfTheUnknown.SharedMania` (after `ScenarioStart`; header read as "A journal entry", no name) | `ai/FearOfTheUnknown/SharedMania.mp3` | 67 s |

@@ -18,9 +18,19 @@ public class GameplayWindow(GlobalData globalData)
     // (docs/AUDIO_TRANSITIONS_MAP.md "Voice-over"). Null: no narration.
     public string? VoiceOver { get; private set; }
 
+    // VoiceOver is a fan-made AI recording (tools/narration, ElevenLabs "Oliver Silk"): one voice, file
+    // wwwroot/audio/vo/ai/<Scenario>/<method>.mp3, played for Male and Female alike and without the thunder lead-in.
+    public bool IsAiVoiceOver { get; private set; }
+
     public void SetCue(SoundCue cue) => Cue = cue;
 
     public void SetVoiceOver(string clip) => VoiceOver = clip;
+
+    public void SetAiVoiceOver(string clip)
+    {
+        VoiceOver     = clip;
+        IsAiVoiceOver = true;
+    }
 
     public void MarkFinalEnding() => IsFinalEnding = true;
 
