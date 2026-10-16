@@ -68,8 +68,9 @@ scenario code only sets `GameplayWindow.SetCue` / `MarkFinalEnding` - never call
 
 Next steps:
 - Test on a real iPhone/iPad (Safari autoplay unlock, MP3 playback) and at the table (volume of the effects vs music).
-- Voice-over: 17 narrated passages (map section 8), Female/Male/Off (default Male as in Unity), "Narrated" pill on those windows.
+- Voice-over: 17 narrated passages in Cost of Disease / Fear of the Unknown (map section 8), Female/Male/Off (default Male as in Unity), "Narrated" pill on those windows.
   Uncertain: the female `GloomyWolvesIntro` clip lives in Unity's male folder (judged female by pitch). Recordings follow the
   English source text, so other text versions differ from the narration.
-- Not ported (deliberate): Unity bidding/reveal screen, clips the shipped app never played (map 2.3), A Time of War VO.
+- A Time of War VO: 11 narrated passages wired (map 8.3, `ParadoxIntro` reuses the `WarningIntro` clip as in Unity).
+- Not ported (deliberate): Unity bidding/reveal screen, clips the shipped app never played (map 2.3).
 - Version: `0.66.6.<revision>`, revision = first-parent commits on main since 3d78856 minus 1 (deploy workflow).

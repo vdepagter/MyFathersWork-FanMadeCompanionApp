@@ -1,4 +1,4 @@
-namespace MyFathersWorkWebApp;
+﻿namespace MyFathersWorkWebApp;
 
 // Generation II "Time Travel" / "A Return to Devastation" (port map 2.3): intro, Paradox tokens, hub, Time Machine
 // repairs, the military token, the Barracks vote in the past, the Blame game and the end of the Generation.
@@ -99,6 +99,7 @@ public static partial class ATimeOfWar
         vars.AllSilent           = false;
 
         globalData.ActiveWindow = new GameplayWindow(globalData);
+        globalData.ActiveWindow.SetVoiceOver("TimeTravelintro1");
         globalData.ActiveWindow.AddGameplayTitle(GlobalTags.Gameplay_Generation_II);
         globalData.ActiveWindow.AddDefaultSubtitle();
         globalData.ActiveWindow.AddDefaultContent();
@@ -109,6 +110,7 @@ public static partial class ATimeOfWar
     {
         globalData.SaveToUndo();
         globalData.ActiveWindow = new GameplayWindow(globalData);
+        globalData.ActiveWindow.SetVoiceOver("TimeTravelIntro2");
         globalData.ActiveWindow.AddDefaultTitle();
         globalData.ActiveWindow.AddDefaultContent(content => content.FormatWithIndex(0, globalData.LocalizedPlayerNumberIndex()));
         globalData.ActiveWindow.AddCustomLink(globalData.GetScenarioLocalizedTag("TimeTravelIntro2_Continue"), TimeMachineExperiment);
@@ -149,6 +151,7 @@ public static partial class ATimeOfWar
     {
         globalData.SaveToUndo();
         globalData.ActiveWindow = new GameplayWindow(globalData);
+        globalData.ActiveWindow.SetVoiceOver("TTIntro3");
         globalData.ActiveWindow.AddDefaultTitle();
         globalData.ActiveWindow.AddDefaultContent();
         globalData.ActiveWindow.AddClickHereToContinue(TimeTokens);

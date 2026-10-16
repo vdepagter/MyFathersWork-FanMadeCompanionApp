@@ -1,4 +1,4 @@
-.page {
+﻿.page {
     position: relative;
     display: flex;
     flex-direction: column;
@@ -76,8 +76,11 @@ main {
     }
 }
 
+/* Fixed like the audio toggles, so it stays in the corner while the page scrolls */
 .app-version {
-    position: absolute;
+    position: fixed;
+    z-index: 1;
+    pointer-events: none;
     bottom: 10px;
     right: 15px;
     font-size: 0.9rem;

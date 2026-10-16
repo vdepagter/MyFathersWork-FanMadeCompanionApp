@@ -1,4 +1,4 @@
-namespace MyFathersWorkWebApp;
+﻿namespace MyFathersWorkWebApp;
 
 // Generation II "Martial" (port map 2.2): intros, hub, outpost, weapons bonus, Barracks penalties, quartering, bribe,
 // afternoon tea and the end of the Generation. Sabotage, messengers and duels: 03_ATimeOfWar_Gen2_Sabotage.cs.
@@ -116,6 +116,7 @@ public static partial class ATimeOfWar
         Vars(globalData).Assessment = false;
 
         globalData.ActiveWindow = new GameplayWindow(globalData);
+        globalData.ActiveWindow.SetVoiceOver("IntroMartial-Monarchists");
         globalData.ActiveWindow.AddGameplayTitle(GlobalTags.Gameplay_Generation_II);
         globalData.ActiveWindow.AddDefaultSubtitle();
         globalData.ActiveWindow.AddDefaultContent();
@@ -129,6 +130,7 @@ public static partial class ATimeOfWar
         Vars(globalData).Assessment = false;
 
         globalData.ActiveWindow = new GameplayWindow(globalData);
+        globalData.ActiveWindow.SetVoiceOver("IntroMartial-Separatists");
         globalData.ActiveWindow.AddGameplayTitle(GlobalTags.Gameplay_Generation_II);
         globalData.ActiveWindow.AddDefaultSubtitle();
         globalData.ActiveWindow.AddDefaultContent();

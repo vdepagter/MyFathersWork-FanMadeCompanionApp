@@ -1,4 +1,4 @@
-namespace MyFathersWorkWebApp;
+﻿namespace MyFathersWorkWebApp;
 
 // Generation III "Heavy is the Crown" (port map 2.4): reached when the Unified Monarchists win the war at the end of
 // Generation II Martial. Intro, Crown token, royal decrees (Royal Advisor), Crown penalties, Wooden Figures, the
@@ -154,6 +154,7 @@ public static partial class ATimeOfWar
         }
 
         globalData.ActiveWindow = new GameplayWindow(globalData);
+        globalData.ActiveWindow.SetVoiceOver("MonarchReignIntro");
         globalData.ActiveWindow.AddGameplayTitle(GlobalTags.Gameplay_Generation_III);
         globalData.ActiveWindow.AddDefaultSubtitle();
         globalData.ActiveWindow.AddDefaultContent();

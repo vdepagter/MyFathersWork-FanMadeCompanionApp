@@ -87,7 +87,7 @@ prefab, controller or asset).
 | Main menu and whole setup flow | `SFX/Fathers work Title theme.ogg` (119 s) | `ViewController.Start` -> `mainMenu.Show()` -> `ViewMainMenu.PlayBGSound(true)`; again in `ViewMainMenu.ShowAnimated` (return to menu) | yes | replaced by the scenario theme when the first story/hub view shows; replaced by Help music | `Pages/Home.razor` and all setup pages (`PlayersSelect` ... `PlayersScenarioLanguage`); also after `Shared/PauseMenu.razor:OnReturnToMainMenu` |
 | The Cost of Disease | `SFX/New_8_April/My Fathers Work-OST/Chronicle Part one_1-2.ogg` (205 s) | `ViewGenerationEnding.ShowAnimated` / `ViewGeneration.ShowAnimated`: `clip[StoryIndex]` when its name differs from the playing clip (first view after scenario select or Continue) | yes | end of game | `/Gameplay` with `ScenarioId.CostOfDisease` (after `GlobalData.StartScenario` or any `LoadGameAsync`) |
 | Fear of the Unknown | `.../My Fathers Work-OST/Chronicle Part Two_2-2.ogg` (214 s) | same, `StoryIndex` 1 | yes | end of game | `/Gameplay` with `ScenarioId.FearOfUnknown` |
-| A Time of War | `.../My Fathers Work-OST/Cost of disease theme loop-louder.ogg` (173 s) | same, `StoryIndex` 2 (as assigned in the scene; looks like a placeholder - uncertain intent) | yes | end of game | not ported yet |
+| A Time of War | `.../My Fathers Work-OST/Cost of disease theme loop-louder.ogg` (173 s) | same, `StoryIndex` 2 (as assigned in the scene; looks like a placeholder - uncertain intent) | yes | end of game | `music-cost-of-disease.mp3` (the "louder" file only differs in level) |
 | Score entry, tie breaker, rankings | (no change) | - | - | - | `FinalScoring.*` keeps the scenario theme |
 | End of game | `.../My Fathers Work-OST/Chronicle Part  Three.ogg` (52 s, two spaces in the name) | `ViewGenerationEnding.EnableDisableContinueBtn(true)` from the ending passages (CoD `END-*`, `WinnerHUB`; FotU `FOTU-End1..8`, `VarEndingsPassage`): `EndGameAudioSource.Play()` + `MusicSource.Stop()` | **no** (plays once) | never stopped explicitly (`EnableDisableContinueBtn(false)` is never called) | the final ending window: `TheCostOfDisease.FinalEnding` (08_TheCostOfDisease_Scoring.cs), `FearOfTheUnknown.FinalEnding` (05_FearOfTheUnknown_Gen3_Shared.cs), reached via `GlobalData.ShowFinalEnding` from `FinalScoring.Rankings` |
 
@@ -284,12 +284,25 @@ male in seconds.
 Lead-in: `SFX/New_8_April/Thunder-vox story.ogg` -> `wwwroot/audio/sfx-vo-thunder.mp3` (mono, 96 kbps; only the first 4.5 s are
 heard).
 
-Not ported (A Time of War is not ported): `ATimeofWarIntro`, `IntroMartial-Monarchists`, `IntroMartial-Separatists`,
-`MonarchReignIntro`, `WarningIntro`, `ParadoxIntro` (same clip as `WarningIntro` in both voices), `PeaceIntro`, `WarningEvent`,
-`TimeTravelintro1`, `TimeTravelIntro2`, `TTIntro3`. No narrated passage is 5-player-only. No other Cost of Disease or Fear of
-the Unknown passage has VO (hubs, events, endings and scoring are silent).
+A Time of War:
 
-Size: 34 clips, female 12.4 MB + male 14.2 MB + thunder 0.1 MB = 26.6 MB, loaded on demand (`preload="none"`).
+| Passage (Unity) | Web method -> `SetVoiceOver` clip | Female clip | Male clip | Notes |
+|---|---|---|---|---|
+| `ATimeofWarIntro` | `ATimeOfWar.ScenarioStart` (00_Setup) -> `ATimeofWarIntro` | `female Takes VO oggs/ATimeofWarIntro.ogg` | `Male VO oggs/ATimeofWarIntro-2.ogg` | 127 / 144 s |
+| `IntroMartial-Monarchists` | `ATimeOfWar.IntroMartialMonarchists` (02) -> `IntroMartial-Monarchists` | `female Takes VO oggs/IntroMartial-Monarchists.ogg` | `Male VO oggs/IntroMartial-Monarchist.ogg` | 101 / 110 s |
+| `IntroMartial-Separatists` | `ATimeOfWar.IntroMartialSeparatists` (02) -> `IntroMartial-Separatists` | `female Takes VO oggs/IntroMartial-Separatists.ogg` | `Male VO oggs/IntroMartial-Separatists.ogg` | 96 / 102 s |
+| `MonarchReignIntro` | `ATimeOfWar.MonarchReignIntro` (05) -> `MonarchReignIntro` | `female Takes VO oggs/MonarchReignIntro.ogg` | `Male VO oggs/MonarchReignIntro.ogg` | 75 / 87 s |
+| `WarningIntro` | `ATimeOfWar.WarningIntro` (07) -> `WarningIntro` | `female Takes VO oggs/WarningIntro.ogg` | `Male VO oggs/Paradox Intro Warning Intro.ogg` | 125 / 139 s |
+| `ParadoxIntro` | `ATimeOfWar.ParadoxIntro` (08) -> `WarningIntro` | same as `WarningIntro` | same as `WarningIntro` | Unity maps both passages to one clip per voice; no separate file. The texts open identically ("A Modern Future" vs "A Brighter Future" heading); whether they diverge later in the recording is unverified |
+| `PeaceIntro` | `ATimeOfWar.PeaceIntro` (06) -> `PeaceIntro` | `female Takes VO oggs/PeaceIntro.ogg` | `Male VO oggs/PeaceIntro.ogg` | 82 / 89 s |
+| `WarningEvent` | `ATimeOfWar.WarningEvent` (07) -> `WarningEvent` | `female Takes VO oggs/WarningEvent.ogg` | `Male VO oggs/WarningEvent.ogg` | 82 / 96 s |
+| `TimeTravelintro1` | `ATimeOfWar.TimeTravelIntro1` (04) -> `TimeTravelintro1` | `female Takes VO oggs/TimeTravelintro1.ogg` | `Male VO oggs/TimeTravelintro1.ogg` | 70 / 80 s |
+| `TimeTravelIntro2` | `ATimeOfWar.TimeTravelIntro2` (04) -> `TimeTravelIntro2` | `female Takes VO oggs/TimeTravelIntro2.ogg` | `Male VO oggs/TimeTravelintro2.ogg` | 61 / 68 s |
+| `TTIntro3` | `ATimeOfWar.TTIntro3` (04) -> `TTIntro3` | `female Takes VO oggs/TTIntro3.ogg` | `Male VO oggs/TTintro3.ogg` | 50 / 55 s |
+
+All 11 passage names exist in `ATimeOfWar.txt`. Clip names are case-sensitive on GitHub Pages.
+
+Size: 34 clips, female 12.4 MB + male 14.2 MB + thunder 0.1 MB = 26.6 MB; A Time of War adds 20 clips (female 6.6 MB + male 7.4 MB), loaded on demand (`preload="none"`).
 
 Open points: the recordings read the English source text, so with another scenario language (`English_Simple`,
 `English_Short`, Italian) the narration differs from the text on screen (Unity also plays English VO for every language).
