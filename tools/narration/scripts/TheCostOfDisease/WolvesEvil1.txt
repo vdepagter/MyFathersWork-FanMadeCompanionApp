@@ -1,0 +1,7 @@
+# TheCostOfDisease_Localization.csv WolvesEvil1_Content, story part only (the CHOOSE rules are not narrated).
+# Audio tags are hand-placed: few, and only where the text itself calls for them.
+Each cousin's recollection of events seems to corroborate the same story during the Summer of eighteen ninety-two. A messenger, obviously meant to intimidate, arrived by carriage unannounced, precisely at noon... dressed in a dapper gray suit, stained in thick streaks by rivulets of blood that cascaded from his shoulders. [with disgust] He wore a mask of gore, his animalistic features stained a sanguine red that still dripped from the tips of his teeth, his belly distending the buttons as if he had recently enjoyed a horrifying meal.
+
+[menacing] "I come to collect," he entreated, with a bow and a disgusting lick of his lips. "It is by our pleasure that you and your family remain alive. And we have need of the knowledge of experimentation that you most assuredly can provide. If this cannot be arranged..." [quietly] "I have slaked my thirst on the blood of lesser individuals than these today. That, I guarantee."
+
+[thoughtful] Making a deal with demons? It was impossible for the young scientists to expect an entirely trustworthy offer as presented... yet to allow a human to be knowingly sacrificed to the jaws of these grotesque animals would also be unconscionable.

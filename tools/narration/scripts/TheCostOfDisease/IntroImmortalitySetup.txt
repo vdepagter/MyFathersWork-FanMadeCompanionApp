@@ -1,0 +1,8 @@
+# TheCostOfDisease_Localization.csv IntroImmortalitySetup_Content ("A Foreword"). Static text. Title not read.
+[measured] Herein contains a historical account of a peculiar lineage. One that spans multiple generations, and by all accounts will continue to fascinate historians for many years to come.
+
+I have endeavored to provide as complete a scholarly history as one could provide, given the conflicting accounts and whims of hearsay. While many of the details, haunting to the imagination as they may be, stretch the very limits of our human understanding... it is my hope that this text, and the accompanying research materials procured, will provide evidence as to their truth. [ominous] The harrowing and potentially supernatural series of events has the capacity to shake the very foundations of the scientific world as we perceive it.
+
+With deference to the fellowship that commissioned this explicit work, though I have never met with these generous benefactors, I humbly submit this biographical account in its entirety, and swear by the veracity of the contents within.
+
+[warmly] In good health... Doctor Ensign Benwallis.

@@ -1,0 +1,39 @@
+{
+  "male": {
+    "name": "MFW Narrator (male)",
+    "prompt": "A mature English man in his fifties with a deep, warm baritone and a refined, old-fashioned Received Pronunciation accent. He narrates a Victorian gothic family chronicle of plague, werewolves, witch hunts and obsessive men of science. Measured, unhurried pacing with deliberate pauses; grave, intimate and quietly ominous, like a scholar reading a cursed family's history aloud by candlelight. Restrained gravitas, never theatrical or hammy. Clean, close-mic studio recording, no reverb, no background noise.",
+    "preview_text": "Herein contains a historical account of a peculiar lineage. One that spans multiple generations and by all accounts will continue to fascinate historians for many years to come. While many of the details, haunting to the imagination as they may be, stretch the very limits of our human understanding, it is my hope that this text will provide evidence as to their truth.",
+    "settings": {
+      "stability": 0.5
+    }
+  },
+  "female": {
+    "name": "MFW Narrator (female)",
+    "prompt": "A woman in her forties with a low, velvety alto and a cultured, slightly old-fashioned English accent. She narrates a Victorian gothic tale of disease, superstition, monsters and mad science. Hushed and intimate, melancholic with an undercurrent of dread, as if reading private letters and diaries that should have stayed hidden. Even, deliberate pacing; expressive but understated. Clean, close-mic studio recording, no reverb, no background noise.",
+    "preview_text": "Herein contains a historical account of a peculiar lineage. One that spans multiple generations and by all accounts will continue to fascinate historians for many years to come. While many of the details, haunting to the imagination as they may be, stretch the very limits of our human understanding, it is my hope that this text will provide evidence as to their truth.",
+    "settings": {
+      "stability": 0.5
+    }
+  },
+  "oliver": {
+    "name": "Oliver Silk - Deep Gravel Narrative",
+    "library": "503ef2e72fb506b3879737bc64638b2d48597374bf1247925feea5d30965f3bd/jfIS2w2yJi0grJZPyEsk",
+    "settings": {
+      "stability": 0.5
+    }
+  },
+  "george": {
+    "name": "George - Warm, Captivating Storyteller (premade)",
+    "voice_id": "JBFqnCBsd6RMkjVDRZzb",
+    "settings": {
+      "stability": 0.5
+    }
+  },
+  "lily": {
+    "name": "Lily - Velvety Actress (premade)",
+    "voice_id": "pFZP5JQG7iQjIQuC4Bku",
+    "settings": {
+      "stability": 0.5
+    }
+  }
+}

@@ -323,14 +323,15 @@
         notifyVoice(id, "stopped");
     }
 
-    // name: clip file name (the Unity passage name); which: "female" | "male"; leadIn: thunder first.
+    // name: clip file name (the Unity passage name; for "ai": <Scenario>/<method>); which: "female" | "male" | "ai";
+    // leadIn: thunder first.
     // Returns the request id, or 0 when nothing starts (audio not unlocked by a user gesture yet).
     function voicePlay(name, which, leadIn) {
         endVoice();
         if (!unlocked || !name) return 0;
 
         voice.id   = ++voice.counter;
-        voice.clip = "audio/vo/" + (which === "male" ? "male" : "female") + "/" + name + ".mp3";
+        voice.clip = "audio/vo/" + (which === "male" || which === "ai" ? which : "female") + "/" + name + ".mp3";
         duckMusic(true);
 
         if (leadIn) {
