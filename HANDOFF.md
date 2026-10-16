@@ -24,15 +24,28 @@ section in `CLAUDE.md`.
   runs per branch without `Mirror: ... not visible` lines, no console errors. `tagcheck.py` (all three scenarios) 0
   missing, `sourcecheck.py ATimeOfWar ATimeOfWar` only lists justified items (unreachable passages, `;` / Harlowe `''`
   in labels, the Unity-only screens handled as popups).
+- Independent browser play test from the main menu (no crafted saves, every screen clicked, hub explanation links
+  visited): 3 players Martial (Separatists intro) -> Peace, ending 8; 2 players Martial (Monarchists intro) -> Reign,
+  ending 6; 4 players Time Travel (town "Paradox") -> Paradox, ending 1; 2 players **mirror mode** Time Travel ->
+  Warning, ending 4 (plus a mirror Martial -> Reign run from a Gen I save). Score entry, tie-breakers, rankings and
+  endings (family and single winner) in each; undo across round and Generation changes, reload on hubs. No console
+  errors; the only `Mirror: ... not visible` line is the documented `Quarter` slot of `RumorD3Revealed`. Fixed: undo
+  from the first screen of a round reached straight from the end-of-round popup jumped back a round (engine,
+  `GlobalData.SaveGame`, PLAYTEST_FINDINGS #7 - also affected Fear of the Unknown Witch Hunt); text "Monarchists's"
+  -> "Monarchists'" (sabotage intros), "a Irresistible Aphrodisiac" -> "an". `tagcheck.py` now also checks computed
+  content indices (`DYNAMIC_VALUES`, ternaries) and the shared `Gen3_*` hub sections.
 
 Next steps:
-- One full browser play-through from the menu to an ending (so far each branch was entered from crafted saves at the
-  previous Generation's Late hub).
 - Table play test; afterwards drop "WORK IN PROGRESS" from the menu description (English + Polish).
 - Owner questions (defaults applied, map section 7): B1 GunsAnnouncement text, B4 TowardsWar wording, B9 figure-token
   holder may not exist, B10 duel death odds, B14 first-visit text, B16 2-player CoW text, B17 Church costs "X/X/X",
   B19 random paradox only after a release (fixed), B21 University "pay $1" in Warning (fixed); the `SeedResolution` popup
-  typo "gains gains"; endings 1/5 print "The family IV" on a shared win (as the source).
+  typo "gains gains"; endings 1/5 print "The family IV" on a shared win (as the source), ending 8 "the The family name"
+  / "Dr. The family" and ending 6 "I, The family" likewise; the Drifters decree popup starts with a dangling "Then,"
+  when the Crown does not move (source `{$crownL} Then, ...`).
+- Not play-tested from the menu: the Martial duel / bribe-success / tea-yay sub-chains, Peace gas release, Warning
+  stable timeline + Stasis, Paradox figure path with two Wooden Figures (covered by the per-branch crafted-save runs).
+- Shared UI text (not ATOW): `PlayersVillageConfirm` "research.In fact" misses a space.
 - `AudioService.ScenarioTheme` has no ATOW music yet (plays none); ATOW voice-over not ported.
 
 ## Fear of the Unknown - table play test (October 2026)

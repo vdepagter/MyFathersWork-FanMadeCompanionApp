@@ -35,7 +35,7 @@ Village_Subtitle;<p>Now that our given names have been established, we must also
 Village_Placeholder;Enter village name...;Wprowadź nazwę wioski...
 Village_PopUp;The village name must be between 2 and 20 characters.;Nazwa wsi musi zawierać od 2 do 20 znaków.
 //====== Village Confirm Screen ======;;
-VillageConfirm_Content;<p>Thank you and please do excuse our forgetfulness.</p><p>Of course, <span class="village-name"><b>{{0=...|London|Dubai|Paris|...}}</b></span> is an appropriate and fitting moniker for a place to conduct important scientific research.In fact, history will remember this name, mark my words.</p>;<p>Dziękujemy i prosimy o wybaczenie naszej niepamięci.</p><p>Oczywiście, <span class="village-name"><b>{{0=...|London|Dubai|Paris|...}}</b></span> to odpowiednia i stosowna nazwa dla miejsca, w którym prowadzi się ważne badania naukowe. Historia zapamięta tę nazwę, zapamiętajcie moje słowa.</p>
+VillageConfirm_Content;<p>Thank you and please do excuse our forgetfulness.</p><p>Of course, <span class="village-name"><b>{{0=...|London|Dubai|Paris|...}}</b></span> is an appropriate and fitting moniker for a place to conduct important scientific research. In fact, history will remember this name, mark my words.</p>;<p>Dziękujemy i prosimy o wybaczenie naszej niepamięci.</p><p>Oczywiście, <span class="village-name"><b>{{0=...|London|Dubai|Paris|...}}</b></span> to odpowiednia i stosowna nazwa dla miejsca, w którym prowadzi się ważne badania naukowe. Historia zapamięta tę nazwę, zapamiętajcie moje słowa.</p>
 //====== Scenario Screen ======;;
 Scenario_Title;Scenario;Scenariusz
 Scenario_Subtitle;Choose a Scenario for {{0=...|2|3|4|...}} players:;Wybierz scenariusz dla {{0=...|2|3|4|...}} graczy:

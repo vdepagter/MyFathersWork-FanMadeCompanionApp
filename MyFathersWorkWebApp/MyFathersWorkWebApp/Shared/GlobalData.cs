@@ -12,7 +12,10 @@ public partial class GlobalData
     {
         public Action<GlobalData>? Callback { get; set; }
         public string              JsonData { get; set; } = string.Empty;
+        public int                 Round    { get; set; } = -1; // hub saves only: (Generation, Years) of the shown hub
     }
+
+    private int UndoRound => (int)Generation * 3 + (int)Years;
 
     [JsonIgnore] public Dictionary<string, Dictionary<string, string>> UI_Localization                { get; }      = new();
     [JsonIgnore] public Dictionary<string, string>                     Scenario_Localization          { get; set; } = new();
@@ -233,11 +236,14 @@ public partial class GlobalData
         string json = JsonConvert.SerializeObject(this, Formatting.Indented);
         await js.InvokeVoidAsync("localStorage.setItem", "continue", Convert.ToBase64String(System.Text.Encoding.UTF8.GetBytes(json)));
         Console.WriteLine("Saving game");
-        if (_UndoInProgress || (UndoStack.Count != 0 && UndoStack.Peek().Callback == null)) return;
+        // A hub shown again in the same round (no undoable screen in between) is not saved twice. A hub of the next round
+        // reached straight from the end-of-round popup is a new undo point, otherwise undo would skip back a round.
+        if (_UndoInProgress || (UndoStack.Count != 0 && UndoStack.Peek().Callback == null && UndoStack.Peek().Round == UndoRound)) return;
         UndoStack.Push(new UndoData
         {
             JsonData = json,
-            Callback = null
+            Callback = null,
+            Round    = UndoRound
         });
     }
 
@@ -293,7 +299,8 @@ public partial class GlobalData
         UndoStack.Push(new UndoData
         {
             JsonData = json,
-            Callback = null
+            Callback = null,
+            Round    = UndoRound
         });
     }
 
