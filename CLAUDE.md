@@ -13,7 +13,7 @@ When a piece of work is finished, move its section to [`HANDOFF_ARCHIVE.md`](HAN
 |---|---|---|
 | The Cost of Disease (`ScenarioId.CostOfDisease`) | **Complete, play testing** - Gen I, II, III, final scoring, all 8 endings | Only English text. Menu description starts with "PLAY TESTING". |
 | Fear of the Unknown (`FearOfUnknown`) | **Ported, browser play test done** - all branches, battle, asylum assessment, scoring, 8 endings | Waiting for a table play test. Menu description starts with "WORK IN PROGRESS". See the section below. |
-| A Time of War (`TimeOfWar`) | **Gen I + Gen II ported** - scaffold, setup, Taking Sides, Martial (sabotage, duels, tea, end of Gen II), Time Travel (Paradox tokens, repairs, Blame game, end of Gen II) | Gen III and endings are `// TODO ATOW` stubs ("not yet ported" screen). Menu description starts with "WORK IN PROGRESS". Spec: `docs/ATOW_PORT_MAP.md`. |
+| A Time of War (`TimeOfWar`) | **Gen I + Gen II + Gen III Reign / Peace ported** - scaffold, setup, Taking Sides, Martial (sabotage, duels, tea, end of Gen II), Time Travel (Paradox tokens, repairs, Blame game, end of Gen II), Heavy is the Crown (royal decrees, Crown, statue), Peace Through War (famine, gas, battles) | Gen III Warning / Paradox, Scoring and endings are `// TODO ATOW` stubs ("not yet ported" screen). Menu description starts with "WORK IN PROGRESS". Spec: `docs/ATOW_PORT_MAP.md`. |
 
 ## Repository layout
 

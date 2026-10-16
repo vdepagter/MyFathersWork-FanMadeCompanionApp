@@ -6,7 +6,8 @@ Only work in progress lives here. When a section is finished, move it to [`HANDO
 ## A Time of War port (October 2026)
 
 Spec: [`docs/ATOW_PORT_MAP.md`](docs/ATOW_PORT_MAP.md) (one task per section 2.x). Status: **scaffold + Gen I "Taking
-Sides" + Gen II "Martial" + Gen II "Time Travel" done** (map 1.3/1.4, 2.1, 2.2 and 2.3), branch `claude/port-a-time-of-war-132617`.
+Sides" + Gen II "Martial" + Gen II "Time Travel" + Gen III "Heavy is the Crown" + Gen III "Peace Through War" done**
+(map 1.3/1.4, 2.1-2.5), branch `claude/port-a-time-of-war-132617`.
 
 - Engine: `Shared/Scenarios/ATimeOfWar/` (`ATimeOfWarVars` with every section-3 field, all `_RND_*` constants of 4.1 in
   `00_ATimeOfWar_Setup.cs`), `ATimeOfWarHubId`, `WarFaction`, `MartialBuilding`, `PopUpIcon` S3 constants, all `GlobalData`
@@ -39,10 +40,29 @@ Sides" + Gen II "Martial" + Gen II "Time Travel" done** (map 1.3/1.4, 2.1, 2.2 a
   stubs, undo on many screens, reload on the hub in every round, one 4-player mirror-mode run (no `Mirror: ... not
   visible` lines, no exceptions).
 
+- Gen III "Heavy is the Crown" (file 05, map 2.4): intro, Suspicious Barn / bribe checks, Crown token, `MonarchReign` hub
+  (3 rounds), royal decrees (all 7, both choices, regal title input), Crown penalties, Wooden Figures, benevolence /
+  iron fist vote (2-player bid), Commemorative Statue (trigger, bid, owner / other visits), Church, Weapon Cache, Royal
+  Advisor bonus (sets `Ending` 5/6), Benevolence / Iron Fist bonus -> `Scoring`. Source bugs B14, B16, B18 fixed, B15 as
+  proposed, B17 kept. Deviations: map 2.4 "Ported" notes.
+- Gen III "Peace Through War" (file 06, map 2.5): intro, barn check, World Conquest / weapons setup, tax, weapon limit,
+  `Peace` hub (3 rounds), war explanation, famine vote / 2-player bid with the new meat name, Wooden Figures, battles,
+  gas vote, Final Battle (sets `Ending` 7/8) -> `Scoring`. Deviations: map 2.5 "Ported" notes.
+- `Scoring` (file 09) is a `// TODO ATOW Scoring` stub (`NotYetPorted`) shared by both branches; the state the endings need
+  is listed at the end of map 2.5.
+- Browser play test of Reign and Peace: both entered from a Martial Late hub through the End of Generation popup (3p
+  Reign, 4p Peace, 2p Peace, 2p and 3p Reign in mirror mode, 3p Peace in mirror mode), all three rounds to the scoring
+  stub with every decree and both choices, title input, crown penalties, Wooden Figures 1 / >1, vote and 2-player bid
+  variants of the CoW and famine events, statue triggered (fixed and random) and not, statue visits by owner / other,
+  Church, Weapon Cache, benevolence tie and unique winner, meat / empty promises, gas / no gas, final battle both sides.
+  Undo on decree, input, vote, end-of-Generation and scoring screens; reload / load on the hub in every round. No
+  `Mirror: ... not visible` lines and no console errors.
+
 Next steps:
-- Gen III (2.4-2.7): replace the stubs `MonarchReignIntro` (file 05), `PeaceIntro` (file 06), `WarningIntro` (file 07)
-  and `Paradoxical` (file 08) and add the rest, then
-  Scoring + endings (2.8, replaces the `FinalEnding` stub in file 09; remove `NotYetPorted`).
+- Gen III (2.6-2.7): replace the stubs `WarningIntro` (file 07) and `Paradoxical` (file 08) and add the rest, then
+  Scoring + endings (2.8/2.9, replace the `Scoring` and `FinalEnding` stubs in file 09; remove `NotYetPorted`).
+- Owner questions for Gen III Reign/Peace: B14 (first-visit text only once), B16 (2-player CoW left/right text fixed),
+  B17 (Church costs "X/X/X"), B18 (decree tie rewards nobody) - defaults applied, see map section 7 and 2.4.
 - Owner questions in map section 7 (B1 GunsAnnouncement text, B4 TowardsWar wording, B9 figure-token holder, B10 duel
   death odds, ...).
 - `AudioService.ScenarioTheme` has no ATOW music yet (plays none).

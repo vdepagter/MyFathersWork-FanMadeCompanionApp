@@ -456,6 +456,52 @@ Reached when the Unified Monarchists win the war at the end of Gen II Martial.
 | `ShadowBonus` | `ShadowBonus` win | "Royal Advisor: closest to the Crown gains 6VP" -> `BenevolenceBonus`; computes the decree winner and `Ending` (6 if `CrownPenalties > PlayersNum - 2`, else 5) | W `Ending` | | | Decree-winner comparison is buggy in the source (7, B18). |
 | `BenevolenceBonus` | `BenevolenceBonus` win + `_0` pop | "Benevolence Bonus"/"Iron Fist Bonus": list "{name} : {n} Benevolent/Iron Fist decrees" per player; tie -> nobody -> pop "{winner or 'Multiple players are tied, so no player'} gains {decbon}VP." -> `Scoring` | R `DecreesGood/Evil`, `Benevolent` | `_RND_DECREE_BONUS` | `ScoreTrackMarker` | |
 
+**Ported (October 2026).** File `05_ATimeOfWar_Gen3_Reign.cs`; `GetHubMethod` maps `ATimeOfWarHubId.MonarchReign`.
+Implementation notes and deviations from the table above:
+- Method names: `ReignBarnCheck` / `BribeDeniedCheck` (routes in front of `RoyalBarnCheck` / `BribeDenied`), `FirstCrownCons`
+  (= `1stCrownCons`), `ReignHUB` (route in the name click of `ReignIntro`), `DecreeChosen` (link helper: `DecreeChoice`,
+  `DecreesGood/Evil`), `StickfunCheck` (route), `CoWEventVote` / `CoWEventBid2P` / `CoWRes` / `CoWRes2P` / `CoWChosen`,
+  `StatueCheck` (route), `ATOWChurch`, `WeaponsCheck` (route part of `Weapons`), `MonarchReign_0` (end-link router:
+  Early -> `StickfunCheck`, Middle -> `StatueCheck`, Late -> `WeaponsCheck`), `ReignYears()` (Late after the Gen III Late
+  popup, `Generation == 3`, so the hub rebuilt by undo on the end screens shows the Late sections).
+- `MonarchReignIntro` applies `Tracker -= 1` and resets the decree state once (source guard `$MonarchReignIntro`). The setup
+  popup of `MonarchReign1` (page 9, guarded by `$gen3pg`) is `MonarchReignSetup`, shown once after `RoyalPriceisRight_0`.
+- Hub sections (source order): `Statue` + `Church` (Late, statue built; the Church link comes before its text, a space was
+  added after "Click here"), `Allegiance` (`SeparatistsBanned != False`, text by True/None), `RoyalDecree` (main),
+  `MostDecrees` (Early text / Middle-Late text with {benevolent / iron fist} and `{decbon}`), `WhisperingShadow`,
+  `RoyalsTakeNotice` (link -> `FirstCrownCons` while `CrownPenalties == 0`, else `CrownCons`), `RoyalEye`
+  (`CrownPenalties > 0`; one text - the Early source text has an extra comma), `WeaponBonus` (`WeaponReward` money / VP),
+  untitled `End` / `EndLate`.
+- Decrees: drawn in the name click of `ReignIntro` from decree 1 + the unused ones (`_RND_DECREE + min(Decrees, 9)`), so
+  mirror mode asks when the decree screen is shown. `n = min(Decrees - 1, 9)`; `crownL` / `crownR` (`RandomBool`,
+  `_RND_CROWN + n*2 + 0/1`) and the generic options (`_RND_DECREE_OPTION + n*2 + 0/1`) are drawn only for the values the
+  decree shows (Reign1: L, R, ch1, ch2 distinct from ch1; Reign2/3: L, R, ch2 from all 14; Reign4/6/8: L, R; Reign7: L, R,
+  ch1); the result popups (`ReignXb_0`, `Reign7b_0`, `Reign7c2_0`) re-read the same slots. `ch1` uses `RandomElement`, not
+  `RandomInRange`, so mirror mode lists the 14 texts instead of asking for a hidden number. The 14 texts are one CSV tag
+  `DecreeOption` (source "Lose 2 <sprite> ." written without the space before the period), crown texts `DecreeCrownLeft` /
+  `DecreeCrownRight` (source quotes kept). Decree windows have no title: shared bold hand-over line (`DecreeHandOver`)
+  then the bold source title in the content (Martial `DuelDenounce1` pattern). Flavor keys `Reign1#<Decrees>#Title` /
+  `#Opening`, `Reign1b#<Decrees>`, `RoyalDecreeExplain#0/1`, `CommemorativeOTHER#<player>`.
+- `SeparatistsBanned` / `WeaponReward` are set in the result popups (`Reign4b_0`, `Reign8b_0`), as in the source.
+- `Reign7c`: `GameplayInputPopup` (1-40 characters) stores `Titles[player]`; `DisplayName` (title + name) is used in the
+  later story text: decree hand-overs, `Reign7c2`, name links (`ReignIntro`, statue bid, statue visit), statue popups,
+  `BenevolenceBonus` list and popup (B15). `GlobalData` player names are not changed.
+- `$decbon` (`_RND_DECREE_BONUS`) is drawn on `CoWEventVote` / `CoWEventBid2P` (always before the Middle hub);
+  `$commtrigger` (`_RND_STATUE_TRIGGER`) in `StatueCheck` only when the decree count does not decide it already
+  (`Decrees < players` -> no statue, `>= players + 2` -> statue). In mirror mode the question shows the two next screens.
+- `CommemorativeStatueEventb`: Bid window (`SetCue(SpecialEvent)`, `AddClickHereAfterBid`); `CommemorativeStatueEventRes`
+  title "Bid Resolved" + bold "Choose the name..." (source glued both); `CommemorativeStatueEventResb` is a popup only.
+  `CommemorativeOTHER`: a space added before the flavor ending ("snear as ...", source "snear{either").
+- `Reign2b` / `Reign4b` / `Reign6b` / `Reign8b`: the result sentence starts on a new line (`<br />`; source line break).
+- `ShadowBonus` sets `Ending` (6 if `CrownPenalties > PlayersNum - 2`, else 5). `BenevolenceBonus` lists the decrees of the
+  chosen kind and its popup names the unique maximum, else "Multiple players are tied, so no player" (B18 fixed).
+- `BenevolenceBonus_0` -> `Scoring` (file 09), a `// TODO ATOW Scoring` stub showing `NotYetPorted` until 2.8/2.9.
+- Source bugs: B14 fixed (first-visit text only before the first decree), B15 as proposed, B16 fixed (2-player text:
+  benevolence = left, iron fist = right), B17 kept ("X/X/X"; only the Reign return link), B18 fixed. "debug" town name
+  "v1.0" dropped (B29). 5-player branches dropped (B28).
+- Mirror mode (2 and 3 players): no `Mirror: ... not visible` line; questions on the decree screens, `CoWEventVote` /
+  `CoWEventBid2P` ($decbon) and `StatueCheck` (visible: statue event vs hub).
+
 ### 2.5 Gen III "Peace Through War" (file 06) - 27 passages
 
 Reached when the Separatists win the war at the end of Gen II Martial.
@@ -494,6 +540,41 @@ Reached when the Separatists win the war at the end of Gen II Martial.
 | `PeaceEventNo` | win + `_0` pop | "The Voice of the People" -> pop "There is no bonus." -> `BattleTime` | W `Gas=False` | | `S3_ScenarioIcon` | |
 | `FinalBattleTime` | win + `_0` pop | "FINAL BATTLE" + rules -> pop `Gas == False`: "The Battle card remains (NOT Final Battle side)"; else "Turn the Battle card to the Final Battle side" -> `FinalBattleComplete` | | | `S3_WorldConquest` | After the Gen III Late popup. |
 | `FinalBattleComplete` | win | `Gas == False`: discard Weapon tokens, 1VP per 2; else most Weapon tokens gains a Vanity Upgrade -> `Scoring`. `Ending = (Meat && Gas == True) ? 7 : 8` | W `Ending` | | | |
+
+**Ported (October 2026).** File `06_ATimeOfWar_Gen3_Peace.cs`; `GetHubMethod` maps `ATimeOfWarHubId.Peace`.
+Implementation notes and deviations from the table above:
+- Method names: `PeaceBarnCheck` (route in front of `SeparatistBarnCheck`), `PeaceEarlySetup` (the `Peace1` setupStyle:
+  page 11, tax if a building was destroyed, `Tracker += 1` (4p `+= 2`) once - source guard `$Peace1`), `PeaceRoundSetup`
+  (`Peace2` / `Peace3` setupStyle, shown after `BattleCompleteReturn`), `Peace_0` (end-link router: Early -> `FamineEvent`,
+  Middle -> `PeaceEvent`, Late -> `FinalBattleTime`), `PeaceYears()` (as `ReignYears`), `FamineEvent` / `FamineVote` /
+  `FamineRes` / `FamineBid2P` / `FamineBidRes2P_0` (popup first) + `FamineBidRes2P` (choice) / `FamineYes` (input) +
+  `FamineYesResult` (window) / `FamineNo` (= `ATOW-FamineEvent*`, `2PFamineBid`, `2pFamineBidRes`), `PeaceStickCheck` (route).
+  The `$pea1-3` guards are dropped (the setup popups are shown once per round).
+- Hub sections: `Allegiance`, `WarOnTheWorld` (main, Early/Middle; explanation link first, then the text - one text, the
+  Early source has an extra comma), `EverythingIsAWeapon` (`Bribe == True`, all rounds), `PublicRelations` (Late,
+  `Gas == True`), `FinalConflict` (main, Late; link, text, "not flip" paragraph when `Gas == False`, end-of-Generation
+  link `FinalConflictEnd` inside the section as in the source), untitled `End` (Early "Round" / Middle "round", source
+  capitalisation).
+- `$wlimit` (`_RND_WEAPON_LIMIT`) is drawn on `PeaceDiscard_0`, `$tempbs` (`_RND_WEAPON_INCOME`) on the first
+  `PeaceRoundSetup` (Middle); the Late setup reuses it (B24).
+- `FamineYes`: `GameplayInputPopup` (1-40 characters), prompt "the player who won the bid" (2p) / "the player with the
+  most VP"; sets `NewMeat`, `Meat = true`. `PeaceEventGas` / `PeaceEventNo` set `Gas` on entering the window.
+- `BattleTime`: one of three flavor paragraphs (`BattleTime#<Years>`), the first names a flavor-random player
+  (`#Player`) "{name} III"; `BattleCompleteReturn` title Engagement / Campaign (`BattleCompleteReturn#<Years>`). The
+  battle runs with `Years` already advanced (Middle after the Early round, Late after the Middle round).
+- `PeaceEventb`: plain link "Click here to start the vote..." (no vote screen, as in the source). `FamineRes` /
+  `PeaceEventc` titles "Vote Result" + bold "Tally ..." line (source glued both); `FamineBidRes2P` title "Bid Outcome".
+- `FinalBattleTime_0`: "remains" text when `Gas == False`, else the Final Battle side. `FinalBattleComplete` sets `Ending`
+  (7 if `Meat && Gas == True`, else 8) and links to `Scoring` (file 09 stub).
+- `PeaceStick_0` / `PeaceRoundSetup` / `PeaceEarlySetup`: source line breaks written as `<br />`.
+- "debug" town name "v1.0" dropped (B29), 5-player branches dropped (B28).
+- Mirror mode (3 players): no `Mirror: ... not visible` line; questions on `PeaceDiscard_0` and `PeaceRoundSetup`.
+
+State for the endings task (2.8, section 8): Reign sets `Ending` 5/6 in `ShadowBonus`; ending 5 reads `Barracks`,
+`WarWinner` ("endchange": Gen I loser == Unified Monarchists, i.e. `WarWinner == Separatists`), `BuildingsDestroyed`,
+`Benevolent` (True / False), `Titles` (endings use the ranking name, not `DisplayName`). Peace sets `Ending` 7/8 in
+`FinalBattleComplete`; ending 7 reads `NewMeat`, ending 8 reads `Meat` and `Gas` (True released / False not). The Gen II
+war winner is not stored: Reign = Unified Monarchists won the war, Peace = Separatists (derivable from `HubId`).
 
 ### 2.6 Gen III "Future Consequences" (Warning, file 07) - 22 passages (+ shared `UniGen3`)
 
@@ -582,7 +663,7 @@ All endings end with "THE END?". Pattern: FotU `FinalEnding` (`MarkFinalEnding()
 
 | Passage | Method / kind | Used by | Flow | Notes |
 |---|---|---|---|---|
-| `Scoring` | `Scoring` win | Reign (`BenevolenceBonus`), Peace (`FinalBattleComplete`), Warning (`Warning3`/`Warning3time` end), Paradox (`ParadoxEvent`) | "Each Estate Upgrade is worth 1VP. Add Vanity Upgrade points. -3VP per Maladjustment gained at the End of this Generation." + `TimeMachineMasterwork`: "Time Machine: if not completed, lose 5VP" -> "Click to tabulate scores for posterity..." -> `FinalScoring.Start` | Tagged `[NOTADDED END]` but reachable. Owned by the 2.8 task; the first Gen III task (2.4) creates it so its branch can be tested end to end. |
+| `Scoring` | `Scoring` win | Reign (`BenevolenceBonus`), Peace (`FinalBattleComplete`), Warning (`Warning3`/`Warning3time` end), Paradox (`ParadoxEvent`) | "Each Estate Upgrade is worth 1VP. Add Vanity Upgrade points. -3VP per Maladjustment gained at the End of this Generation." + `TimeMachineMasterwork`: "Time Machine: if not completed, lose 5VP" -> "Click to tabulate scores for posterity..." -> `FinalScoring.Start` | Tagged `[NOTADDED END]` but reachable. Owned by the 2.8 task. The 2.4/2.5 task added `Scoring` (file 09) as a `// TODO ATOW Scoring` stub showing `NotYetPorted`; Reign and Peace already route to it. |
 | `UniGen3` | `UniGen3` win | Warning (`Warning1`), Paradox (`Paradox1/2/3/3b`) | "University: When you visit this location, (Paradox: pay $1 to) gain 1 Caretaker from Lost. (1st Edition icon note)" -> back to the hub | Owned by 2.6 (Warning), reused by 2.7. Dead statement `$round == 13;`. See 7, B21. |
 
 ### 2.10 Unreachable passages (do not port)
