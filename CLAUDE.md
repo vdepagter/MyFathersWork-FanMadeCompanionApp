@@ -92,7 +92,7 @@ The engine was generalized while porting Fear of the Unknown. A new scenario nee
 - A hub id enum in `Shared/Enums/`, mapped in `GetHubMethod`.
 - After the last generation link to `FinalScoring.Start`; provide `public static void FinalEnding(GlobalData)` and the shared scoring tags (`ScoreEntry_Content`, `TieBreaker1_*`, `TieBreaker2_Content`, `Rankings_*`) in the scenario CSV.
 - A `tools/tagcheck.py --scenario=` entry and `test-save-helpers.js` support. Run `tools/sourcecheck.py` and the `PLAYTEST_FINDINGS.md` checklist.
-- `Shared/Enums/Generation.cs` has 3 values; after the last round `Generation` becomes 3 (guard like `EndedYears()` in Fear of the Unknown). `Pages/Home.razor` `Test()` still sets `ScenarioId.CostOfDisease`.
+- `Shared/Enums/Generation.cs` has 3 values; after the last round `Generation` becomes 3 (guard like `EndedYears()` in Fear of the Unknown).
 
 Source size: `ATimeOfWar.txt` 297 passages, English. It has time-travel/paradox mechanics - look at the Unity `View*` scripts (`ViewBiddingSystem`, etc.) for UI the Twine text relies on.
 

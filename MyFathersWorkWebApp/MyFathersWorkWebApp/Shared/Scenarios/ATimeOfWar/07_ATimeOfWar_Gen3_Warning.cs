@@ -1,4 +1,4 @@
-namespace MyFathersWorkWebApp;
+﻿namespace MyFathersWorkWebApp;
 
 // Generation III "Future Consequences" (port map 2.6): reached from TimeEnd1 (Paradox tokens >= dox) or TimeEnd2 (Time
 // Machine not repaired). Intro, Wooden Figure fortune, Utopian Experiments, the time travelers, the changing worlds
@@ -171,6 +171,7 @@ public static partial class ATimeOfWar
         vars.Ending         = 4;
 
         globalData.ActiveWindow = new GameplayWindow(globalData);
+        globalData.ActiveWindow.SetVoiceOver("WarningIntro");
         globalData.ActiveWindow.AddGameplayTitle(GlobalTags.Gameplay_Generation_III);
         globalData.ActiveWindow.AddDefaultSubtitle();
         globalData.ActiveWindow.AddDefaultContent();
@@ -333,6 +334,7 @@ public static partial class ATimeOfWar
     {
         globalData.SaveToUndo();
         globalData.ActiveWindow = new GameplayWindow(globalData);
+        globalData.ActiveWindow.SetVoiceOver("WarningEvent");
         globalData.ActiveWindow.AddDefaultTitle();
         globalData.ActiveWindow.AddDefaultContent(content => content.FormatWithIndex(0, globalData.LocalizedPlayerNumberIndex()));
         globalData.ActiveWindow.AddClickHereToContinue(TimeWarp1st);

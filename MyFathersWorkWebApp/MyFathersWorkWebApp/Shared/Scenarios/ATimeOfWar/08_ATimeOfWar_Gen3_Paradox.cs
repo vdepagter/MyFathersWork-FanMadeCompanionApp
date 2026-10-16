@@ -1,4 +1,4 @@
-namespace MyFathersWorkWebApp;
+﻿namespace MyFathersWorkWebApp;
 
 // Generation III "You Cant Stop Progress" (port map 2.7): reached from TimeEnd1 (fewer Paradox tokens than dox) or
 // TimeEnd2 (Time Machine repaired), via Paradoxical. Time Paradox cards, intro, Utopian Experiments, the {figure} token
@@ -121,6 +121,7 @@ public static partial class ATimeOfWar
         foreach (string player in globalData.GetActivePlayers()) vars.Released[player] = false;
 
         globalData.ActiveWindow = new GameplayWindow(globalData);
+        globalData.ActiveWindow.SetVoiceOver("WarningIntro"); // Unity plays the WarningIntro clip for ParadoxIntro
         globalData.ActiveWindow.AddGameplayTitle(GlobalTags.Gameplay_Generation_III);
         globalData.ActiveWindow.AddDefaultSubtitle();
         globalData.ActiveWindow.AddDefaultContent();

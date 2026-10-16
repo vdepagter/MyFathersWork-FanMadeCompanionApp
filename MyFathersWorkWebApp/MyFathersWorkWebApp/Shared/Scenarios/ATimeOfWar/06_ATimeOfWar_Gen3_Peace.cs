@@ -1,4 +1,4 @@
-namespace MyFathersWorkWebApp;
+﻿namespace MyFathersWorkWebApp;
 
 // Generation III "Peace Through War" (port map 2.5): reached when the Separatists win the war at the end of Generation II
 // Martial. Intro, World Conquest setup, battles at the end of each round, the famine vote (new meat), the gas vote and
@@ -92,6 +92,7 @@ public static partial class ATimeOfWar
         vars.Gas     = ExtendedBool.None;
 
         globalData.ActiveWindow = new GameplayWindow(globalData);
+        globalData.ActiveWindow.SetVoiceOver("PeaceIntro");
         globalData.ActiveWindow.AddGameplayTitle(GlobalTags.Gameplay_Generation_III);
         globalData.ActiveWindow.AddDefaultSubtitle();
         globalData.ActiveWindow.AddDefaultContent();
