@@ -1,6 +1,6 @@
 ﻿/* Back Button */
 .back-button {
-    position: absolute;
+    position: fixed;
     top: 1rem;
     left: 1rem;
     background-color: #5c4633;

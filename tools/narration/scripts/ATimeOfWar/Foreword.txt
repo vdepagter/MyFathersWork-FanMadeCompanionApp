@@ -1,0 +1,8 @@
+# ATimeOfWar_Localization.csv Foreword_Content ("A Time of War : A Memoir Across Three Generations"). Static text. Title not read.
+[proudly] Dear reader, it is with great excitement that I offer this expansive work for your consideration: a recently unearthed, voluminous manuscript... an epic memoir, written over the course of three generations. It is a work as monumental and daunting as it is groundbreaking... a glimpse into the inner workings of the true scientific mind.
+
+Upon discovery of these immaculate pages, I, suffering great personal expense, set forth to ensure the general publication and distribution of this important history. It is a work that will perhaps elucidate upon, and justify, the eccentric reputations of my forebears.
+
+[with mock modesty] While I admit that I am biased in this appraisal, as it is my own exemplary lineage which is documented, I submit this comprehensive prosopography in as accurate a condition as I can muster. As one will soon attest, it is a chronicle of events of a decidedly fantastical nature... yet my research confirms it to be as true and vital a work as has ever been seen in print.
+
+[grave] However, I must offer a word of caution to those with weaker constitutions. While these pages hold a brilliant catalogue of achievements, they also boldly depict the setbacks encountered along the journey. Gruesome, grim, and horrifying as they may be, I have included their spine-chilling contents as originally written. As one might expect, in exposing the base components of the universe, we uncover both light and darkness in equal measure. [quietly] For without darkness, we cannot appreciate the brilliance of the light.

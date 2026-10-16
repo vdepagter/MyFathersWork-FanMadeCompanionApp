@@ -104,6 +104,25 @@ Run after the port was merged; no changes to Fear of the Unknown were needed.
 - #4 mirror heading: shared code; checked on Foreigners questions ("Blame it on the Foreigners", "Town Strength",
   "Death and Resolution").
 
+## Browser play test - A Time of War, full games from the menu (October 2026)
+
+Four games from the main menu, no crafted saves: 3 players Martial -> Peace (ending 8), 2 players Martial -> Reign
+(ending 6), 4 players Time Travel -> Paradox (ending 1), 2 players mirror mode Time Travel -> Warning (ending 4), plus a
+mirror-mode Martial -> Reign run from a Gen I save.
+
+### 7. Undo from the first screen of a round skips back a whole round - FIXED (engine, all scenarios)
+
+- **Cause:** a hub is an undo point only through `GlobalData.SaveGame` (called when a hub is shown after a window or
+  popup), which skips the push when the top undo entry is already a hub entry, so a hub re-shown without an undoable
+  screen in between is not stored twice. The end-of-round popup has no `SaveToUndo`, so when the next round's hub
+  follows the popup directly, the new hub looked like a re-shown hub and was not stored. Undo from the first screen
+  of that round (Scoring after the Late round, a hub link) then restored the previous round's hub.
+- **Where:** every round transition whose next event is the hub itself: A Time of War Reign (Middle -> Late without
+  the statue), Paradox (Middle -> Late without a release), Fear of the Unknown Witch Hunt (Early -> Middle). The Cost of
+  Disease always shows an event first, so it was not affected.
+- **Fix:** hub undo entries remember their round (`UndoData.Round`); `SaveGame` only skips the push when the top hub
+  entry is of the same round. Undo then goes Scoring -> Late hub -> Middle hub. Checked in all three scenarios.
+
 ## Checklist for porting / reviewing a scenario
 
 1. **Hub text vs. state** - hub text is formatted when the hub is built. `RunScenarioAction` rebuilds the shown hub
@@ -119,3 +138,8 @@ Run after the port was merged; no changes to Fear of the Unknown were needed.
    made earlier or later than the official app shows it (often a missing piece of text, as in finding 3).
 5. **Branch differences with the official app** - before treating a branch as a bug, compare the deciding variables in
    the save with the source condition (`tools/passage_dump.py`) and write down the player choices that feed them.
+6. **Undo across round transitions** - after each end-of-round popup, press undo on the first screen of the new round
+   (and on Scoring): it must return to that round's hub, then to the previous round's hub (finding 7). Crafted saves
+   start with a single undo entry, so check this in games that reach the round by playing.
+7. **Dynamic tags** - `python tools/tagcheck.py --scenario=<Scenario>` checks computed content indices that are a ternary
+   of literals or listed in its `DYNAMIC_VALUES`; add an entry there for every new computed index it prints as DYNAMIC.

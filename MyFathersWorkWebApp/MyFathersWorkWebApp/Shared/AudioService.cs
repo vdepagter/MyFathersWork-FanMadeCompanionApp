@@ -63,6 +63,7 @@ public sealed class AudioService(IJSRuntime js)
     {
         ScenarioId.CostOfDisease => MusicTrack.CostOfDisease,
         ScenarioId.FearOfUnknown => MusicTrack.FearOfTheUnknown,
+        ScenarioId.TimeOfWar     => MusicTrack.CostOfDisease, // as in Unity (StoryIndex 2 uses the Cost of Disease theme, map 3)
         _                        => MusicTrack.None
     };
 
