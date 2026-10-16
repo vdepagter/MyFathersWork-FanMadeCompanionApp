@@ -8,8 +8,8 @@ Only work in progress lives here. When a section is finished, move it to [`HANDO
 Spec: [`docs/ATOW_PORT_MAP.md`](docs/ATOW_PORT_MAP.md) (one task per section 2.x). Status: **fully ported** - scaffold,
 Gen I "Taking Sides", Gen II "Martial" and "Time Travel", Gen III "Heavy is the Crown", "Peace Through War", "Future
 Consequences" and "You Cant Stop Progress", Scoring and all 8 endings (map 2.1-2.9), branch
-`claude/port-a-time-of-war-132617`. No `// TODO ATOW` / `NotYetPorted` left; `GetHubMethod` maps all seven ATOW hubs. Menu
-description still "WORK IN PROGRESS" (until a full play test). Deviations: the "Ported" notes in map 2.1-2.8 and the ATOW
+`claude/port-a-time-of-war-132617`. No `// TODO ATOW` / `NotYetPorted` left; `GetHubMethod` maps all seven ATOW hubs. The status prefix was
+removed from all menu descriptions (October 2026). Deviations: the "Ported" notes in map 2.1-2.8 and the ATOW
 section in `CLAUDE.md`.
 
 - Engine: `Shared/Scenarios/ATimeOfWar/` (files 00-09, `ATimeOfWarVars`), `ATimeOfWarHubId`, `WarFaction`,
@@ -36,7 +36,7 @@ section in `CLAUDE.md`.
   content indices (`DYNAMIC_VALUES`, ternaries) and the shared `Gen3_*` hub sections.
 
 Next steps:
-- Table play test; afterwards drop "WORK IN PROGRESS" from the menu description (English + Polish).
+- Table play test.
 - Owner questions (defaults applied, map section 7): B1 GunsAnnouncement text, B4 TowardsWar wording, B9 figure-token
   holder may not exist, B10 duel death odds, B14 first-visit text, B16 2-player CoW text, B17 Church costs "X/X/X",
   B19 random paradox only after a release (fixed), B21 University "pay $1" in Warning (fixed); the `SeedResolution` popup

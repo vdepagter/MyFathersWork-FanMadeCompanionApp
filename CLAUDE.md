@@ -11,9 +11,9 @@ When a piece of work is finished, move its section to [`HANDOFF_ARCHIVE.md`](HAN
 
 | Scenario | Web app | Notes |
 |---|---|---|
-| The Cost of Disease (`ScenarioId.CostOfDisease`) | **Complete, play testing** - Gen I, II, III, final scoring, all 8 endings | Only English text. Menu description starts with "PLAY TESTING". |
-| Fear of the Unknown (`FearOfUnknown`) | **Ported, browser play test done** - all branches, battle, asylum assessment, scoring, 8 endings | Waiting for a table play test. Menu description starts with "WORK IN PROGRESS". See the section below. |
-| A Time of War (`TimeOfWar`) | **Fully ported, browser play test per branch done** - Gen I Taking Sides, Gen II Martial / Time Travel, Gen III Heavy is the Crown / Peace Through War / Future Consequences / You Cant Stop Progress, scoring, all 8 endings | Waiting for a full play-through and a table play test. Menu description starts with "WORK IN PROGRESS". Spec: `docs/ATOW_PORT_MAP.md`. See the section below. |
+| The Cost of Disease (`ScenarioId.CostOfDisease`) | **Complete, play testing** - Gen I, II, III, final scoring, all 8 endings | Only English text. |
+| Fear of the Unknown (`FearOfUnknown`) | **Ported, browser play test done** - all branches, battle, asylum assessment, scoring, 8 endings | Waiting for a table play test. See the section below. |
+| A Time of War (`TimeOfWar`) | **Fully ported, browser play test per branch done** - Gen I Taking Sides, Gen II Martial / Time Travel, Gen III Heavy is the Crown / Peace Through War / Future Consequences / You Cant Stop Progress, scoring, all 8 endings | Waiting for a full play-through and a table play test. Spec: `docs/ATOW_PORT_MAP.md`. See the section below. |
 
 ## Repository layout
 
