@@ -5,67 +5,35 @@ Only work in progress lives here. When a section is finished, move it to [`HANDO
 
 ## A Time of War port (October 2026)
 
-Spec: [`docs/ATOW_PORT_MAP.md`](docs/ATOW_PORT_MAP.md) (one task per section 2.x). Status: **scaffold + Gen I "Taking
-Sides" + Gen II "Martial" + Gen II "Time Travel" + Gen III "Heavy is the Crown" + Gen III "Peace Through War" done**
-(map 1.3/1.4, 2.1-2.5), branch `claude/port-a-time-of-war-132617`.
+Spec: [`docs/ATOW_PORT_MAP.md`](docs/ATOW_PORT_MAP.md) (one task per section 2.x). Status: **fully ported** - scaffold,
+Gen I "Taking Sides", Gen II "Martial" and "Time Travel", Gen III "Heavy is the Crown", "Peace Through War", "Future
+Consequences" and "You Cant Stop Progress", Scoring and all 8 endings (map 2.1-2.9), branch
+`claude/port-a-time-of-war-132617`. No `// TODO ATOW` / `NotYetPorted` left; `GetHubMethod` maps all seven ATOW hubs. Menu
+description still "WORK IN PROGRESS" (until a full play test). Deviations: the "Ported" notes in map 2.1-2.8 and the ATOW
+section in `CLAUDE.md`.
 
-- Engine: `Shared/Scenarios/ATimeOfWar/` (`ATimeOfWarVars` with every section-3 field, all `_RND_*` constants of 4.1 in
-  `00_ATimeOfWar_Setup.cs`), `ATimeOfWarHubId`, `WarFaction`, `MartialBuilding`, `PopUpIcon` S3 constants, all `GlobalData`
-  cases, `ATimeOfWar_Localization.csv` / `ATimeOfWar_Gameplay_Localization.csv` (+ shared scoring tags),
-  `mkSaveATOW` in `tools/test-save-helpers.js`. Menu description "WORK IN PROGRESS".
-- Gen I: setup, intro, Taking Sides hub (3 rounds), Town Hall rumors, Village Meeting, Barracks vote, end of Gen I
-  (`TSBarracksPenalty`, `SeedGUNS`, `Warwarn`, both end-of-generation popups, `TowardsWar` / `TowardsDev`).
-  Deviations: map 2.1 "Ported" notes.
-- Browser play test: 3-player game from the menu through all Gen I rounds (all six rumors, meeting, both vote
-  outcomes, both `$war` outcomes, town name "Paradox"), 2- and 4-player runs, undo, reload on the hub, mirror mode.
-
-- Gen II Martial (files 02, 03): intros, `Martial` hub (3 rounds), Special Setup popup before the Early/Middle
-  events, sabotage (village / cousin / Outpost), messengers, duels (science / pistols, denounce, decline, tie, death),
-  quartering, bribe, afternoon tea (vote and 2-player bid), Barracks penalties, `ResistSides` -> `ResistEnd` / `2` / `3`
-  -> End of Generation popup -> Gen III stubs `MonarchReignIntro` (file 05) / `PeaceIntro` (file 06). Deviations and
-  source-bug decisions (B5-B7 fixed, B8/B9 as shipped, B10 death on 1 of 5): map 2.2 "Ported" notes.
-- Browser play test of Martial: both factions from the end of Gen I through all rounds (2, 3 and 4 players), every
-  sabotage/messenger/duel/tea/quartering/bribe branch, all three `ResistEnd*` into both Gen III stubs, undo on many
-  screens, reload on the hub in every round, two mirror-mode runs (no `Mirror: ... not visible` lines, no exceptions).
-
-- Gen II Time Travel (file 04): intro, Time Machine question/update card, Paradox tokens, `TimeTravel` hub (3 rounds:
-  Paradox explanation, mending reward, Time Machine repairs, Military Demands), military token (followed / not), Barracks
-  vote reversed, showcase resolution, Blame game (2-player rules, secret interrogation per player, $2 Flag offer,
-  silent / blame), `BlameOut1/2/3`, Chaos Theory, Barracks penalty, one End of Generation popup -> `TimeEnd1` (dox) /
-  `TimeEnd2` (repaired / zero / one / two) -> Gen III stubs `WarningIntro` (file 07) / `Paradoxical` (file 08).
-  Deviations: map 2.3 "Ported" notes.
-- Browser play test of Time Travel: from the end of Gen I into Time Travel and through all rounds with 2, 3 and 4
-  players (both military token answers, repairs, mending, every Blame outcome incl. the 2-player rules, flags bought
-  singular/plural, both Barracks states), `TimeEnd1` both links, `TimeEnd2` repaired and zero/one/two into the Gen III
-  stubs, undo on many screens, reload on the hub in every round, one 4-player mirror-mode run (no `Mirror: ... not
-  visible` lines, no exceptions).
-
-- Gen III "Heavy is the Crown" (file 05, map 2.4): intro, Suspicious Barn / bribe checks, Crown token, `MonarchReign` hub
-  (3 rounds), royal decrees (all 7, both choices, regal title input), Crown penalties, Wooden Figures, benevolence /
-  iron fist vote (2-player bid), Commemorative Statue (trigger, bid, owner / other visits), Church, Weapon Cache, Royal
-  Advisor bonus (sets `Ending` 5/6), Benevolence / Iron Fist bonus -> `Scoring`. Source bugs B14, B16, B18 fixed, B15 as
-  proposed, B17 kept. Deviations: map 2.4 "Ported" notes.
-- Gen III "Peace Through War" (file 06, map 2.5): intro, barn check, World Conquest / weapons setup, tax, weapon limit,
-  `Peace` hub (3 rounds), war explanation, famine vote / 2-player bid with the new meat name, Wooden Figures, battles,
-  gas vote, Final Battle (sets `Ending` 7/8) -> `Scoring`. Deviations: map 2.5 "Ported" notes.
-- `Scoring` (file 09) is a `// TODO ATOW Scoring` stub (`NotYetPorted`) shared by both branches; the state the endings need
-  is listed at the end of map 2.5.
-- Browser play test of Reign and Peace: both entered from a Martial Late hub through the End of Generation popup (3p
-  Reign, 4p Peace, 2p Peace, 2p and 3p Reign in mirror mode, 3p Peace in mirror mode), all three rounds to the scoring
-  stub with every decree and both choices, title input, crown penalties, Wooden Figures 1 / >1, vote and 2-player bid
-  variants of the CoW and famine events, statue triggered (fixed and random) and not, statue visits by owner / other,
-  Church, Weapon Cache, benevolence tie and unique winner, meat / empty promises, gas / no gas, final battle both sides.
-  Undo on decree, input, vote, end-of-Generation and scoring screens; reload / load on the hub in every round. No
-  `Mirror: ... not visible` lines and no console errors.
+- Engine: `Shared/Scenarios/ATimeOfWar/` (files 00-09, `ATimeOfWarVars`), `ATimeOfWarHubId`, `WarFaction`,
+  `MartialBuilding`, `PopUpIcon` S3 constants, the `GlobalData` cases, both ATOW CSVs, `mkSaveATOW` in
+  `tools/test-save-helpers.js`.
+- Browser-tested per branch (crafted saves at the end of the previous Generation, then every round transition): Gen I
+  (2/3/4 players), Martial (both factions, every event chain), Time Travel (every Blame outcome), Reign and Peace (all
+  decrees, votes / bids, statue, battles), Warning (all six world pages, time shifts to the stable timeline, old man's
+  letter, Stasis), Paradox (both figure paths, the Time Machine vote with 0 / 1 / 2 releases, all eight random paradoxes,
+  giant check), Scoring with score entry, tie-breakers (Masterwork, Estate Upgrades, family win) and rankings into all
+  8 endings. 2, 3 and 4 players, undo on many screens incl. score entry, reload on the hub in every round, mirror-mode
+  runs per branch without `Mirror: ... not visible` lines, no console errors. `tagcheck.py` (all three scenarios) 0
+  missing, `sourcecheck.py ATimeOfWar ATimeOfWar` only lists justified items (unreachable passages, `;` / Harlowe `''`
+  in labels, the Unity-only screens handled as popups).
 
 Next steps:
-- Gen III (2.6-2.7): replace the stubs `WarningIntro` (file 07) and `Paradoxical` (file 08) and add the rest, then
-  Scoring + endings (2.8/2.9, replace the `Scoring` and `FinalEnding` stubs in file 09; remove `NotYetPorted`).
-- Owner questions for Gen III Reign/Peace: B14 (first-visit text only once), B16 (2-player CoW left/right text fixed),
-  B17 (Church costs "X/X/X"), B18 (decree tie rewards nobody) - defaults applied, see map section 7 and 2.4.
-- Owner questions in map section 7 (B1 GunsAnnouncement text, B4 TowardsWar wording, B9 figure-token holder, B10 duel
-  death odds, ...).
-- `AudioService.ScenarioTheme` has no ATOW music yet (plays none).
+- One full browser play-through from the menu to an ending (so far each branch was entered from crafted saves at the
+  previous Generation's Late hub).
+- Table play test; afterwards drop "WORK IN PROGRESS" from the menu description (English + Polish).
+- Owner questions (defaults applied, map section 7): B1 GunsAnnouncement text, B4 TowardsWar wording, B9 figure-token
+  holder may not exist, B10 duel death odds, B14 first-visit text, B16 2-player CoW text, B17 Church costs "X/X/X",
+  B19 random paradox only after a release (fixed), B21 University "pay $1" in Warning (fixed); the `SeedResolution` popup
+  typo "gains gains"; endings 1/5 print "The family IV" on a shared win (as the source).
+- `AudioService.ScenarioTheme` has no ATOW music yet (plays none); ATOW voice-over not ported.
 
 ## Fear of the Unknown - table play test (October 2026)
 

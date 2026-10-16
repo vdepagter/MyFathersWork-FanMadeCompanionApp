@@ -610,6 +610,42 @@ Reached from `TimeEnd1` (Paradox tokens >= dox) or `TimeEnd2` (Time Machine not 
 | `OldManYes` | win + `_0` pop | "Underground Contacts" -> pop "Place the {figure} token near your Estate Affairs action: do not discard when drawing" -> same | | | `S3_SickleToken`/`S3_ShieldToken` by figure | |
 | `Stasis` | `Stasis` win + `_0` pop | "Timeline Stabilized" (`{playtxt}` travelers) -> pop "The player who completed their Masterwork gains 5VP. Each player gains 1 Bodies." -> `Warning` | W `MasterworkDone=true`, `Ending=3` | | `Bodies_Icon` | |
 
+**Ported (October 2026).** File `07_ATimeOfWar_Gen3_Warning.cs`; `GetHubMethod` maps `ATimeOfWarHubId.Warning`.
+Implementation notes and deviations from the table above:
+- Method names: `Late2ResBCheck` (route), `WarningStableSetup` (route) + `WarningStableSetup_0` (page 16 popup),
+  `TimeWarpNext` (route after the Lost in Time popup), `TimeShiftLimitReached`, `ShiftWorld`, `OldManTokenRevealed`,
+  `OldManNext` (route), `Warning_0` (end-link router: Early -> `WarningEvent`; Middle unstable -> `TimeWarp2`, stable ->
+  `OldManToken` if `MetGentleman` else `WarningStableSetup`; Late -> `Scoring`), `WarningYears()` (as `ReignYears`).
+- Hub: title `{{0=?|Peaceful Return|Not Again}}`. Early: `Gen3_Technician` / `Gen3_Utopian` / `Gen3_University` sections
+  (shared helper `AddUtopianSections`, tags `Gen3_*`, also used by Paradox), the end-of-round link inside University as in
+  the source. Middle / Late unstable: `World` (title and text by page, `Warning_World_Content17..22`; the Late texts
+  differ by "there" / "here" and an extra paragraph break in 22, written as `{{0=?|...}}`; page 18 flavor key
+  `Warning#18#<WorldShifts>`), `Stressful` (page 19; Late tense as in the source), `Visit` (location by page; link
+  "Click here to change the world..." adds 1 to `TimeShifts`, then `TimeWarp`), `UtopianWorld` with the end link. Stable:
+  `Masterwork` (until `MasterworkDone`) and `Perseverance` with the end link. The world sections are not built while
+  `World == 0` (between a shift and the next page popup), so the hub never draws.
+- World pages: drawn on `WarningWorldSetup` (the popup that shows the page; `_RND_WORLD + min(WorldShifts, 9)`, excluding
+  the previous page) instead of `TimeWarp1st` / the `TimeWarp` / `TimeWarp2` click. `TimeWarp_0` / `TimeWarp2_0` clear the
+  current page (`ShiftWorld`). Lost in Time VP (`_RND_SHIFT_VP + min(TimeShifts, 9)`) on `TimeWarp_0`. `$total`
+  (`_RND_SHIFT_LIMIT`, 6-10 minus 3/2/1 = players + 1 ... players + 5) only when the shift count does not decide it already;
+  in mirror mode the question shows the two next screens (`WarningEvent2` vs the page popup).
+- `$search + 1` of the Middle end-of-round link is applied in `TimeWarp2` (the only screen after that link in a shifting
+  timeline). The Warning3 "change the world" links that use Warning2's fragment (B23) are one link.
+- Setup popups at round entry instead of every hub render: page 16 once before the Early hub (`WarningEarlySetup`, guard
+  `$pgGen3` dropped), the world page after `WarningMaybe` / every time shift / `TimeWarp2` / the old man's letter, page 16
+  of the stable timeline after `WarningEvent2` and at the start of the Late Years while the Masterwork is not completed.
+  The Late world popup text "of the Village Chronicle" got the period of the Middle text.
+- `UniGen3` (shared): source bug B21 fixed ("pay $1 to" always); returns to the hub of `HubId` (Warning or Paradox).
+- `WarningIntro` resets the Warning state and sets `Ending = 4`; `Stasis` sets `Ending = 3`. Wooden Figure fortune
+  (`_RND_FIGURE_FORTUNE`) drawn in the intro's click callback. `$master = 0` / `$stasis = "no"` init in the intro.
+- Text: "When the the round is complete" written "When the round is complete" (source typo). Source `;` written as " - ".
+- "debug" town name "v1.0" dropped (B29), 5-player text dropped (B28).
+- Browser play test: 2, 3 and 4 players, entered from TimeTravel Late hubs (TimeEnd1 and TimeEnd2), both fortunes, Gift of
+  Silence, both war texts, all six pages (Middle and Late variants), time shifts up to the stable timeline (3 and 4
+  players), old man's letter (yes / no, shifting and stable), Stasis (ending 3) and no Stasis (ending 4), undo on the
+  shift / letter / popup screens, reload on the hub in every round, one 3-player mirror-mode run (no `Mirror: ... not
+  visible` line).
+
 ### 2.7 Gen III "You Cant Stop Progress" (Paradox, file 08) - 26 passages (+ shared `UniGen3`)
 
 Reached from `TimeEnd1` (fewer Paradox tokens than dox) or `TimeEnd2` (Time Machine repaired), via `Paradoxical`.
@@ -642,6 +678,33 @@ Reached from `TimeEnd1` (fewer Paradox tokens than dox) or `TimeEnd2` (Time Mach
 | `ParadoxGiantCheck` | choice win | "How many players completed their Giant Masterwork?" 0..PlayersNum -> `ParadoxEvent` | W `Giants` | | | After the Gen III Late popup. |
 | `ParadoxEvent` | `ParadoxEvent` win (+ `_0` pop) | `TimeMistake < 8`: "Monument to Progress" (`Releases >= 1` -> `Giants -= 1`) -> pop In Memoriam award -> `Scoring`; `TimeMistake == 8`: "Rebuilding" -> `Scoring`. `Ending = Giants >= threshold (2p 1, 3p 2, 4p 3) ? 1 : 2` | W `Giants`, `Ending` | | `S3_EstateUpgradeBack` | |
 
+**Ported (October 2026).** File `08_ATimeOfWar_Gen3_Paradox.cs`; `GetHubMethod` maps `ATimeOfWarHubId.Paradox`.
+Implementation notes and deviations from the table above:
+- Method names: `FigureontheTrackInRevealed` (+ `_0`, the "Gain 2 Creepy" popup), `Late2ResACheck` (route), `ParadoxSetup`
+  (page 15 popup, once before the Early hub; `$pgGen3` dropped), `Monu` / `MonuRevealed` (= `MonuA..D`, player
+  `MonuIndex`), `MonuChosen` (link helper), `Paradox_0` (end-link router), `ParadoxYears()`, `Accolade` / `AccoladeText`.
+- Hub sections: `ScienceAtAnyCost` (hidden after "A Return to Suspicion"), `AngryMobReturn` (after it), the shared
+  `Gen3_Technician` / `Gen3_Utopian` / `Gen3_University` (Technician and University hidden after "Utter Catastrophe"; Early
+  end link in University), `InMemoriam` (Middle / Late; "at no cost" Middle, "for no cost" Late as in the source; the
+  "no longer awarded" text after the catastrophe). The Middle / Late end links are in `InMemoriam`; for `Paradox3b` the
+  source had them in an untitled section after it (same place on screen). `Paradox3b` = the Late hub when `TimeMistake`
+  is 6 or 8.
+- Source bug B19 fixed: `$timemistake` is only drawn on `ParadoxTimeRandom` (`_RND_TIME_MISTAKE`, `RandomElement` so mirror
+  mode lists the eight texts), so without releases `TimeMistake` stays 0 and `ParadoxEvent` always shows the monument.
+  B20 applied (the Late end always goes through the end-of-round popup). B22 as shipped.
+- `$accolade` (`_RND_ACCOLADE`) drawn on the popup that shows it (`FigureontheTrackInb_0` / `NobodyFigures_0`); the Wooden
+  Figure story (`_RND_PARADOX_FIGURE`) in the `ParadoxFirst_0` close callback.
+- `MonuRes_0` lists releasers first, then the others, in turn order (3VP for a single releaser, a Compulsion each for
+  more). `ParadoxTimeRandom_0`: one popup tag with the eight setup texts; outcome 7 lists the releasers.
+- `ParadoxGiantCheck` offers 0 ... players; `ParadoxEvent` keeps `Giants` as answered and computes the adjusted count
+  (minus 1 with releases, not after the catastrophe, as in the source) for `Ending` (1 if >= players - 1, else 2).
+- Text: source `;` written as " - ". "debug" town name "v1.0" dropped (B29), `MonuE` / 5-player text dropped (B28).
+- Browser play test: 2, 3 and 4 players, entered from TimeTravel Late hubs (TimeEnd1 and TimeEnd2), figure holder and
+  nobody, both Wooden Figure stories, Gift of Silence, votes with 0 / 1 / 2 releases, all eight random paradoxes (hub
+  variants for 6 and 8), giant check with and without the release penalty, endings 1 (with and without the release
+  paragraph, also after the catastrophe) and 2, undo through the giant check and scoring, reload on the hub, mirror-mode
+  runs (4 players full branch, 2 players for the eight paradoxes) without `Mirror: ... not visible` lines.
+
 ### 2.8 Scoring + Endings (file 09) - 9 passages (+ shared `Scoring`)
 
 | Passage | Method / kind | Flow / conditions | State | Random | Image | Notes |
@@ -659,12 +722,31 @@ Reached from `TimeEnd1` (fewer Paradox tokens than dox) or `TimeEnd2` (Time Mach
 All endings end with "THE END?". Pattern: FotU `FinalEnding` (`MarkFinalEnding()`, title `FormatWithIndex(0, Ending)`,
 `AddNextContent(Ending, ...)`). Winner text: `vars.FamilyWinner ? "The family" : vars.Winner`.
 
+**Ported (October 2026).** File `09_ATimeOfWar_Scoring.cs` (`Scoring` + `FinalEnding`); the temporary `NotYetPorted`
+helper and CSV row are removed, no `// TODO ATOW` is left.
+- `Scoring` (story tag `Scoring_Title`, rules `Scoring_Content*` in the Gameplay CSV, FotU layout): the Time Machine -5VP
+  paragraph only when `TimeMachineMasterwork` (B30, as shipped) -> `FinalScoring.Start`. The shared scoring tags of the
+  scaffold (`ScoreEntry_Content`, `TieBreaker1_*`, `TieBreaker2_Content`, `Rankings_*`) fit ATOW unchanged (rulebook
+  tie-breakers: Masterwork, then Estate Upgrades).
+- `FinalEnding`: title `FinalEnding_Title` by `Ending`, text `FinalEnding_Content1..8`, then `<b>THE END?</b>`
+  (`FinalEnding_Content10`, as CoD / FotU). Placeholders: 0 winner (ranking name, "The family" on a shared win, no regal
+  title), 1 town, 2 Generation I faction (ending 4), 3 new meat (ending 7), 4 flavor (ending 1 giant invention,
+  `FinalEnding#1`, 3 names; ending 7 weapon, `FinalEnding#7`, 9 names), conditions 5 releases (ending 1), 6 "endchange"
+  (`WarWinner == Separatists`), 7 buildings destroyed, 8 Barracks built, 9 benevolence (ending 5), 10 exactly one of meat
+  / gas and 11 gas (ending 8). Inner placeholders are formatted before the conditions that contain them.
+- Ending 1 / 5 keep "{winner} IV" also for a family win ("The family IV", as the source with `GLOBALS.winnerName`). The
+  source's empty `$newmeat` checks in ending 7 are dropped; the doubled line breaks around the optional paragraphs of
+  endings 1 and 8 are written as one paragraph break.
+- Browser play test: all eight endings (1-4 from Paradox / Warning runs, 5-8 from crafted Reign / Peace Late hubs, both
+  text variants of 5 and all of 8), unique winner, shared win (family), tie broken by the Masterwork, undo on the ending,
+  rankings, tie-breaker and score entry screens.
+
 ### 2.9 Shared passages
 
 | Passage | Method / kind | Used by | Flow | Notes |
 |---|---|---|---|---|
-| `Scoring` | `Scoring` win | Reign (`BenevolenceBonus`), Peace (`FinalBattleComplete`), Warning (`Warning3`/`Warning3time` end), Paradox (`ParadoxEvent`) | "Each Estate Upgrade is worth 1VP. Add Vanity Upgrade points. -3VP per Maladjustment gained at the End of this Generation." + `TimeMachineMasterwork`: "Time Machine: if not completed, lose 5VP" -> "Click to tabulate scores for posterity..." -> `FinalScoring.Start` | Tagged `[NOTADDED END]` but reachable. Owned by the 2.8 task. The 2.4/2.5 task added `Scoring` (file 09) as a `// TODO ATOW Scoring` stub showing `NotYetPorted`; Reign and Peace already route to it. |
-| `UniGen3` | `UniGen3` win | Warning (`Warning1`), Paradox (`Paradox1/2/3/3b`) | "University: When you visit this location, (Paradox: pay $1 to) gain 1 Caretaker from Lost. (1st Edition icon note)" -> back to the hub | Owned by 2.6 (Warning), reused by 2.7. Dead statement `$round == 13;`. See 7, B21. |
+| `Scoring` | `Scoring` win | Reign (`BenevolenceBonus`), Peace (`FinalBattleComplete`), Warning (`Warning3`/`Warning3time` end), Paradox (`ParadoxEvent`) | "Each Estate Upgrade is worth 1VP. Add Vanity Upgrade points. -3VP per Maladjustment gained at the End of this Generation." + `TimeMachineMasterwork`: "Time Machine: if not completed, lose 5VP" -> "Click to tabulate scores for posterity..." -> `FinalScoring.Start` | Tagged `[NOTADDED END]` but reachable. Owned by the 2.8 task. Ported in file 09 (see 2.8). |
+| `UniGen3` | `UniGen3` win | Warning (`Warning1`), Paradox (`Paradox1/2/3/3b`) | "University: When you visit this location, (Paradox: pay $1 to) gain 1 Caretaker from Lost. (1st Edition icon note)" -> back to the hub | Owned by 2.6 (Warning), reused by 2.7. Dead statement `$round == 13;`. See 7, B21. Ported in file 07 (B21 fixed). |
 
 ### 2.10 Unreachable passages (do not port)
 

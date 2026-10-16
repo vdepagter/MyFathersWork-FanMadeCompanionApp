@@ -171,14 +171,5 @@ public static partial class ATimeOfWar
         globalData.ActiveWindow!.AddCustomLink(globalData.GetScenarioLocalizedTag("FinishedReading"), nextCallback);
     }
 
-    // TODO ATOW: temporary screen for parts that are not ported yet (Gen II / III entry points, endings). It has no link:
-    // the players return with the pause menu. Remove once every branch is ported.
-    private static void NotYetPorted(GlobalData globalData)
-    {
-        globalData.ActiveWindow = new GameplayWindow(globalData);
-        globalData.ActiveWindow.AddGameplayTitle(globalData.Generation == Generation.Second ? GlobalTags.Gameplay_Generation_II : GlobalTags.Gameplay_Generation_III);
-        globalData.ActiveWindow.AddCustomContent(globalData.GetScenarioLocalizedTag("NotYetPorted"));
-    }
-
     #endregion Helpers
 }

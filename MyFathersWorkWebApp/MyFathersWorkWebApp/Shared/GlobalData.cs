@@ -386,7 +386,6 @@ public partial class GlobalData
 
         if (ScenarioId == ScenarioId.TimeOfWar)
         {
-            // TODO ATOW: add the remaining hubs (Warning, Paradox) when ported
             return ATimeOfWarVars.HubId switch
             {
                 ATimeOfWarHubId.TakingSides  => ATimeOfWar.TakingSides,
@@ -394,6 +393,8 @@ public partial class GlobalData
                 ATimeOfWarHubId.TimeTravel   => ATimeOfWar.TimeTravel,
                 ATimeOfWarHubId.MonarchReign => ATimeOfWar.MonarchReign,
                 ATimeOfWarHubId.Peace        => ATimeOfWar.Peace,
+                ATimeOfWarHubId.Warning      => ATimeOfWar.Warning,
+                ATimeOfWarHubId.Paradox      => ATimeOfWar.Paradox,
                 _                            => null
             };
         }

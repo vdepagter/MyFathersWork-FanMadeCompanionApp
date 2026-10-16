@@ -13,7 +13,7 @@ When a piece of work is finished, move its section to [`HANDOFF_ARCHIVE.md`](HAN
 |---|---|---|
 | The Cost of Disease (`ScenarioId.CostOfDisease`) | **Complete, play testing** - Gen I, II, III, final scoring, all 8 endings | Only English text. Menu description starts with "PLAY TESTING". |
 | Fear of the Unknown (`FearOfUnknown`) | **Ported, browser play test done** - all branches, battle, asylum assessment, scoring, 8 endings | Waiting for a table play test. Menu description starts with "WORK IN PROGRESS". See the section below. |
-| A Time of War (`TimeOfWar`) | **Gen I + Gen II + Gen III Reign / Peace ported** - scaffold, setup, Taking Sides, Martial (sabotage, duels, tea, end of Gen II), Time Travel (Paradox tokens, repairs, Blame game, end of Gen II), Heavy is the Crown (royal decrees, Crown, statue), Peace Through War (famine, gas, battles) | Gen III Warning / Paradox, Scoring and endings are `// TODO ATOW` stubs ("not yet ported" screen). Menu description starts with "WORK IN PROGRESS". Spec: `docs/ATOW_PORT_MAP.md`. |
+| A Time of War (`TimeOfWar`) | **Fully ported, browser play test per branch done** - Gen I Taking Sides, Gen II Martial / Time Travel, Gen III Heavy is the Crown / Peace Through War / Future Consequences / You Cant Stop Progress, scoring, all 8 endings | Waiting for a full play-through and a table play test. Menu description starts with "WORK IN PROGRESS". Spec: `docs/ATOW_PORT_MAP.md`. See the section below. |
 
 ## Repository layout
 
@@ -95,6 +95,34 @@ The engine was generalized while porting Fear of the Unknown. A new scenario nee
 - `Shared/Enums/Generation.cs` has 3 values; after the last round `Generation` becomes 3 (guard like `EndedYears()` in Fear of the Unknown). `Pages/Home.razor` `Test()` still sets `ScenarioId.CostOfDisease`.
 
 Source size: `ATimeOfWar.txt` 297 passages, English. It has time-travel/paradox mechanics - look at the Unity `View*` scripts (`ViewBiddingSystem`, etc.) for UI the Twine text relies on.
+
+## A Time of War - notes and deliberate deviations
+
+Details per branch: the "Ported" notes in `docs/ATOW_PORT_MAP.md` 2.1-2.8; source bugs and owner questions: map section 7.
+
+- Branches: Gen I Taking Sides -> Gen II Martial (Monarchists / Separatists intro) or Time Travel -> Gen III Reign or Peace
+  (after Martial, by the war winner), Warning or Paradox (after Time Travel). Endings: Paradox 1/2, Warning 3/4, Reign 5/6,
+  Peace 7/8 (`Vars.Ending`).
+- Source `setupStyle` blocks that Unity re-showed on every hub render are setup popups shown once at round entry; their
+  guard flags (`$pg13`, `$gen3pg`, `$pgGen3`, `$pea1-3`, ...) are dropped. Hub setup text that depends on a draw (world
+  page, weapon income, ...) is drawn on that popup.
+- Random values are drawn where they become visible: `$war` / `$quarter` lazily (Gen I), Martial incentives in the shown
+  hub section, `$decbon` on the CoW vote, world pages on the page popup, `$timemistake` on `ParadoxTimeRandom`, the next
+  random passage in the click/close callback. Hidden thresholds (`$commtrigger`, `$total`) are only drawn when the counts
+  do not decide them already. Once-per-game "sticky" passages use one fixed index.
+- Fixed source bugs: B5-B7 (afternoon tea sabotage pages / state), B14 (Royal Advisor first-visit text), B16 (2-player
+  CoW left/right), B18 (decree tie rewards nobody), B19 (random paradox only after a release), B20 (Paradox3b end-of-round
+  popup), B21 (University "pay $1" in Warning), B29 (town-name override applied in every case, "debug" text dropped).
+- Kept as shipped: B1 (GunsAnnouncement unreachable), B4 (TowardsWar text), B8, B9 (figure-token holder may not exist),
+  B10 (duel death on 1 of 5), B11, B17 (Church "X/X/X"), B22, B24, B30 (Time Machine -5VP only on the Time Travel path).
+- Regal titles (Reign7c) are shown via `DisplayName` in later story text; player names, rankings and endings use the plain
+  name. Endings use "The family" on a shared win (endings 1/5 then read "The family IV", as the source).
+- Martial end of round: Special Setup popup first, events with `Years` unchanged, then the end-of-round popup. Time Travel
+  end of Generation: one End of Generation popup, then `TimeEnd1` / `TimeEnd2`.
+- Warning: `$search + 1` of the Middle end link is applied in `TimeWarp2`; the stable-timeline page 16 popup is shown after
+  `WarningEvent2` and at the start of the Late Years while the Masterwork is open.
+- Small text fixes: source `;` written as " - ", "When the the round" -> "When the round", doubled line breaks around
+  optional paragraphs reduced to one. 5-player branches dropped.
 
 ## Fear of the Unknown - notes and deliberate deviations
 
