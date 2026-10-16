@@ -12,7 +12,10 @@ public partial class GlobalData
     {
         public Action<GlobalData>? Callback { get; set; }
         public string              JsonData { get; set; } = string.Empty;
+        public int                 Round    { get; set; } = -1; // hub saves only: (Generation, Years) of the shown hub
     }
+
+    private int UndoRound => (int)Generation * 3 + (int)Years;
 
     [JsonIgnore] public Dictionary<string, Dictionary<string, string>> UI_Localization                { get; }      = new();
     [JsonIgnore] public Dictionary<string, string>                     Scenario_Localization          { get; set; } = new();
@@ -33,18 +36,21 @@ public partial class GlobalData
     public Generation                 Generation           { get; set; } = Generation.First;
     public TheCostOfDiseaseVars       TheCostOfDiseaseVars { get; }      = new();
     public FearOfTheUnknownVars       FearOfTheUnknownVars { get; }      = new();
+    public ATimeOfWarVars             ATimeOfWarVars       { get; }      = new();
     public Dictionary<string, object> TmpValues            { get; }      = new();
 
     // The active scenario's random values and final scoring state
     [JsonIgnore] public ScenarioVars ScenarioVars => ScenarioId switch
     {
         ScenarioId.FearOfUnknown => FearOfTheUnknownVars,
+        ScenarioId.TimeOfWar     => ATimeOfWarVars,
         _                        => TheCostOfDiseaseVars
     };
 
     // Only the active scenario's state is saved (keeps saves and undo snapshots small)
-    public bool ShouldSerializeTheCostOfDiseaseVars() => ScenarioId != ScenarioId.FearOfUnknown;
+    public bool ShouldSerializeTheCostOfDiseaseVars() => ScenarioId is not (ScenarioId.FearOfUnknown or ScenarioId.TimeOfWar);
     public bool ShouldSerializeFearOfTheUnknownVars() => ScenarioId == ScenarioId.FearOfUnknown;
+    public bool ShouldSerializeATimeOfWarVars()       => ScenarioId == ScenarioId.TimeOfWar;
 
     [JsonIgnore] public GameplayHub?        ActiveHub        { get; set; }
     [JsonIgnore] public GameplayWindow?     ActiveWindow     { get; set; }
@@ -66,6 +72,7 @@ public partial class GlobalData
     {
         TheCostOfDiseaseVars.Reset(this);
         FearOfTheUnknownVars.Reset(this);
+        ATimeOfWarVars.Reset(this);
     }
 
     // Static class holding the active scenario's screens (SaveToUndo looks methods up by name)
@@ -73,6 +80,7 @@ public partial class GlobalData
     {
         ScenarioId.CostOfDisease => typeof(TheCostOfDisease),
         ScenarioId.FearOfUnknown => typeof(FearOfTheUnknown),
+        ScenarioId.TimeOfWar     => typeof(ATimeOfWar),
         _                        => null
     };
 
@@ -228,11 +236,14 @@ public partial class GlobalData
         string json = JsonConvert.SerializeObject(this, Formatting.Indented);
         await js.InvokeVoidAsync("localStorage.setItem", "continue", Convert.ToBase64String(System.Text.Encoding.UTF8.GetBytes(json)));
         Console.WriteLine("Saving game");
-        if (_UndoInProgress || (UndoStack.Count != 0 && UndoStack.Peek().Callback == null)) return;
+        // A hub shown again in the same round (no undoable screen in between) is not saved twice. A hub of the next round
+        // reached straight from the end-of-round popup is a new undo point, otherwise undo would skip back a round.
+        if (_UndoInProgress || (UndoStack.Count != 0 && UndoStack.Peek().Callback == null && UndoStack.Peek().Round == UndoRound)) return;
         UndoStack.Push(new UndoData
         {
             JsonData = json,
-            Callback = null
+            Callback = null,
+            Round    = UndoRound
         });
     }
 
@@ -288,7 +299,8 @@ public partial class GlobalData
         UndoStack.Push(new UndoData
         {
             JsonData = json,
-            Callback = null
+            Callback = null,
+            Round    = UndoRound
         });
     }
 
@@ -299,6 +311,7 @@ public partial class GlobalData
         {
             ScenarioId.CostOfDisease => "localization/TheCostOfDisease_Localization.csv",
             ScenarioId.FearOfUnknown => "localization/FearOfTheUnknown_Localization.csv",
+            ScenarioId.TimeOfWar     => "localization/ATimeOfWar_Localization.csv",
             _                        => string.Empty
         };
 
@@ -306,6 +319,7 @@ public partial class GlobalData
         {
             ScenarioId.CostOfDisease => "localization/TheCostOfDisease_Gameplay_Localization.csv",
             ScenarioId.FearOfUnknown => "localization/FearOfTheUnknown_Gameplay_Localization.csv",
+            ScenarioId.TimeOfWar     => "localization/ATimeOfWar_Gameplay_Localization.csv",
             _                        => string.Empty
         };
 
@@ -329,6 +343,7 @@ public partial class GlobalData
         {
             ScenarioId.CostOfDisease => TheCostOfDisease.Init,
             ScenarioId.FearOfUnknown => FearOfTheUnknown.Init,
+            ScenarioId.TimeOfWar     => ATimeOfWar.Init,
             _                        => null
         };
 
@@ -351,6 +366,11 @@ public partial class GlobalData
                 FearOfTheUnknown.FinalEnding(this);
                 break;
             }
+            case ScenarioId.TimeOfWar:
+            {
+                ATimeOfWar.FinalEnding(this);
+                break;
+            }
         }
     }
 
@@ -368,6 +388,21 @@ public partial class GlobalData
                 FearOfTheUnknownHubId.Privatized => FearOfTheUnknown.Privatized,
                 FearOfTheUnknownHubId.Liberal    => FearOfTheUnknown.Liberal,
                 _                                => null
+            };
+        }
+
+        if (ScenarioId == ScenarioId.TimeOfWar)
+        {
+            return ATimeOfWarVars.HubId switch
+            {
+                ATimeOfWarHubId.TakingSides  => ATimeOfWar.TakingSides,
+                ATimeOfWarHubId.Martial      => ATimeOfWar.Martial,
+                ATimeOfWarHubId.TimeTravel   => ATimeOfWar.TimeTravel,
+                ATimeOfWarHubId.MonarchReign => ATimeOfWar.MonarchReign,
+                ATimeOfWarHubId.Peace        => ATimeOfWar.Peace,
+                ATimeOfWarHubId.Warning      => ATimeOfWar.Warning,
+                ATimeOfWarHubId.Paradox      => ATimeOfWar.Paradox,
+                _                            => null
             };
         }
 

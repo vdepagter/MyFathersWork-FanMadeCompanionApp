@@ -11,9 +11,9 @@ When a piece of work is finished, move its section to [`HANDOFF_ARCHIVE.md`](HAN
 
 | Scenario | Web app | Notes |
 |---|---|---|
-| The Cost of Disease (`ScenarioId.CostOfDisease`) | **Complete, play testing** - Gen I, II, III, final scoring, all 8 endings | Only English text. Menu description starts with "PLAY TESTING". |
-| Fear of the Unknown (`FearOfUnknown`) | **Ported, browser play test done** - all branches, battle, asylum assessment, scoring, 8 endings | Waiting for a table play test. Menu description starts with "WORK IN PROGRESS". See the section below. |
-| A Time of War (`TimeOfWar`) | **Not started** | Selecting it bounces back to the main menu. |
+| The Cost of Disease (`ScenarioId.CostOfDisease`) | **Complete, play testing** - Gen I, II, III, final scoring, all 8 endings | Only English text. |
+| Fear of the Unknown (`FearOfUnknown`) | **Ported, browser play test done** - all branches, battle, asylum assessment, scoring, 8 endings | Waiting for a table play test. See the section below. |
+| A Time of War (`TimeOfWar`) | **Fully ported, browser play test per branch done** - Gen I Taking Sides, Gen II Martial / Time Travel, Gen III Heavy is the Crown / Peace Through War / Future Consequences / You Cant Stop Progress, scoring, all 8 endings | Waiting for a full play-through and a table play test. Spec: `docs/ATOW_PORT_MAP.md`. See the section below. |
 
 ## Repository layout
 
@@ -54,7 +54,7 @@ private static void Changes_0(GlobalData globalData)       // setup popup
 ```
 
 - **Localization tags come from `[CallerMemberName]`**: `Method_Title`, `Method_SubTitle`, `Method_Content`, `Method_Content{n}` (`AddNextContent(n)` / `AddNextContentWithLinks(n, [...])`), popups `Method_Content`. `AddDefaultBaseTitle` uses the part before the first `_`. Hubs: `Hub_Title`, `Hub_{Section}_Title/_Content/_Content{n}/_ClickHere`. Calls inside lambdas still use the enclosing method name. Use `AddCustomContent(string)` for text built in code.
-- **Undo** (`GlobalData.SaveToUndo`) finds the caller by name via reflection on the scenario class (`GlobalData.ScenarioType`), then `FinalScoring`: every method that calls it must be unique by name, `static`, and take exactly `(GlobalData)`. Call it before mutating state; methods that only route (no screen) must not call it. Undo restores the JSON snapshot, rebuilds the hub (`GetHubMethod`) and re-invokes the method.
+- **Undo** (`GlobalData.SaveToUndo`) finds the caller by name via reflection on the scenario class (`GlobalData.ScenarioType`), then `FinalScoring`: every method that calls it must be unique by name, `static`, and take exactly `(GlobalData)`. Call it before mutating state; methods that only route (no screen) must not call it. Undo restores the JSON snapshot, rebuilds the hub (`GetHubMethod`) and re-invokes the method. Hubs become undo points in `GlobalData.SaveGame` (a hub re-shown in the same round with no undoable screen in between is not stored twice; the next round's hub shown straight after the end-of-round popup is a new point, `PLAYTEST_FINDINGS.md` #7).
 - **Hubs** (`GameplayHub`) are the per-generation round screens. One hub method per branch (e.g. `GloomyGothic`), sections switched by `ReplaceShouldShow(() => globalData.Years ...)` plus state flags. Set `HubId` and register the hub in `GlobalData.GetHubMethod()` (used by load and undo). End the round with a section calling `globalData.ShowEndOfRoundPopUp(nextEvent)`; the last round uses `AddEndOfGenerationSection`. Hub text is formatted when the hub is built; `RunScenarioAction` rebuilds the shown hub after every action that ends with no window/popup open (`RefreshShownHub`), so hub methods must have no side effects. Ending a chain with the hub method instead of `_ => { }` is still fine.
 - **`ShowEndOfRoundPopUp` advances `Years` (and `Generation` after Late) *before* calling the next event** - events after the Early round run with `Years == Middle`. At the generation change `ActiveHub` becomes null, so a callback of `_ => { }` then renders a **blank page** (this was the old "blank after Gen II" bug).
 - **Randomness** must use the pre-rolled `ScenarioVars.RandomArray` (`RandomElement`, `RandomBool`, `RandomInRange`) with a fixed index per decision so undo/load replay identically. Never read `RandomArray` directly. Indices in use for Cost of Disease: 0-58 (Gen I/II) and 59-203 (`_RND_*` constants in the Gen III files). Fear of the Unknown: `_RND_*` constants in `00_FearOfTheUnknown_Setup.cs` (0-164, battle 400-899). For events that can repeat, use `base + min(counter, 9)`. Shuffles are drawn one position at a time from the remaining items (`HunterAt`, `HuntRewardAt`).
@@ -95,6 +95,35 @@ The engine was generalized while porting Fear of the Unknown. A new scenario nee
 - `Shared/Enums/Generation.cs` has 3 values; after the last round `Generation` becomes 3 (guard like `EndedYears()` in Fear of the Unknown). `Pages/Home.razor` `Test()` still sets `ScenarioId.CostOfDisease`.
 
 Source size: `ATimeOfWar.txt` 297 passages, English. It has time-travel/paradox mechanics - look at the Unity `View*` scripts (`ViewBiddingSystem`, etc.) for UI the Twine text relies on.
+
+## A Time of War - notes and deliberate deviations
+
+Details per branch: the "Ported" notes in `docs/ATOW_PORT_MAP.md` 2.1-2.8; source bugs and owner questions: map section 7.
+
+- Branches: Gen I Taking Sides -> Gen II Martial (Monarchists / Separatists intro) or Time Travel -> Gen III Reign or Peace
+  (after Martial, by the war winner), Warning or Paradox (after Time Travel). Endings: Paradox 1/2, Warning 3/4, Reign 5/6,
+  Peace 7/8 (`Vars.Ending`).
+- Source `setupStyle` blocks that Unity re-showed on every hub render are setup popups shown once at round entry; their
+  guard flags (`$pg13`, `$gen3pg`, `$pgGen3`, `$pea1-3`, ...) are dropped. Hub setup text that depends on a draw (world
+  page, weapon income, ...) is drawn on that popup.
+- Random values are drawn where they become visible: `$war` / `$quarter` lazily (Gen I), Martial incentives in the shown
+  hub section, `$decbon` on the CoW vote, world pages on the page popup, `$timemistake` on `ParadoxTimeRandom`, the next
+  random passage in the click/close callback. Hidden thresholds (`$commtrigger`, `$total`) are only drawn when the counts
+  do not decide them already. Once-per-game "sticky" passages use one fixed index.
+- Fixed source bugs: B5-B7 (afternoon tea sabotage pages / state), B14 (Royal Advisor first-visit text), B16 (2-player
+  CoW left/right), B18 (decree tie rewards nobody), B19 (random paradox only after a release), B20 (Paradox3b end-of-round
+  popup), B21 (University "pay $1" in Warning), B29 (town-name override applied in every case, "debug" text dropped).
+- Kept as shipped: B1 (GunsAnnouncement unreachable), B4 (TowardsWar text), B8, B9 (figure-token holder may not exist),
+  B10 (duel death on 1 of 5), B11, B17 (Church "X/X/X"), B22, B24, B30 (Time Machine -5VP only on the Time Travel path).
+- Regal titles (Reign7c) are shown via `DisplayName` in later story text; player names, rankings and endings use the plain
+  name. Endings use "The family" on a shared win (endings 1/5 then read "The family IV", as the source).
+- Martial end of round: Special Setup popup first, events with `Years` unchanged, then the end-of-round popup. Time Travel
+  end of Generation: one End of Generation popup, then `TimeEnd1` / `TimeEnd2`.
+- Warning: `$search + 1` of the Middle end link is applied in `TimeWarp2`; the stable-timeline page 16 popup is shown after
+  `WarningEvent2` and at the start of the Late Years while the Masterwork is open.
+- Small text fixes: source `;` written as " - ", "When the the round" -> "When the round", doubled line breaks around
+  optional paragraphs reduced to one, "{faction}'s noble cause" -> "{faction}' noble cause" (sabotage intros), "a
+  Irresistible Aphrodisiac" -> "an" (Royal Power). 5-player branches dropped.
 
 ## Fear of the Unknown - notes and deliberate deviations
 
