@@ -321,6 +321,8 @@ and ffmpeg ships a 96 kbps mono copy) from narration scripts in
 `[hushed]`, ...), numbers written out, titles not read, random letter headers replaced by a generic one (no player name),
 one recording per value of a random choice the text names.
 Editing the CSV text does not update the recording - render it again.
+Eleven v3 cuts off the end of the last word: v3 renders get " ... [long pause]" appended and are trimmed 0.5 s into
+the final silence; a render warns when a clip still ends mid-sound.
 
 | Window | Clip | Length |
 |---|---|---|
