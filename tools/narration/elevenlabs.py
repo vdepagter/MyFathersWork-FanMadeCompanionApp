@@ -13,13 +13,16 @@ ELEVENLABS_API_KEY (never put it in a file in the repository).
   python tools/narration/elevenlabs.py render oliver TheCostOfDisease/Dubious --web     # for the game, with the model and
         # settings of voices.json: 192 kbps master -> out/master/oliver/<name>.mp3 (keep it, not in git), 96 kbps mono
         # copy (ffmpeg) -> wwwroot/audio/vo/ai/<name>.mp3 (GameplayWindow.SetAiVoiceOver)
+  python tools/narration/elevenlabs.py check [<name> ...]               # script vs on-screen text (all scripts);
+                                                                        # render runs it too and refuses on drift
   python tools/narration/elevenlabs.py credits                          # remaining character credits
 
 Output goes to tools/narration/out/ (git-ignored). Scripts are plain text with ElevenLabs v3 audio tags
-([whispers], [sighs], ...); lines starting with # are comments. They are kept apart from the localization CSVs
+([whispers], [sighs], ...); lines starting with # are comments. The first line names the source: "# <File>.csv <Tag>". They are kept apart from the localization CSVs
 so tags never appear on screen.
 """
 import base64
+import difflib
 import json
 import os
 import re
@@ -75,6 +78,54 @@ def script_text(name):
     with open(os.path.join(SCRIPTS, name + ".txt"), encoding="utf-8") as f:
         lines = [l.rstrip() for l in f if not l.startswith("#")]
     return "\n".join(lines).strip()
+
+
+LOCALIZATION = os.path.join(HERE, "..", "..", "MyFathersWorkWebApp", "MyFathersWorkWebApp", "wwwroot", "localization")
+SOURCE = re.compile(r"^# (\w+\.csv) (\w+)")  # first line of every script: "# <CSV file> <Tag> ..."
+
+
+def words(text):
+    text = re.sub(r"\[[^\]]+\]|<[^>]+>", " ", text)                  # audio tags, HTML
+    text = re.sub(r"\{\{\d+=[^}]*\}\}", " _ ", text)                    # placeholder -> wildcard "_"
+    return re.findall(r"[a-z0-9_']+", text.lower().replace("’", "'"))
+
+
+def check(name):
+    """Word-level diff of a script against its CSV source text (named on the script's first line).
+
+    Catches drift: words of the on-screen text missing or changed in the narration. Allowed: inserted words
+    (interjections, generic headers), and replacing numbers, "Dr" or a placeholder (spelled-out years, names).
+    The story text is compared up to "<b>CHOOSE" (rules are not narrated). Returns a list of problems.
+    """
+    with open(os.path.join(SCRIPTS, name + ".txt"), encoding="utf-8") as f:
+        m = SOURCE.match(f.readline())
+    if not m:
+        return [f"first line must be '# <File>.csv <Tag>'"]
+    with open(os.path.join(LOCALIZATION, m.group(1)), encoding="utf-8-sig") as f:
+        src = next((l.split(";", 1)[1] for l in f if l.startswith(m.group(2) + ";")), None)
+    if src is None:
+        return [f"tag {m.group(2)} not found in {m.group(1)}"]
+    a, b = words(src.split("<b>CHOOSE")[0]), words(script_text(name))
+    problems = []
+    for op, i1, i2, j1, j2 in difflib.SequenceMatcher(None, a, b, autojunk=False).get_opcodes():
+        lost = [w for w in a[i1:i2] if not (w.isdigit() or w in ("_", "dr"))]
+        if op in ("delete", "replace") and lost:
+            problems.append(f"{op}: '{' '.join(a[i1:i2])}' -> '{' '.join(b[j1:j2])}'")
+    return problems
+
+
+def check_all(names):
+    bad = 0
+    for name in names:
+        problems = check(name)
+        bad += bool(problems)
+        print(f"{name}: " + ("ok" if not problems else "DRIFT\n  " + "\n  ".join(problems)))
+    return bad
+
+
+def all_scripts():
+    return sorted(os.path.relpath(os.path.join(d, f), SCRIPTS)[:-4].replace(os.sep, "/")
+                  for d, _, fs in os.walk(SCRIPTS) for f in fs if f.endswith(".txt"))
 
 
 def design(voice):
@@ -180,11 +231,15 @@ if __name__ == "__main__":
         a = [x for x in a if not x.startswith("--")]
         opt = lambda k: next((f.split("=", 1)[1] for f in flags if f.startswith(f"--{k}=")), None)
         overrides = {k: float(x) for k, x in (f.split("=", 1)[1].split("=") for f in flags if f.startswith("--set="))}
+        if "--force" not in flags and check_all(a[2:]):
+            sys.exit("Script text drifts from the on-screen text (see above). Fix the script, or pass --force.")
         render(a[1], a[2:], "--plain" in flags, "--web" in flags, opt("model"), "--stored" in flags, overrides, opt("label"))
     elif a[0] == "library":
         library(" ".join(a[1:]))
     elif a[0] == "add":
         add(a[1], a[2], a[3], " ".join(a[4:]) or a[1])
+    elif a[0] == "check":
+        sys.exit(1 if check_all(a[1:] or all_scripts()) else 0)
     elif a[0] == "credits":
         credits()
     else:
