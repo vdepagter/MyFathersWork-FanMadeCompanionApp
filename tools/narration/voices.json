@@ -18,6 +18,7 @@
   "oliver": {
     "name": "Oliver Silk - Deep Gravel Narrative",
     "library": "503ef2e72fb506b3879737bc64638b2d48597374bf1247925feea5d30965f3bd/jfIS2w2yJi0grJZPyEsk",
+    "model": "eleven_v3",
     "settings": {
       "stability": 0.5
     }

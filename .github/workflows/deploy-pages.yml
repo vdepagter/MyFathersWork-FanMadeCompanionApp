@@ -23,7 +23,20 @@ jobs:
           fetch-depth: 0 # full history, needed to count commits for the version number
           lfs: false
 
-      # Images are stored in Git LFS. Only pull the web app's files, not UnityOriginalApp/ (saves LFS bandwidth)
+      # Images and audio are stored in Git LFS. Only pull the web app's files, not UnityOriginalApp/ (saves LFS bandwidth).
+      # The LFS objects are cached between runs: the key is the list of object ids (content hashes), so a changed or new
+      # file gives a new key, the previous cache is restored via restore-keys and only the new objects are downloaded.
+      # Nothing to clear by hand, file names can stay the same.
+      - name: List LFS objects of the web app
+        run: git lfs ls-files --long --include "MyFathersWorkWebApp/**" > lfs-objects.txt # hashFiles only reads the workspace
+
+      - name: Restore LFS cache
+        uses: actions/cache@v4
+        with:
+          path: .git/lfs
+          key: lfs-${{ hashFiles('lfs-objects.txt') }}
+          restore-keys: lfs-
+
       - name: Pull LFS files of the web app
         run: git lfs pull --include "MyFathersWorkWebApp/**"
 

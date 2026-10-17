@@ -7,8 +7,12 @@ ELEVENLABS_API_KEY (never put it in a file in the repository).
   python tools/narration/elevenlabs.py save male <generated_voice_id>   # keep a preview as a voice, id -> voices.local.json
   python tools/narration/elevenlabs.py render male TheCostOfDisease/WolvesEvil1         # scripts/<name>.txt -> out/male/<name>.mp3
   python tools/narration/elevenlabs.py render male TheCostOfDisease/WolvesEvil1 --plain # without audio tags -> out/male-plain/
-  python tools/narration/elevenlabs.py render oliver TheCostOfDisease/Dubious --web     # 64 kbps into the web app:
-                                                                    # wwwroot/audio/vo/ai/<name>.mp3 (GameplayWindow.SetAiVoiceOver)
+  python tools/narration/elevenlabs.py render oliver TheCostOfDisease/Dubious --model=eleven_v4  # -> out/oliver-v4/
+  python tools/narration/elevenlabs.py render oliver <name> --stored               # the voice's own saved settings
+  python tools/narration/elevenlabs.py render oliver <name> --set=similarity_boost=0.9 --label=sim90  # -> out/oliver-sim90/
+  python tools/narration/elevenlabs.py render oliver TheCostOfDisease/Dubious --web     # for the game, with the model and
+        # settings of voices.json: 192 kbps master -> out/master/oliver/<name>.mp3 (keep it, not in git), 96 kbps mono
+        # copy (ffmpeg) -> wwwroot/audio/vo/ai/<name>.mp3 (GameplayWindow.SetAiVoiceOver)
   python tools/narration/elevenlabs.py credits                          # remaining character credits
 
 Output goes to tools/narration/out/ (git-ignored). Scripts are plain text with ElevenLabs v3 audio tags
@@ -19,6 +23,7 @@ import base64
 import json
 import os
 import re
+import subprocess
 import sys
 import urllib.error
 import urllib.parse
@@ -104,27 +109,42 @@ def save(voice, generated_id):
     print(f"Saved {voice} as voice {res['voice_id']}")
 
 
-def render(voice, names, plain=False, web=False):
+def render(voice, names, plain=False, web=False, model=None, stored=False, overrides=None, label=None):
+    """Render scripts. Model and voice_settings come from voices.json (what the game clips use) unless overridden.
+
+    stored: send no voice_settings, so the voice's own saved settings apply (for a library voice: the creator's).
+    web: render a 192 kbps master to out/master/<voice>/ (kept offline) and ship a 96 kbps mono copy (ffmpeg) to WEB.
+    """
     v = load(VOICES)[voice]
     voice_id = load(LOCAL).get(voice) or v.get("voice_id")
     if not voice_id:
         sys.exit(f"No voice id for {voice}: run design + save first.")
-    d = WEB if web else os.path.join(OUT, voice + ("-plain" if plain else ""))
-    fmt = "mp3_44100_64" if web else "mp3_44100_128"  # web: same bitrate as the original clips
+    model = model or v.get("model", "eleven_v3")
+    settings = None if stored else {**v.get("settings", {}), **(overrides or {})}
+    if web:
+        d, fmt = os.path.join(OUT, "master", voice), "mp3_44100_192"
+    else:
+        suffix = label or (("-plain" if plain else "") + ("" if model == "eleven_v3" else "-" + model.removeprefix("eleven_")))
+        d, fmt = os.path.join(OUT, voice + (("-" + suffix) if label else suffix)), "mp3_44100_128"
     for name in names:
         text = script_text(name)
         if plain:  # comparison render without audio tags
             text = re.sub(r"[ ]*\[[^\]]+\][ ]*", " ", text).replace("\n ", "\n").strip()
-        audio = call("POST", f"/v1/text-to-speech/{voice_id}?output_format={fmt}", {
-            "text": text,
-            "model_id": "eleven_v3",
-            "voice_settings": v.get("settings", {}),
-        }, raw=True)
+        body = {"text": text, "model_id": model}
+        if settings is not None:
+            body["voice_settings"] = settings
+        audio = call("POST", f"/v1/text-to-speech/{voice_id}?output_format={fmt}", body, raw=True)
         path = os.path.normpath(os.path.join(d, name + ".mp3"))
         os.makedirs(os.path.dirname(path), exist_ok=True)
         with open(path, "wb") as f:
             f.write(audio)
-        print(f"{path}  ({len(text)} characters)")
+        print(f"{path}  ({len(text)} characters, {model}, settings {settings if settings is not None else 'stored'})")
+        if web:
+            ship = os.path.normpath(os.path.join(WEB, name + ".mp3"))
+            os.makedirs(os.path.dirname(ship), exist_ok=True)
+            subprocess.run(["ffmpeg", "-v", "error", "-y", "-i", path, "-ac", "1", "-ar", "44100", "-b:a", "96k",
+                            "-map_metadata", "-1", ship], check=True)
+            print(f"  -> {ship}")
 
 
 def library(search):
@@ -156,9 +176,11 @@ if __name__ == "__main__":
     elif a[0] == "save":
         save(a[1], a[2])
     elif a[0] == "render":
-        flags = {x for x in a if x.startswith("--")}
+        flags = [x for x in a if x.startswith("--")]
         a = [x for x in a if not x.startswith("--")]
-        render(a[1], a[2:], "--plain" in flags, "--web" in flags)
+        opt = lambda k: next((f.split("=", 1)[1] for f in flags if f.startswith(f"--{k}=")), None)
+        overrides = {k: float(x) for k, x in (f.split("=", 1)[1].split("=") for f in flags if f.startswith("--set="))}
+        render(a[1], a[2:], "--plain" in flags, "--web" in flags, opt("model"), "--stored" in flags, overrides, opt("label"))
     elif a[0] == "library":
         library(" ".join(a[1:]))
     elif a[0] == "add":

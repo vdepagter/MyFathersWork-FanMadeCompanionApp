@@ -310,11 +310,13 @@ Open points: the recordings read the English source text, so with another scenar
 ### 8.4 Fan-made AI narration (not in the Unity app)
 
 Windows the original app never narrated can get an AI recording: `GameplayWindow.SetAiVoiceOver("<Scenario>/<method>")`,
-file `wwwroot/audio/vo/ai/<Scenario>/<method>.mp3` (mono, 64 kbps). One voice (ElevenLabs library voice "Oliver Silk - Deep
+file `wwwroot/audio/vo/ai/<Scenario>/<method>.mp3` (mono; new renders 96 kbps, the first 7 clips are still 64 kbps). One voice (ElevenLabs library voice "Oliver Silk - Deep
 Gravel Narrative", model `eleven_v3`), played for Male and Female alike (Off: Play button only), **without** the thunder
 lead-in (it would repeat next to the narrated intros). Everything else (pill, stop rules, ducking) as in 8.2.
 
-Made with `tools/narration/elevenlabs.py render oliver <Scenario>/<method> --web` from narration scripts in
+Made with `tools/narration/elevenlabs.py render oliver <Scenario>/<method> --web` (model and settings from
+`tools/narration/voices.json`; a 192 kbps master goes to the git-ignored `tools/narration/out/master/` - keep it offline -
+and ffmpeg ships a 96 kbps mono copy) from narration scripts in
 `tools/narration/scripts/<Scenario>/<method>.txt`: the English source text with hand-placed v3 audio tags (`[dryly]`,
 `[hushed]`, ...), numbers written out, titles not read, random letter headers replaced by a generic one (no player name),
 one recording per value of a random choice the text names.
