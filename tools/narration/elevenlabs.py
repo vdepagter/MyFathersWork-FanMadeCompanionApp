@@ -13,6 +13,8 @@ ELEVENLABS_API_KEY (never put it in a file in the repository).
   python tools/narration/elevenlabs.py render oliver TheCostOfDisease/Dubious --web     # for the game, with the model and
         # settings of voices.json: 192 kbps master -> out/master/oliver/<name>.mp3 (keep it, not in git), 96 kbps mono
         # copy (ffmpeg) -> wwwroot/audio/vo/ai/<name>.mp3 (GameplayWindow.SetAiVoiceOver)
+  # v3 renders get " ... [long pause]" appended (v3 cuts off the last word otherwise; --no-tail to skip); every render
+  # warns when the clip still ends mid-sound.
   python tools/narration/elevenlabs.py check [<name> ...]               # script vs on-screen text (all scripts);
                                                                         # render runs it too and refuses on drift
   python tools/narration/elevenlabs.py credits                          # remaining character credits
@@ -160,7 +162,34 @@ def save(voice, generated_id):
     print(f"Saved {voice} as voice {res['voice_id']}")
 
 
-def render(voice, names, plain=False, web=False, model=None, stored=False, overrides=None, label=None):
+# Eleven v3 tends to cut off the end of the last word (the clip stops mid-sound). Text after the last sentence gives
+# the cut somewhere harmless to land; tail_db() then checks whether the clip still ends in sound.
+V3_TAIL = " ... [long pause]"
+
+
+def tail_db(path):
+    """RMS level (dB) of the last 80 ms; above about -50 dB the clip ends mid-sound (cut off)."""
+    out = subprocess.run(["ffmpeg", "-sseof", "-0.08", "-i", path, "-af", "astats", "-f", "null", "-"],
+                         capture_output=True, text=True).stderr
+    levels = re.findall(r"RMS level dB: (-?[\d.]+|-inf)", out)
+    return float(levels[-1]) if levels and levels[-1] != "-inf" else -200.0
+
+
+def trim_tail(path, keep=0.5):
+    """Cut a clip 'keep' seconds into its last silence (>= 0.4 s below -60 dB), dropping what v3 made of the tail."""
+    out = subprocess.run(["ffmpeg", "-i", path, "-af", "silencedetect=noise=-60dB:d=0.4", "-f", "null", "-"],
+                         capture_output=True, text=True).stderr
+    starts = [float(x) for x in re.findall(r"silence_start: ([\d.]+)", out)]
+    duration = float(subprocess.run(["ffprobe", "-v", "error", "-show_entries", "format=duration", "-of", "csv=p=0", path],
+                                    capture_output=True, text=True).stdout)
+    if not starts or duration - starts[-1] > 3:  # no silence near the end: leave it (tail_db will warn)
+        return
+    tmp = path + ".tmp.mp3"
+    subprocess.run(["ffmpeg", "-v", "error", "-y", "-i", path, "-t", f"{starts[-1] + keep:.3f}", "-c", "copy", tmp], check=True)
+    os.replace(tmp, path)
+
+
+def render(voice, names, plain=False, web=False, model=None, stored=False, overrides=None, label=None, tail=True):
     """Render scripts. Model and voice_settings come from voices.json (what the game clips use) unless overridden.
 
     stored: send no voice_settings, so the voice's own saved settings apply (for a library voice: the creator's).
@@ -181,6 +210,8 @@ def render(voice, names, plain=False, web=False, model=None, stored=False, overr
         text = script_text(name)
         if plain:  # comparison render without audio tags
             text = re.sub(r"[ ]*\[[^\]]+\][ ]*", " ", text).replace("\n ", "\n").strip()
+        if tail and model.startswith("eleven_v3"):
+            text += V3_TAIL
         body = {"text": text, "model_id": model}
         if settings is not None:
             body["voice_settings"] = settings
@@ -190,6 +221,10 @@ def render(voice, names, plain=False, web=False, model=None, stored=False, overr
         with open(path, "wb") as f:
             f.write(audio)
         print(f"{path}  ({len(text)} characters, {model}, settings {settings if settings is not None else 'stored'})")
+        if tail and model.startswith("eleven_v3"):
+            trim_tail(path)
+        if (db := tail_db(path)) > -50:
+            print(f"  WARNING: ends mid-sound ({db:.0f} dB in the last 80 ms) - the last word is probably cut off, render again")
         if web:
             ship = os.path.normpath(os.path.join(WEB, name + ".mp3"))
             os.makedirs(os.path.dirname(ship), exist_ok=True)
@@ -233,7 +268,8 @@ if __name__ == "__main__":
         overrides = {k: float(x) for k, x in (f.split("=", 1)[1].split("=") for f in flags if f.startswith("--set="))}
         if "--force" not in flags and check_all(a[2:]):
             sys.exit("Script text drifts from the on-screen text (see above). Fix the script, or pass --force.")
-        render(a[1], a[2:], "--plain" in flags, "--web" in flags, opt("model"), "--stored" in flags, overrides, opt("label"))
+        render(a[1], a[2:], "--plain" in flags, "--web" in flags, opt("model"), "--stored" in flags, overrides, opt("label"),
+               "--no-tail" not in flags)
     elif a[0] == "library":
         library(" ".join(a[1:]))
     elif a[0] == "add":
