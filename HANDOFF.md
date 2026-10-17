@@ -78,5 +78,12 @@ Next steps:
   about half has placeholders (names, random dates) that need generic wording. Custom designed voices (`voices.json`
   male/female) need tweaking: a bit sharp, slightly too slow. Local open-model route (Qwen3-TTS,
   Chatterbox) in `tools/narration/local_tts.py`, tested on the laptop GPU only.
+  Open: choose model/settings for Oliver (v3 with the creator's stored settings vs v4 with similarity 0.9 and stability
+  0.5 / 0.65 - renders in `out/oliver-*`), then re-render the 7 game clips with `--web` (96 kbps, masters offline).
+  Our first renders sent only stability 0.5, so Oliver's own settings (stability 0.3, similarity 0.8, style 0.7,
+  speed 0.91, speaker boost off) were not used.
+- Deploy: LFS objects of the web app are cached in the workflow (key = hash of the LFS object ids), so deploys no longer
+  use LFS bandwidth for unchanged files. Players never use LFS quota: they download from GitHub Pages (1 GB site,
+  100 GB/month soft bandwidth).
 - Not ported (deliberate): Unity bidding/reveal screen, clips the shipped app never played (map 2.3).
 - Version: `0.66.6.<revision>`, revision = first-parent commits on main since 3d78856 minus 1 (deploy workflow).
