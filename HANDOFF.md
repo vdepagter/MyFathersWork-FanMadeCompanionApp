@@ -84,10 +84,9 @@ State:
 - Live (pushed, deployed): 7 Oliver Silk clips (v3, stability 0.5 only, **64 kbps**) around each scenario intro:
   Cost of Disease `IntroImmortalitySetup` + `Dubious`, Fear of the Unknown `Prologue` + `SharedMania`, A Time of War
   `Foreword` + `IntroConflict_Separatists/_Monarchists`. Played for Male and Female, no thunder lead-in.
-- Local `main` is **4 commits ahead of origin, not pushed**: 192 kbps master + 96 kbps game copy pipeline (`--web`),
+- Local `main` (C:\GitHub\MyFathersWork-FanMadeCompanionApp) has these merged but **not pushed**: 192 kbps master + 96 kbps game copy pipeline (`--web`),
   per-render settings (`--set=key=value`, `--stored`, `--label`, `--model`), drift check (`check`, run by render),
-  restored WolvesEvil1 clause, LFS cache in the deploy workflow (untested until the next push). The v3 tail fix below is
-  committed on top (5 ahead after this commit).
+  restored WolvesEvil1 clause, the v3 tail fix below, LFS cache in the deploy workflow (untested until the next push).
 - ElevenLabs: Creator plan, ~9.5k of 126k characters used (October). API key in the user environment variable
   `ELEVENLABS_API_KEY` (the script also reads it from the registry). Free tier cannot use library voices or Voice Design via API.
 - Oliver Silk is a library voice: in a new worktree run
