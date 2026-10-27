@@ -331,4 +331,5 @@ speed and speaker boost). Female and Male play the original recordings only (8.2
   narrated at all (input forms, pick-a-player screens, the battle).
 - Hand-written overrides: `scripts/<Scenario>/<Tag>.txt` (the former v3 intro scripts), see `chunks.read_overrides`.
 
-State (27 Oct 2026): Fear of the Unknown in progress (see HANDOFF.md); Cost of Disease and A Time of War not rendered yet.
+State (27 Oct 2026): Fear of the Unknown fully rendered (509 clips); Cost of Disease and A Time of War not rendered yet.
+Stand-ins for typed-in values (player names -> "a cousin", village -> "the village", ...): `chunks.STAND_INS`.

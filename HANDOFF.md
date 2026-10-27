@@ -88,7 +88,14 @@ State (27 Oct 2026, branch `claude/oliver-v4-narration`, merged into local `main
 - Model `eleven_v4`, stability 0.8, similarity 0.8 (user's choice). Verified: v4 accepts but ignores style, speed and
   speaker boost (model metadata `can_use_style` / `can_use_speaker_boost` false; speed 0.7 gave the same clip length);
   it does not read audio tags aloud (speech-to-text check); no clipped endings.
-- Fear of the Unknown: ~90k characters in 377 clips, 10.7k of them private (rendered last). Progress: see below.
+- Fear of the Unknown: **fully rendered** - 509 clips, 124k characters sent, ~58k billed (v4 bills ~0.45 per character
+  sent), 94 MB at 96 kbps mono (`wwwroot/audio/vo/oliver/`, LFS). Browser walk-throughs (Witch Hunt, Foreigners, Creature,
+  all four Gen III branches, endings) found every window narrated except `skip.txt`; private screens offer Play only.
+- Stand-ins for values nobody can render (user's choice, 27 Oct): player names -> "one of the cousins" / "a cousin" /
+  "a cousin's" / "two of the cousins", village -> "the village" ("the town of <village>" -> "the town"), newspaper ->
+  "the local newspaper", warrior / program names -> "the warrior" / "the program" (`chunks.STAND_INS`). Random dates
+  are skipped. Headers: "A letter." etc. "$<amount>" -> "<amount> dollars" (amount is a value clip, 1-20).
+- Quota after Fear of the Unknown: ~57.8k of 126.6k left (resets 16 Nov 2026).
 - ElevenLabs Creator: 126,634 characters per month, resets 16 Nov 2026. API key in `ELEVENLABS_API_KEY`; the key has an
   IP allowlist (a 403 "ip_not_allowed" means the PC's public IP changed). Oliver: `python tools/narration/elevenlabs.py add
   oliver 503ef2e72fb506b3879737bc64638b2d48597374bf1247925feea5d30965f3bd jfIS2w2yJi0grJZPyEsk "Oliver Silk - Deep Gravel
@@ -97,9 +104,11 @@ State (27 Oct 2026, branch `claude/oliver-v4-narration`, merged into local `main
   Older comparison renders: `.claude/worktrees/elevenlabs-voice-narration-3a3e64/tools/narration/out/`.
 
 Next steps:
-1. Finish Fear of the Unknown (`python tools/narration/chunks.py render FearOfTheUnknown`), then The Cost of Disease
-   (~126k) and A Time of War (~106k) after the quota resets; private sections of each last. Both need a `values.txt`,
+1. The Cost of Disease (~126k characters sent, ~57k billed) and A Time of War (~106k, ~48k billed); private sections of
+   each last. Cost of Disease fits roughly in the remaining quota; A Time of War after the reset. Both need a `values.txt`,
    `private.txt` and `skip.txt` like Fear of the Unknown (review `chunks.py plan <Scenario> --list` and the chunk starts).
-2. Play-test every Fear of the Unknown branch with Oliver: console lines "Oliver narration: no clips for <Tag>" show
+2. Listen-through at the table: joins around skipped names, the stand-ins, the private Play button. Size: the three
+   scenarios will be ~300 MB of clips; 64 kbps mono would cut that by a third if Pages/LFS limits bite.
+3. Play-test the other scenarios with Oliver once rendered: console lines "Oliver narration: no clips for <Tag>" show
    windows whose text code changes beyond placeholders (not narrated); fix the split or accept.
-3. Push main after the user's OK and check the deploy (first run with the LFS cache step).
+4. Push main after the user's OK and check the deploy (first run with the LFS cache step).

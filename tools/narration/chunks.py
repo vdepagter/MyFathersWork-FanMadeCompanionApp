@@ -257,7 +257,12 @@ def stand_ins(parts):
             result[i - 1] = ("", "", "of")
             words = ""
         if words:
-            if nxt < len(parts) and normalize(after[2:] if possessive else after):
+            # The words end the previous clip ("...a location in the village"): v4 drops a dangling last word like
+            # "in", and the next chunk's text may also follow a narrated value in another tag (one clip, one text).
+            # Only a possessive, or a value with no speaking clip before it, begins the next clip.
+            if not possessive and i > 0 and normalize(parts[i - 1][1]):
+                result[i - 1] = ("", " " + words, False)
+            elif nxt < len(parts) and normalize(after[2:] if possessive else after):
                 result[nxt] = (words + " ", "", possessive)
             elif i > 0:
                 result[i - 1] = ("", " " + words, False)
@@ -270,9 +275,11 @@ def tag_chunks(scenario, tag, text):
     overrides = read_overrides(scenario, tag)
     parts = segment(text)
     extra = stand_ins(parts)
-    out, i = [], 0
+    out, i, dollars = [], 0, False
     for n, (kind, raw) in enumerate(parts):
         if kind == "s":
+            # "$<b>{{0=3}}</b> in donations": the amount is a value clip, so "dollars" moves behind it
+            money = n + 1 < len(parts) and re.search(r"\$(</?b>)*$", raw) is not None
             if i in overrides:
                 spoken, free = overrides[i]
             else:
@@ -287,7 +294,12 @@ def tag_chunks(scenario, tag, text):
                         spoken = re.sub(r"\s+of$", "", spoken)
                     spoken = (prefix + spoken + suffix).strip() if spoken or prefix or suffix else ""
                     spoken = re.sub(r"(?<=\w) +(?=[.,;:!?])", "", spoken)  # "the village ." -> "the village."
+                if dollars:
+                    spoken = re.sub(r"(?<=\w) +(?=[.,;:!?])", "", "dollars " + normalize(raw, False)).strip()
+                if money:
+                    spoken = re.sub(r"\s*\$$", "", spoken)
                 free = False
+            dollars = money
             out.append(("s", raw, fnv64(raw), spoken, free))
             i += 1
         else:
@@ -305,6 +317,7 @@ def windows(scenario):
     """{method: [tags]} of the methods that build a GameplayWindow, in source order, plus the set of methods that are
     private (target of AddDoNotOtherPlayersToSee / AddOnceYouAreReady, or listed in scripts/<Scenario>/private.txt)."""
     folder = os.path.join(CODE, scenario)
+    story = load_csv(scenario)
     result, private = {}, set()
     for name in sorted(os.listdir(folder)):
         if not name.endswith(".cs"):
@@ -320,7 +333,13 @@ def windows(scenario):
                 continue
             tags = []
             for c in re.finditer(r"\.(AddDefaultContent|AddNextContentWithLinks|AddNextContent)\((\d*)", body):
-                tags.append(m.group(1) + ("_Content" if c.group(1) == "AddDefaultContent" else "_Content" + c.group(2)))
+                if c.group(1) == "AddDefaultContent":
+                    tags.append(m.group(1) + "_Content")
+                elif c.group(2):
+                    tags.append(m.group(1) + "_Content" + c.group(2))
+                else:  # index computed in code: every <Method>_Content<n> of the CSV
+                    tags += sorted((t for t in story if re.fullmatch(m.group(1) + r"_Content\d+", t)),
+                                   key=lambda t: int(t.rsplit("Content", 1)[1]))
             tags += re.findall(r'\.AddStoryContent\("(\w+)"\)', body)
             result[m.group(1)] = list(dict.fromkeys(tags))
     def listed(name):
@@ -519,6 +538,13 @@ if __name__ == "__main__":
             if "--list" in a:
                 print(f"{'P ' if is_private else '  '}{tag}: {sum(len(c[3]) for c in chunks)}")
         print(f"{a[1]}: {len(seen)} clips, {total} characters, {todo} still to render ({priv} in private sections)")
+        texts = {}
+        for method, tag, is_private, chunks in plan(a[1]):
+            for kind, raw, h, spoken, free in chunks:
+                texts.setdefault(h, {}).setdefault(spoken, tag)
+        for h, variants in texts.items():
+            if len(variants) > 1:
+                print(f"CONFLICT {h}: one chunk, different spoken text in {', '.join(variants.values())}")
     elif len(a) == 3 and a[0] == "show":
         text, i = load_csv(a[1])[a[2]], 0
         for kind, raw, h, spoken, free in tag_chunks(a[1], a[2], text):
