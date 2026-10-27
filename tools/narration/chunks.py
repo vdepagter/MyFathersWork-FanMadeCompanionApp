@@ -75,7 +75,8 @@ def options(placeholder):
         opts = body[2:].split("|", 1) if "|" in body[2:] else [body[2:], ""]
     else:
         opts = body.split("|")[1:] if body.startswith("|") else body.split("|")
-    return [o for o in opts if o.strip() and o != "..." and o not in ("Oliver", "James", "Olivia") and "{{" not in o]
+    return [o for o in opts if o.strip() and o != "..." and o not in ("Oliver", "James", "Olivia") and o not in STAND_INS
+            and "{{" not in o]
 
 
 # ---- Spoken text -------------------------------------------------------------------------------------------------
@@ -139,7 +140,7 @@ HEADERS = {
 }
 
 
-def normalize(html):
+def normalize(html, strip_lead=True):
     """Spoken form of CSV text: link texts (choices) and HTML dropped, line breaks as pauses, numbers in words."""
     if html in HEADERS:
         return HEADERS[html]
@@ -153,8 +154,9 @@ def normalize(html):
     t = re.sub(r" *\n *", "\n", t)
     t = re.sub(r"\n{3,}", "\n\n", t).strip()
     t = re.sub(r"\s*\(cont\.\)", "", t, flags=re.I)
-    t = re.sub(r"^'s( Journal| Handwriting)?", "", t)  # "<name>'s Journal - <date>"
-    t = re.sub(r"^[-:,.\s]+", "", t)  # " - <i>date</i>" after a skipped name
+    if strip_lead:  # not after a stand-in, which keeps the punctuation
+        t = re.sub(r"^'s( Journal| Handwriting)?", "", t)  # "<name>'s Journal - <date>"
+        t = re.sub(r"^[-:,.\s]+", "", t)  # " - <i>date</i>" after a skipped name
     return t if re.search(r"[A-Za-z]", t) else ""
 
 
@@ -181,13 +183,111 @@ def read_overrides(scenario, tag):
     return chunks
 
 
+# Values nobody can render (typed in by the players) are replaced by a stand-in spoken inside the neighbouring clip:
+# (singular, plural). Keyed by the placeholder's preview text.
+STAND_INS = {
+    "Oliver": ("a cousin", "the cousins"),           # player names: "one of the cousins" at a sentence start
+    "Town": ("the village", "the village"),          # the village name typed in at setup
+    "The Town Ledger": ("the local newspaper", ""),  # "The <village> Ledger"
+    "Steam Titan": ("the warrior", "the warriors"),  # warrior names typed in (Privatized)
+    "Iron Maiden": ("the warrior", "the warriors"),
+    "Iron Will": ("the program", ""),                # program name typed in (Liberal)
+}
+
+
+def stand_in_kind(placeholder):
+    body = placeholder[2:-2].split("=", 1)[1].split("|")
+    return next((k for k in STAND_INS if len(body) > 1 and body[0] == "..." and body[1] == k), None)
+
+
+def plain(html):
+    return re.sub(r"<[^>]+>", "", re.sub(r"<br\s*/?>", "\n", html))
+
+
+def stand_ins(parts):
+    """{part index of a static: (prefix, suffix)} - the stand-in words around typed-in values.
+
+    Not in a header (the leading <b>...</b> line: "Letter from <name>" is read as "A letter."), except a possessive
+    ("<name>'s Journal" -> "A cousin's Journal"). Sentence start -> "One of the cousins" / "The village". Two or three
+    names joined by " and " / ", " -> "two of the cousins" / "the cousins". "the town of <village>" -> "the town". The
+    words go in front of the next static, or after the previous one when the next one is silent."""
+    text = "".join(raw for _, raw in parts)
+    header_end = text.find("</b>") if text.startswith("<b>") else -1
+    result, pos, i = {}, 0, 0
+    offsets = []
+    for _, raw in parts:
+        offsets.append(pos)
+        pos += len(raw)
+    while i < len(parts):
+        kind, raw = parts[i]
+        k = stand_in_kind(raw) if kind == "p" else None
+        if not k:
+            i += 1
+            continue
+        group = 1  # names joined by " and " / ", "
+        while i + 2 * group < len(parts) and parts[i + 2 * group - 1][1] in (" and ", ", ", ", and ") \
+                and stand_in_kind(parts[i + 2 * group][1]) == k:
+            group += 1
+        nxt = i + 2 * group - 1  # static after the group
+        after = parts[nxt][1] if nxt < len(parts) else ""
+        before = plain("".join(r for _, r in parts[:i]))
+        possessive = after.startswith("'s")
+        in_header = 0 <= header_end and offsets[i] < header_end
+        if (in_header and not possessive) or (in_header and plain(parts[i - 1][1]).strip() in
+                                              [plain(h).strip() for h in HEADERS]):
+            i += 2 * group - 1
+            continue
+        start = not before.strip() or re.search(r"[.!?:\"\n]\s*$", before) is not None
+        single, plural = STAND_INS[k]
+        if group > 1:
+            words = "two of the cousins" if k == "Oliver" and group == 2 else plural
+        elif k == "Oliver" and start and not possessive:
+            words = "one of the cousins"
+        else:
+            words = single
+        if possessive:
+            words += "'s"
+        if start:
+            words = words[0].upper() + words[1:]
+        for j in range(i + 1, nxt, 2):  # the " and " between grouped names is said by the stand-in
+            result[j] = ("", "", True)
+        if k == "Town" and re.search(r"\bthe\s*$", before, re.I):  # "the <village> Jail" -> "the village Jail"
+            words = "village"
+        if k == "Town" and re.search(r"\btown of\s*$", before):  # "the town of <village>" -> "the town"
+            result[i - 1] = ("", "", "of")
+            words = ""
+        if words:
+            if nxt < len(parts) and normalize(after[2:] if possessive else after):
+                result[nxt] = (words + " ", "", possessive)
+            elif i > 0:
+                result[i - 1] = ("", " " + words, False)
+        i += 2 * group - 1
+    return result
+
+
 def tag_chunks(scenario, tag, text):
     """[(kind, raw, hash, spoken, free)] for the statics (kind "s") and placeholder values (kind "v")."""
     overrides = read_overrides(scenario, tag)
+    parts = segment(text)
+    extra = stand_ins(parts)
     out, i = [], 0
-    for kind, raw in segment(text):
+    for n, (kind, raw) in enumerate(parts):
         if kind == "s":
-            spoken, free = overrides.get(i, (normalize(raw), False))
+            if i in overrides:
+                spoken, free = overrides[i]
+            else:
+                prefix, suffix, flag = extra.get(n, ("", "", False))
+                if flag is True and not prefix:  # " and " said by a group stand-in
+                    spoken = ""
+                elif flag is True:  # possessive: "'s" belongs to the stand-in
+                    spoken = prefix + normalize(raw[2:], False) if normalize(raw[2:]) else prefix.strip()
+                else:
+                    spoken = normalize(raw, not prefix)
+                    if flag == "of":
+                        spoken = re.sub(r"\s+of$", "", spoken)
+                    spoken = (prefix + spoken + suffix).strip() if spoken or prefix or suffix else ""
+                    spoken = re.sub(r"(?<=\w) +(?=[.,;:!?])", "", spoken)  # "the village ." -> "the village."
+                free = False
             out.append(("s", raw, fnv64(raw), spoken, free))
             i += 1
         else:
