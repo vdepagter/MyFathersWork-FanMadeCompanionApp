@@ -252,7 +252,7 @@ Constraints:
   the first user gesture does not play (browser autoplay rule, pill shows Play); an Off setting exists (pill "Narration
   available" + Play, which plays the female voice without the lead-in); Play / Replay in the pill play the clip without the
   lead-in; no auto-scroll; VO volume is independent of the music and effects toggles.
-- Setting: `localStorage` `audio.voice` = `female` | `male` | `off`, default `male` (the Unity default). UI: Narration select on
+- Setting: `localStorage` `audio.voice` = `female` | `male` | `oliver` (8.4) | `off`, default `male` (the Unity default). UI: Narration select on
   `Pages/PlayersScenarioLanguage.razor` and in `Shared/PauseMenu.razor`.
 
 ### 8.3 Passage -> web window -> clips
@@ -307,28 +307,28 @@ Size: 34 clips, female 12.4 MB + male 14.2 MB + thunder 0.1 MB = 26.6 MB; A Time
 Open points: the recordings read the English source text, so with another scenario language (`English_Simple`,
 `English_Short`, Italian) the narration differs from the text on screen (Unity also plays English VO for every language).
 
-### 8.4 Fan-made AI narration (not in the Unity app)
+### 8.4 Fan-made Oliver narration (not in the Unity app)
 
-Windows the original app never narrated can get an AI recording: `GameplayWindow.SetAiVoiceOver("<Scenario>/<method>")`,
-file `wwwroot/audio/vo/ai/<Scenario>/<method>.mp3` (mono; new renders 96 kbps, the first 7 clips are still 64 kbps). One voice (ElevenLabs library voice "Oliver Silk - Deep
-Gravel Narrative", model `eleven_v3`), played for Male and Female alike (Off: Play button only), **without** the thunder
-lead-in (it would repeat next to the narrated intros). Everything else (pill, stop rules, ducking) as in 8.2.
+Voice setting **Oliver** (`NarrationVoice.Oliver`, `audio.voice` = `oliver`): an AI narration of all story text (ElevenLabs
+library voice "Oliver Silk - Deep Gravel Narrative", model `eleven_v4`, stability 0.8, similarity 0.8; v4 ignores style,
+speed and speaker boost). Female and Male play the original recordings only (8.2/8.3).
 
-Made with `tools/narration/elevenlabs.py render oliver <Scenario>/<method> --web` (model and settings from
-`tools/narration/voices.json`; a 192 kbps master goes to the git-ignored `tools/narration/out/master/` - keep it offline -
-and ffmpeg ships a 96 kbps mono copy) from narration scripts in
-`tools/narration/scripts/<Scenario>/<method>.txt`: the English source text with hand-placed v3 audio tags (`[dryly]`,
-`[hushed]`, ...), numbers written out, titles not read, random letter headers replaced by a generic one (no player name),
-one recording per value of a random choice the text names.
-Editing the CSV text does not update the recording - render it again.
-Eleven v3 cuts off the end of the last word: v3 renders get " ... [long pause]" appended and are trimmed 0.5 s into
-the final silence; a render warns when a clip still ends mid-sound.
+- Clips: `tools/narration/chunks.py` takes every window's story text (tags of `<Scenario>_Localization.csv` shown with
+  `AddDefaultContent`, `AddNextContent*` or `AddStoryContent`), cuts it at `<b>CHOOSE` and splits it around its
+  placeholders. Each static chunk is one clip `wwwroot/audio/vo/oliver/<Scenario>/<fnv64 of the chunk's CSV text>.mp3`
+  (96 kbps mono; 192 kbps masters stay offline in `tools/narration/out/master/oliver/`). A placeholder's formatted value
+  (an either/or variant, an NPC or place name, a number; `scripts/<Scenario>/values.txt`) has its own clip named after
+  the value text; player names, the town name and typed names have none and are skipped. Headers such as "Letter from
+  <name> - <date>" are read as "A letter." (`chunks.HEADERS`). Changed text gets a new hash, so only it is rendered again.
+- `wwwroot/audio/vo/oliver/<Scenario>.json`: `clips` (hash -> script hash, `""` = silent chunk; the script hash is the
+  url's `?v=` so a re-render is not cached) and `private` (tags read by one player alone).
+- App: `GameplayWindow.StoryTexts` keeps each story tag with its formatted text. `Shared/Narration.cs` repeats the split
+  (same regex, cut and hash) and lines the CSV chunks up with the formatted text to find the values; a window is
+  narrated only when every speaking chunk has a clip, otherwise Oliver plays the original male recording (8.3) if the
+  window has one. `audio.js` `voicePlayList` plays the clips in order (next clip preloaded), without the thunder lead-in.
+- Private sections (targets of `AddDoNotOtherPlayersToSee` / `AddOnceYouAreReady`, plus `scripts/<Scenario>/private.txt`)
+  are narrated but never autoplayed: the pill offers Play. `scripts/<Scenario>/skip.txt` lists windows that are not
+  narrated at all (input forms, pick-a-player screens, the battle).
+- Hand-written overrides: `scripts/<Scenario>/<Tag>.txt` (the former v3 intro scripts), see `chunks.read_overrides`.
 
-| Window | Clip | Length |
-|---|---|---|
-| `TheCostOfDisease.IntroImmortalitySetup` ("A Foreword", before `ScenarioStart`) | `ai/TheCostOfDisease/IntroImmortalitySetup.mp3` | 60 s |
-| `TheCostOfDisease.Dubious` (after `ScenarioStart`) | `ai/TheCostOfDisease/Dubious.mp3` | 38 s |
-| `FearOfTheUnknown.Prologue` ("A Note for my Sister", before `ScenarioStart`) | `ai/FearOfTheUnknown/Prologue.mp3` | 108 s |
-| `FearOfTheUnknown.SharedMania` (after `ScenarioStart`; header read as "A journal entry", no name) | `ai/FearOfTheUnknown/SharedMania.mp3` | 67 s |
-| `ATimeOfWar.Foreword` (before `ScenarioStart`) | `ai/ATimeOfWar/Foreword.mp3` | 98 s |
-| `ATimeOfWar.IntroConflict` (after `ScenarioStart`; one clip per random `WarWinner`) | `ai/ATimeOfWar/IntroConflict_Separatists.mp3`, `IntroConflict_Monarchists.mp3` | 46 / 42 s |
+State (27 Oct 2026): Fear of the Unknown in progress (see HANDOFF.md); Cost of Disease and A Time of War not rendered yet.

@@ -78,44 +78,28 @@ Next steps:
 
 ## AI narration - ElevenLabs (October 2026)
 
-Rules and commands: CLAUDE.md "AI narration", `docs/AUDIO_TRANSITIONS_MAP.md` 8.4, docstring of `tools/narration/elevenlabs.py`.
+Rules and commands: CLAUDE.md "AI narration", `docs/AUDIO_TRANSITIONS_MAP.md` 8.4, docstrings of `tools/narration/chunks.py`
+and `elevenlabs.py`.
 
-State:
-- Live (pushed, deployed): 7 Oliver Silk clips (v3, stability 0.5 only, **64 kbps**) around each scenario intro:
-  Cost of Disease `IntroImmortalitySetup` + `Dubious`, Fear of the Unknown `Prologue` + `SharedMania`, A Time of War
-  `Foreword` + `IntroConflict_Separatists/_Monarchists`. Played for Male and Female, no thunder lead-in.
-- Local `main` (C:\GitHub\MyFathersWork-FanMadeCompanionApp) has these merged but **not pushed**: 192 kbps master + 96 kbps game copy pipeline (`--web`),
-  per-render settings (`--set=key=value`, `--stored`, `--label`, `--model`), drift check (`check`, run by render),
-  restored WolvesEvil1 clause, the v3 tail fix below, LFS cache in the deploy workflow (untested until the next push).
-- ElevenLabs: Creator plan, ~9.5k of 126k characters used (October). API key in the user environment variable
-  `ELEVENLABS_API_KEY` (the script also reads it from the registry). Free tier cannot use library voices or Voice Design via API.
-- Oliver Silk is a library voice: in a new worktree run
-  `python tools/narration/elevenlabs.py add oliver 503ef2e72fb506b3879737bc64638b2d48597374bf1247925feea5d30965f3bd jfIS2w2yJi0grJZPyEsk "Oliver Silk - Deep Gravel Narrative"`
-  (writes the git-ignored `voices.local.json`; it is already in the account's voice list).
-- Render outputs and masters are git-ignored in `tools/narration/out/` of the worktree
-  `.claude/worktrees/elevenlabs-voice-narration-3a3e64` - copy them out before that worktree is cleaned up.
-
-Findings from the comparison renders (WolvesEvil1, `out/oliver-*`):
-- v4 is more creative with better delivery, but loses much of Oliver's "deep gravel". v4 has only Stability and
-  Similarity (no Style/Speed, no SSML). Tried v4 sim 0.9/stab 0.5, 0.9/0.65, 0.8/0.3, 0.5/0.3.
-- v3 keeps the gravel. Oliver's creator settings: stability 0.3, similarity 0.8, style 0.7, speed 0.91, speaker boost off.
-  Latest v3 candidate: the same with speed 1.0 (`out/oliver-v3-tail/`).
-- v3 cuts off the end of the last word. Fix (committed): v3 renders get " ... [long pause]" appended and are trimmed
-  0.5 s into the last silence (`trim_tail`); every render warns when a clip still ends mid-sound (`tail_db`). Verified on
-  2 renders; the user still has to confirm by ear.
+State (27 Oct 2026, branch `claude/oliver-v4-narration`, merged into local `main`, **not pushed**):
+- Voice setting "Oliver (AI, whole story)" next to Female / Male / Off. Male and Female play only the original recordings
+  (the 7 v3 intro clips in `wwwroot/audio/vo/ai/` are gone). Oliver plays chunk clips per window, falls back to the
+  original male recording where a window has none, and never autoplays private screens (Play only).
+- Model `eleven_v4`, stability 0.8, similarity 0.8 (user's choice). Verified: v4 accepts but ignores style, speed and
+  speaker boost (model metadata `can_use_style` / `can_use_speaker_boost` false; speed 0.7 gave the same clip length);
+  it does not read audio tags aloud (speech-to-text check); no clipped endings.
+- Fear of the Unknown: ~90k characters in 377 clips, 10.7k of them private (rendered last). Progress: see below.
+- ElevenLabs Creator: 126,634 characters per month, resets 16 Nov 2026. API key in `ELEVENLABS_API_KEY`; the key has an
+  IP allowlist (a 403 "ip_not_allowed" means the PC's public IP changed). Oliver: `python tools/narration/elevenlabs.py add
+  oliver 503ef2e72fb506b3879737bc64638b2d48597374bf1247925feea5d30965f3bd jfIS2w2yJi0grJZPyEsk "Oliver Silk - Deep Gravel
+  Narrative"` in a new checkout (git-ignored `voices.local.json`).
+- Masters (192 kbps) are in the git-ignored `tools/narration/out/master/oliver/` of the main checkout - keep them.
+  Older comparison renders: `.claude/worktrees/elevenlabs-voice-narration-3a3e64/tools/narration/out/`.
 
 Next steps:
-1. User picks the final model + settings (probably v3, stab 0.3 / sim 0.8 / style 0.7 / speed 1.0 / speaker boost off).
-   Put them in `voices.json` -> `oliver` (`model`, `settings`; booleans as 0/1 work).
-2. Optional wording pass on the 7 game scripts for listeners (narrator clauses between quotes, interjections like
-   "Weeell...", `...` beats, read fixed headers/signatures); run `check` after editing.
-3. Re-render the 7 game clips: `render oliver <Scenario>/<method> ... --web` (96 kbps shipped, 192 kbps master offline),
-   then build, play-test in the browser and push main (also brings the LFS-cache deploy change live - check the run).
-4. Later: narrate more windows. Remaining story text: Cost of Disease + Fear of the Unknown ~258k characters (~5.7 h),
-   A Time of War ~156k (~3.4 h). About half has placeholders (player names, random dates/choices): use generic wording or
-   one clip per value (see IntroConflict). Budget ~1.5x characters for retakes.
-5. Optional: custom domain for GitHub Pages (needs a domain + DNS records; base href in the workflow must become `/`;
-   the new origin starts with empty localStorage, so saves/settings do not carry over).
-6. Custom designed voices (`voices.json` male/female) were a bit sharp and slow; local open models (Qwen3-TTS,
-   Chatterbox, `local_tts.py`) tested on the laptop GPU only - the user has an RTX 5090 PC for that.
-
+1. Finish Fear of the Unknown (`python tools/narration/chunks.py render FearOfTheUnknown`), then The Cost of Disease
+   (~126k) and A Time of War (~106k) after the quota resets; private sections of each last. Both need a `values.txt`,
+   `private.txt` and `skip.txt` like Fear of the Unknown (review `chunks.py plan <Scenario> --list` and the chunk starts).
+2. Play-test every Fear of the Unknown branch with Oliver: console lines "Oliver narration: no clips for <Tag>" show
+   windows whose text code changes beyond placeholders (not narrated); fix the split or accept.
+3. Push main after the user's OK and check the deploy (first run with the LFS cache step).
