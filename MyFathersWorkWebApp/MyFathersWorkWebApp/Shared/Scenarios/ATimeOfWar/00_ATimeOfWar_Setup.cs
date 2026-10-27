@@ -66,7 +66,6 @@ public static partial class ATimeOfWar
     {
         globalData.SaveToUndo();
         globalData.ActiveWindow = new GameplayWindow(globalData);
-        globalData.ActiveWindow.SetAiVoiceOver("ATimeOfWar/Foreword");
         globalData.ActiveWindow.AddDefaultTitle();
         globalData.ActiveWindow.AddDefaultContent();
         globalData.ActiveWindow.AddClickHereToContinue(ScenarioStart);
@@ -93,7 +92,6 @@ public static partial class ATimeOfWar
         vars.WarWinner = vars.RandomElement([WarFaction.Separatists, WarFaction.Monarchists], _RND_WAR_WINNER);
 
         globalData.ActiveWindow = new GameplayWindow(globalData);
-        globalData.ActiveWindow.SetAiVoiceOver("ATimeOfWar/IntroConflict_" + (vars.WarWinner == WarFaction.Separatists ? "Separatists" : "Monarchists"));
         globalData.ActiveWindow.AddDefaultTitle();
         globalData.ActiveWindow.AddDefaultContent(content => content.FormatWithReplacement(0, Winner(globalData)));
         globalData.ActiveWindow.AddClickHereToContinue(IntroConflict_0);

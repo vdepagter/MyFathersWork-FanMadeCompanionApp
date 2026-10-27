@@ -79,6 +79,7 @@ public static class GlobalTags
     public const string Audio_NarrationFemale = "Audio_NarrationFemale";
     public const string Audio_NarrationMale   = "Audio_NarrationMale";
     public const string Audio_NarrationOff    = "Audio_NarrationOff";
+    public const string Audio_NarrationOliver = "Audio_NarrationOliver";
     public const string Narration_Narrated    = "Narration_Narrated";
     public const string Narration_Available   = "Narration_Available";
     public const string Narration_Starting    = "Narration_Starting";

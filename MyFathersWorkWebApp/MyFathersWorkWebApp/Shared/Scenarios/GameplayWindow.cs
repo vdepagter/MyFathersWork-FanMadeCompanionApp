@@ -15,21 +15,20 @@ public class GameplayWindow(GlobalData globalData)
     public bool     IsFinalEnding { get; private set; }
 
     // Voice-over clip of a narrated window: the Unity passage name, file wwwroot/audio/vo/<voice>/<VoiceOver>.mp3
-    // (docs/AUDIO_TRANSITIONS_MAP.md "Voice-over"). Null: no narration.
+    // (docs/AUDIO_TRANSITIONS_MAP.md "Voice-over"). Null: no original recording.
     public string? VoiceOver { get; private set; }
 
-    // VoiceOver is a fan-made AI recording (tools/narration, ElevenLabs "Oliver Silk"): one voice, file
-    // wwwroot/audio/vo/ai/<Scenario>/<method>.mp3, played for Male and Female alike and without the thunder lead-in.
-    public bool IsAiVoiceOver { get; private set; }
+    // Story text of this window for the Oliver narration (Shared/Narration.cs): every tag of the scenario story CSV
+    // added with AddDefaultContent / AddNextContent*, with the text as formatted (before the links are split off).
+    public List<(string Tag, string Text)> StoryTexts { get; } = new();
 
     public void SetCue(SoundCue cue) => Cue = cue;
 
     public void SetVoiceOver(string clip) => VoiceOver = clip;
 
-    public void SetAiVoiceOver(string clip)
+    private void AddStoryText(string tag, string text)
     {
-        VoiceOver     = clip;
-        IsAiVoiceOver = true;
+        if (globalData.Scenario_Localization.ContainsKey(tag)) StoryTexts.Add((tag, text));
     }
 
     public void MarkFinalEnding() => IsFinalEnding = true;
@@ -62,6 +61,7 @@ public class GameplayWindow(GlobalData globalData)
     {
         string content                        = globalData.GetScenarioLocalizedTag(callerName + "_Content");
         if (contentProcessor != null) content = contentProcessor(content);
+        AddStoryText(callerName + "_Content", content);
         Elements.Add(new GameplayElement(content));
     }
 
@@ -69,6 +69,7 @@ public class GameplayWindow(GlobalData globalData)
     {
         string content                        = globalData.GetScenarioLocalizedTag(callerName + $"_Content{index}");
         if (contentFormatter != null) content = contentFormatter(content);
+        AddStoryText(callerName + $"_Content{index}", content);
         Elements.Add(new GameplayElement(content, nextCallback, fromNewLine));
     }
 
@@ -76,6 +77,7 @@ public class GameplayWindow(GlobalData globalData)
     {
         string content                        = globalData.GetScenarioLocalizedTag(callerName + $"_Content{index}");
         if (contentFormatter != null) content = contentFormatter(content);
+        AddStoryText(callerName + $"_Content{index}", content);
 
         // Regex pattern to find <link=X>Text</link>
         var linkPattern = new Regex(@"<link=(\d+)>(.*?)<\/link>", RegexOptions.Singleline);
@@ -114,6 +116,14 @@ public class GameplayWindow(GlobalData globalData)
             Action<GlobalData>? callback = linkIndexMap.TryGetValue(outputStrings[x], out int callbackIndex) ? nextCallbacks[callbackIndex] : null;
             Elements.Add(new GameplayElement(outputStrings[x], callback, x == 0 && fromNewLine));
         }
+    }
+
+    // Story text of another method's tag (shared screens like "Secret_Content"): shown and narrated like AddDefaultContent
+    public void AddStoryContent(string tag)
+    {
+        string content = globalData.GetScenarioLocalizedTag(tag);
+        AddStoryText(tag, content);
+        Elements.Add(new GameplayElement(content));
     }
 
     public void AddCustomContent(string content, bool fromNewLine = false)

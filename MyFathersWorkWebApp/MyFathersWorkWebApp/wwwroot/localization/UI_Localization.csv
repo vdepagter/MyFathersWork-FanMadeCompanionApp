@@ -64,6 +64,7 @@ Audio_Music;Music;Muzyka
 Audio_Narration;Narration;Narracja
 Audio_NarrationFemale;Female voice;Głos kobiecy
 Audio_NarrationMale;Male voice;Głos męski
+Audio_NarrationOliver;Oliver (AI, whole story);Oliver (AI, cała historia)
 Audio_NarrationOff;Off;Wyłączona
 Narration_Narrated;Narrated;Z narracją
 Narration_Available;Narration available;Narracja dostępna

@@ -67,7 +67,6 @@ public static partial class FearOfTheUnknown
     {
         globalData.SaveToUndo();
         globalData.ActiveWindow = new GameplayWindow(globalData);
-        globalData.ActiveWindow.SetAiVoiceOver("FearOfTheUnknown/Prologue");
         globalData.ActiveWindow.AddDefaultTitle();
         globalData.ActiveWindow.AddDefaultContent();
         globalData.ActiveWindow.AddClickHereToContinue(ScenarioStart);
@@ -88,7 +87,6 @@ public static partial class FearOfTheUnknown
     {
         globalData.SaveToUndo();
         globalData.ActiveWindow = new GameplayWindow(globalData);
-        globalData.ActiveWindow.SetAiVoiceOver("FearOfTheUnknown/SharedMania");
         globalData.ActiveWindow.AddDefaultTitle();
         globalData.ActiveWindow.AddDefaultContent(content => content.FormatWithReplacement(0, RandomPlayer(globalData)));
         globalData.ActiveWindow.AddClickHereToContinue(SharedMania_0);

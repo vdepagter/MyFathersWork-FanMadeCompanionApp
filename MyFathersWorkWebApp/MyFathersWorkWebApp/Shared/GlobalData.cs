@@ -307,6 +307,8 @@ public partial class GlobalData
     public async Task LoadScenarioLanguagesOptionsAsync(NavigationManager nav, HttpClient http, Dictionary<string, Dictionary<string, string>> scenarioLocalizations,
                                                         Dictionary<string, Dictionary<string, string>> scenarioGameplayLocalizations)
     {
+        await Narration.LoadAsync(http, ScenarioId);
+
         string scenarioLocalization = ScenarioId switch
         {
             ScenarioId.CostOfDisease => "localization/TheCostOfDisease_Localization.csv",

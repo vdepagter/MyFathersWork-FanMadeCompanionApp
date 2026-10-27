@@ -1,0 +1,16 @@
+# Windows (method names) read by one player alone, besides the targets of AddDoNotOtherPlayersToSee /
+# AddOnceYouAreReady that chunks.py finds itself: the outcome of a secret choice, still in that player's journal.
+# Their narration is never autoplayed (Play only).
+RevengeFortune
+RevengeMisfortune
+BusinessThanks
+BusinessBargain
+BusinessDeclined
+CureConfirmed
+CountPaid
+CountDisappointed
+PaymentReceived
+PrematureEnd
+MeetingAtTheJunkPalace
+HideousFeast
+JunkResolution

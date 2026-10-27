@@ -1,0 +1,4 @@
+# Placeholder values narrated as their own clip (chunks.py): one per line, exactly as the code formats them, or
+# @<Tag> for every text a one-placeholder tag produces. Player names, the town name and typed names are never narrated.
+Separatists
+Unified Monarchists

@@ -231,7 +231,7 @@ public static partial class FearOfTheUnknown
         globalData.ActiveWindow = new GameplayWindow(globalData);
         globalData.ActiveWindow.AddDefaultBaseTitle();
         globalData.ActiveWindow.AddCustomContent(LetterHeader(globalData, nameof(CalmBeforeTheTempest)));
-        globalData.ActiveWindow.AddCustomContent(Tag(globalData, "CalmBeforeTheTempest_Content"));
+        globalData.ActiveWindow.AddStoryContent("CalmBeforeTheTempest_Content");
         globalData.ActiveWindow.AddClickHereToContinue(CalmBeforeTheTempestEnd_0);
     }
 

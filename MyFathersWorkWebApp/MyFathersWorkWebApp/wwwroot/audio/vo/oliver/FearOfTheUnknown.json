@@ -1,0 +1,36 @@
+{
+ "clips": {
+  "1c8a40f6e9f5e2b6": "a94a4814",
+  "61598402eaa6df2b": "df44b4b8"
+ },
+ "private": [
+  "BusinessBargain_Content",
+  "BusinessDeclined_Content",
+  "BusinessOfferRevealed_Content",
+  "BusinessOfferRevealed_Content1",
+  "BusinessThanks_Content",
+  "CollectionDayRevealed_Content",
+  "CollectionDayRevealed_Content1",
+  "CountDisappointed_Content",
+  "CountPaid_Content",
+  "CureConfirmed_Content",
+  "CursedCure_Content",
+  "CursedCure_Content1",
+  "HideousFeast_Content",
+  "JunkResolution_Content",
+  "JunkResolution_Content1",
+  "JunkResolution_Content2",
+  "MeetingAtTheJunkPalace_Content",
+  "MeetingAtTheJunkPalace_Content3",
+  "MeetingAtTheJunkPalace_Content4",
+  "PaymentReceived_Content",
+  "PrematureEnd_Content",
+  "RemoveACurseRevealed_Content",
+  "RevengeFortune_Content",
+  "RevengeMisfortune_Content",
+  "RevengePlotChoice_Content1",
+  "RumorRevealed_Content",
+  "UnwelcomeReturnRevealed_Content",
+  "UnwelcomeReturnRevealed_Content1"
+ ]
+}
