@@ -5,7 +5,8 @@
 //   popup   - one at a time, a new popup sound cuts the previous one (setup, end of round, special event)
 //   click   - may overlap
 //   voice   - one element for the voice-over: thunder lead-in, then the narration clip (docs/AUDIO_TRANSITIONS_MAP.md
-//             "Voice-over"). Own setting (female / male / off), independent of the music and effects toggles; the
+//             "Voice-over"), or the clips of the fan-made Oliver narration played one after the other. Own setting
+//             (female / male / oliver / off), independent of the music and effects toggles; the
 //             music is ducked while it plays. State changes are reported to one .NET listener (Pages/Gameplay.razor).
 // Browsers block audio until the first user gesture: the wanted music starts on the first gesture, effects requested
 // before it are dropped. Paths are relative so they resolve against <base href> (the site runs from a sub-path).
@@ -241,7 +242,7 @@
     // Unity (SoundManager.OnVOPlayOneTime): 4.5 s of the thunder clip, then the narration clip on the same source.
     // Pause menu: pause; resume during the lead-in skips the rest of it (SoundManager.OnVOResume).
 
-    const VOICES        = ["female", "male", "off"];
+    const VOICES        = ["female", "male", "oliver", "off"];
     const VOICE_DEFAULT = "male"; // Unity: PlayerPrefs "AudioTrack" defaults to 0 = male (ViewAudioTrack, ViewMainMenu)
     const LEAD_IN_MS    = 4500;
     const THUNDER       = src("sfx-vo-thunder");
@@ -264,6 +265,7 @@
         counter:  0,
         phase:    null,     // null | "leadin" | "clip"
         clip:     null,     // url of the narration clip of the current request
+        queue:    [],       // urls still to play after clip (Oliver narration: one clip per text chunk)
         timer:    0,        // lead-in timer
         paused:   false,    // paused by the pause menu
         listener: null      // DotNetObjectReference (Pages/Gameplay.razor), method OnVoiceState(id, state)
@@ -311,6 +313,7 @@
         voice.id     = 0;
         voice.phase  = null;
         voice.clip   = null;
+        voice.queue  = [];
         voice.paused = false;
         try {
             voiceElement.pause();
@@ -323,7 +326,7 @@
         notifyVoice(id, "stopped");
     }
 
-    // name: clip file name (the Unity passage name; for "ai": <Scenario>/<method>); which: "female" | "male" | "ai";
+    // name: clip file name (the Unity passage name); which: "female" | "male";
     // leadIn: thunder first.
     // Returns the request id, or 0 when nothing starts (audio not unlocked by a user gesture yet).
     function voicePlay(name, which, leadIn) {
@@ -331,7 +334,7 @@
         if (!unlocked || !name) return 0;
 
         voice.id   = ++voice.counter;
-        voice.clip = "audio/vo/" + (which === "male" || which === "ai" ? which : "female") + "/" + name + ".mp3";
+        voice.clip = "audio/vo/" + (which === "male" ? "male" : "female") + "/" + name + ".mp3";
         duckMusic(true);
 
         if (leadIn) {
@@ -345,11 +348,36 @@
         return voice.id;
     }
 
+    // urls: the clips of one Oliver narration, played in order without a lead-in. Returns the request id, or 0.
+    function voicePlayList(urls) {
+        endVoice();
+        if (!unlocked || !urls || !urls.length) return 0;
+
+        voice.id    = ++voice.counter;
+        voice.clip  = urls[0];
+        voice.queue = urls.slice(1);
+        duckMusic(true);
+        startClip();
+        return voice.id;
+    }
+
+    let preload = null; // warms the browser cache for the next clip of a list, so the gap between clips stays short
+
     voiceElement.addEventListener("playing", () => {
-        if (voice.phase === "clip") notifyVoice(voice.id, "speaking");
+        if (voice.phase !== "clip") return;
+        if (voice.queue.length) {
+            preload         = new Audio();
+            preload.preload = "auto";
+            preload.src     = voice.queue[0];
+        }
+        notifyVoice(voice.id, "speaking");
     });
     voiceElement.addEventListener("ended", () => {
-        if (voice.phase === "clip") endVoice();
+        if (voice.phase === "clip" && voice.queue.length) {
+            voice.clip = voice.queue.shift();
+            startVoiceSource(voice.clip);
+        }
+        else if (voice.phase === "clip") endVoice();
         else if (voice.phase === "leadin") startClip(); // lead-in clip shorter than LEAD_IN_MS
     });
     voiceElement.addEventListener("error", () => {
@@ -428,6 +456,7 @@
             endVoice(); // a change stops the current narration, it does not start a new one
         },
         voicePlay: voicePlay,
+        voicePlayList: voicePlayList,
         voiceStop: endVoice,
         voicePause: voicePause,
         voiceResume: voiceResume,

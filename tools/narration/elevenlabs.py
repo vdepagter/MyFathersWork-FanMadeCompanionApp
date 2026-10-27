@@ -57,16 +57,27 @@ def key():
     return k
 
 
-def call(method, path, body=None, raw=False):
-    req = urllib.request.Request(API + path, method=method,
-                                 data=json.dumps(body).encode() if body is not None else None,
-                                 headers={"xi-api-key": key(), "Content-Type": "application/json"})
-    try:
-        with urllib.request.urlopen(req, timeout=300) as r:
-            data = r.read()
-    except urllib.error.HTTPError as e:
-        sys.exit(f"HTTP {e.code} on {path}: {e.read().decode(errors='replace')}")
-    return data if raw else json.loads(data)
+def call(method, path, body=None, raw=False, retries=0):
+    """API call; retries (2, 4, 8, ... s) on rate limits, server errors and network errors."""
+    import time
+    for attempt in range(retries + 1):
+        req = urllib.request.Request(API + path, method=method,
+                                     data=json.dumps(body).encode() if body is not None else None,
+                                     headers={"xi-api-key": key(), "Content-Type": "application/json"})
+        try:
+            with urllib.request.urlopen(req, timeout=300) as r:
+                data = r.read()
+            return data if raw else json.loads(data)
+        except urllib.error.HTTPError as e:
+            message = f"HTTP {e.code} on {path}: {e.read().decode(errors='replace')}"
+            if e.code not in (429, 500, 502, 503, 504) or attempt == retries:
+                sys.exit(message)
+        except (urllib.error.URLError, TimeoutError) as e:
+            message = f"{e} on {path}"
+            if attempt == retries:
+                sys.exit(message)
+        print(f"  {message} - retrying", flush=True)
+        time.sleep(2 ** (attempt + 1))
 
 
 def load(path):
@@ -92,28 +103,26 @@ def words(text):
     return re.findall(r"[a-z0-9_']+", text.lower().replace("’", "'"))
 
 
-def check(name):
-    """Word-level diff of a script against its CSV source text (named on the script's first line).
+def diff(src, spoken):
+    """Word-level diff of spoken text against its CSV source text: words of the on-screen text missing or changed.
 
-    Catches drift: words of the on-screen text missing or changed in the narration. Allowed: inserted words
-    (interjections, generic headers), and replacing numbers, "Dr" or a placeholder (spelled-out years, names).
-    The story text is compared up to "<b>CHOOSE" (rules are not narrated). Returns a list of problems.
+    Allowed: inserted words (interjections, generic headers), and replacing numbers, "Dr" or a placeholder (spelled-out
+    years, names). The source is compared up to "<b>CHOOSE" (rules are not narrated). Returns a list of problems.
     """
-    with open(os.path.join(SCRIPTS, name + ".txt"), encoding="utf-8") as f:
-        m = SOURCE.match(f.readline())
-    if not m:
-        return [f"first line must be '# <File>.csv <Tag>'"]
-    with open(os.path.join(LOCALIZATION, m.group(1)), encoding="utf-8-sig") as f:
-        src = next((l.split(";", 1)[1] for l in f if l.startswith(m.group(2) + ";")), None)
-    if src is None:
-        return [f"tag {m.group(2)} not found in {m.group(1)}"]
-    a, b = words(src.split("<b>CHOOSE")[0]), words(script_text(name))
+    a, b = words(src.split("<b>CHOOSE")[0]), words(spoken)
     problems = []
     for op, i1, i2, j1, j2 in difflib.SequenceMatcher(None, a, b, autojunk=False).get_opcodes():
         lost = [w for w in a[i1:i2] if not (w.isdigit() or w in ("_", "dr"))]
         if op in ("delete", "replace") and lost:
             problems.append(f"{op}: '{' '.join(a[i1:i2])}' -> '{' '.join(b[j1:j2])}'")
     return problems
+
+
+def check(name):
+    """Drift check of scripts/<Scenario>/<Tag>.txt, chunk by chunk (chunks.check)."""
+    import chunks
+    scenario, tag = name.split("/")
+    return chunks.check(scenario, tag)
 
 
 def check_all(names):
@@ -275,7 +284,8 @@ if __name__ == "__main__":
     elif a[0] == "add":
         add(a[1], a[2], a[3], " ".join(a[4:]) or a[1])
     elif a[0] == "check":
-        sys.exit(1 if check_all(a[1:] or all_scripts()) else 0)
+        import chunks
+        sys.exit(1 if (check_all(a[1:]) if a[1:] else chunks.check_all()) else 0)
     elif a[0] == "credits":
         credits()
     else:

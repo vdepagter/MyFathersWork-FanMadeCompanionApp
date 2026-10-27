@@ -321,7 +321,7 @@ public static partial class ATimeOfWar
     {
         globalData.SaveToUndo();
         globalData.ActiveWindow = new GameplayWindow(globalData);
-        globalData.ActiveWindow.AddCustomContent(globalData.GetScenarioLocalizedTag("Secret_Content"));
+        globalData.ActiveWindow.AddStoryContent("Secret_Content");
         globalData.ActiveWindow.AddOnceYouAreReady(AMessYes2bRevealed);
     }
 

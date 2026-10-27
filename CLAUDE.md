@@ -27,7 +27,7 @@ When a piece of work is finished, move its section to [`HANDOFF_ARCHIVE.md`](HAN
   - `wwwroot/localization/` - `UI_Localization.csv` (English + Polish), per scenario `<Scenario>_Localization.csv` (story text) and `<Scenario>_Gameplay_Localization.csv` (rules/setup text). `*-copy.csv` are old copies.
   - `wwwroot/images/setup/` (popup images, referenced by `Shared/Consts/PopUpIcon.cs`) and `wwwroot/images/gameplay/` (inline `<icon=...>`). S2_*/S3_* images for the other scenarios already exist. Images are **Git LFS** - a worktree without `git lfs pull` shows broken icons.
 - `MyFathersWorkConsole/` - porting aid. `Processor/*.txt` are the decompiled Cradle story classes for all three scenarios (the only source for Fear of the Unknown and A Time of War). `TheStoryProcessor.Run()` converts a `.txt` into readable console C# under `Processor/Scenario/ScenarioPart_*.cs` (currently holds the Cost of Disease Gen III passages; they are fully ported now).
-- `tools/` - `cradle_dump.py` (decompiled Cradle `.txt` -> readable pseudo-Twine with link labels; `--graph <Passage>` BFS from a passage, `--html` CSV-ready text - the preferred way to read a scenario), `passage_dump.py` (older passage reader), `tagcheck.py` (verify localization tags; `--scenario=FearOfTheUnknown`), `sourcecheck.py` (source link labels missing from the CSVs, Unity-only end-of-generation/setup screens), `test-save-helpers.js` (play-test from crafted saves). `narration/` - AI narration (ElevenLabs): `elevenlabs.py` (voices, render, `check`), narration scripts in `narration/scripts/<Scenario>/`, `local_tts.py` (open models).
+- `tools/` - `cradle_dump.py` (decompiled Cradle `.txt` -> readable pseudo-Twine with link labels; `--graph <Passage>` BFS from a passage, `--html` CSV-ready text - the preferred way to read a scenario), `passage_dump.py` (older passage reader), `tagcheck.py` (verify localization tags; `--scenario=FearOfTheUnknown`), `sourcecheck.py` (source link labels missing from the CSVs, Unity-only end-of-generation/setup screens), `test-save-helpers.js` (play-test from crafted saves). `narration/` - AI narration (ElevenLabs): `chunks.py` (Oliver clips per text chunk: plan, render), `elevenlabs.py` (voices, comparison renders, `check`), overrides/values/private lists in `narration/scripts/<Scenario>/`, `local_tts.py` (open models).
 - `PLAYTEST_FINDINGS.md` - findings from real play-tests, their causes and a checklist against recurrence. Read it before porting or reviewing a scenario.
 - `UnityOriginalApp/` - the original Unity project is also in the repo (same content as the path below).
 - Original Unity project (outside the repo, owner's machine): `C:\Users\ValentijndePagter\Downloads\my-fathers-work-master-4-20260622T163118Z-3-001\my-fathers-work-master-4`. Useful parts: `Assets/Scripts/OldStory/TheCostofDisease*.cs` (Cradle output, Cost of Disease only), `Assets/Scripts/UI/View*.cs` (score entry, tie breaker, ranking, endings UI flow), `Assets/Resources/setupImages`.
@@ -156,18 +156,24 @@ Details per branch: the "Ported" notes in `docs/ATOW_PORT_MAP.md` 2.1-2.8; sourc
 
 ## AI narration (tools/narration)
 
-Fan-made recordings for windows the official app never narrated (`GameplayWindow.SetAiVoiceOver`, `docs/AUDIO_TRANSITIONS_MAP.md` 8.4).
+Voice setting "Oliver": AI narration of all story text, played as clips keyed by a hash of their CSV text
+(`tools/narration/chunks.py`, `Shared/Narration.cs`, `docs/AUDIO_TRANSITIONS_MAP.md` 8.4). Male and Female are the
+original recordings only.
 
-- A narration script (`tools/narration/scripts/<Scenario>/<method>.txt`) is the on-screen CSV text rewritten for speech:
-  audio tags, spelled-out numbers, a generic header instead of a player name, an occasional interjection. Its first line
-  names the source: `# <File>.csv <Tag>`. Rewriting text by hand drifts: a narrator clause was once dropped unnoticed, and
-  listeners reading along got lost.
-- **Always run `python tools/narration/elevenlabs.py check`** after writing or editing a script and after changing
-  the CSV text: a word-level diff against the CSV that reports every source word that is missing or changed (inserted
-  words, numbers, "Dr" and placeholders are allowed). `render` runs it and refuses on drift (`--force` overrides).
-  A CSV text change does not update the recording - render it again.
-- Game clips: `render <voice> <Scenario>/<method> --web` (model + settings from `voices.json`; 192 kbps master to the
-  git-ignored `out/master/`, kept offline; 96 kbps mono copy to `wwwroot/audio/vo/ai/`).
+- `python tools/narration/chunks.py plan <Scenario>` (characters still to render), `show <Scenario> <Tag>` (chunks,
+  hashes, spoken text), `render <Scenario> [--max=N] [--reserve=N] [--tags=A,B] [--no-private] [--dry]` (checks the
+  quota every ~10k characters and stops above the reserve; resumable). Model and settings: `voices.json` `oliver`.
+- `Shared/Narration.cs` must split exactly like `chunks.py` (placeholder regex, `<b>CHOOSE` cut, FNV-1a 64 hash).
+  Scenario code that rewrites story text beyond placeholders makes the split fail: that window is not narrated
+  (console "Oliver narration: no clips for <Tag>"). Story text added with `AddCustomContent` is not narrated; use
+  `AddStoryContent(tag)` for a plain story tag.
+- New screens read by one player alone: list them in `scripts/<Scenario>/private.txt` unless they are the target of
+  `AddDoNotOtherPlayersToSee` / `AddOnceYouAreReady`. New placeholder values worth narrating go in `values.txt`.
+- A hand-written override (`scripts/<Scenario>/<Tag>.txt`) rewrites text by hand, which drifts: a narrator clause was
+  once dropped unnoticed, and listeners reading along got lost. **Always run `python tools/narration/elevenlabs.py
+  check`** after editing an override or the CSV text (word-level diff per chunk; render refuses on drift).
+- A CSV text change makes new hashes: render the scenario again (only the changed chunks are sent) and commit the clips
+  and `wwwroot/audio/vo/oliver/<Scenario>.json`.
 
 ## Build, run, test
 

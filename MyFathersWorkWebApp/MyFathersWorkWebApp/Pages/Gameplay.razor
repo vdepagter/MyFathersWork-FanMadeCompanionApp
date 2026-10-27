@@ -48,7 +48,7 @@
             <h2>@GlobalData.ActiveWindow.Subtitle.InsertImages().AsMarkup()</h2>
         }
 
-        @if (GlobalData.ActiveWindow.VoiceOver != null)
+        @if (HasNarration(GlobalData.ActiveWindow))
         {
             // Voice-over indicator, only on narrated windows (docs/AUDIO_TRANSITIONS_MAP.md "Voice-over")
             bool          narrationOff = Audio.Narration == NarrationVoice.Off;
@@ -354,8 +354,9 @@
 
     #region Voice-over (docs/AUDIO_TRANSITIONS_MAP.md "Voice-over")
 
-    // A narrated window (GameplayWindow.VoiceOver) that is newly presented by a click starts the narration: thunder
-    // lead-in, then the clip (audio.js). Undo, load and reload (Suppressed) never start it, nor does a window shown before
+    // A narrated window (GameplayWindow.VoiceOver, or Oliver clips - Shared/Narration.cs) that is newly presented by a
+    // click starts the narration: thunder lead-in, then the clip (audio.js); Oliver clips play without the lead-in, and
+    // never by themselves in a private section (one player reads alone: Play only). Undo, load and reload (Suppressed) never start it, nor does a window shown before
     // the first user gesture (the browser would block it); the indicator then offers Play. Anything else on screen - a
     // popup, another window, the hub, a mirror question - stops it, as Unity stops it on every passage change. Undo,
     // leaving the page and a change of the narration setting stop it too.
@@ -372,7 +373,7 @@
     private VoicePillState VoicePillFor(GameplayWindow window)
     {
         // Rendered before OnAfterRender registered this window: show what UpdateVoiceOver is about to do
-        if (!ReferenceEquals(window, _VoiceWindow)) return WillAutoplay(_SuppressScreenChange) ? VoicePillState.Starting : VoicePillState.Play;
+        if (!ReferenceEquals(window, _VoiceWindow)) return WillAutoplay(window, _SuppressScreenChange) ? VoicePillState.Starting : VoicePillState.Play;
 
         return _VoiceState switch
         {
@@ -382,29 +383,58 @@
         };
     }
 
-    private bool WillAutoplay(bool suppressed) => !suppressed && Audio.Narration != NarrationVoice.Off && Audio.IsUnlocked;
+    private bool WillAutoplay(GameplayWindow window, bool suppressed) =>
+        !suppressed && Audio.Narration != NarrationVoice.Off && Audio.IsUnlocked && !(OliverClips(window) != null && Narration.IsPrivate(GlobalData, window));
+
+    private bool HasNarration(GameplayWindow window) => window.VoiceOver != null || OliverClips(window) != null;
+
+    private GameplayWindow? _OliverWindow; // the window _OliverClips was computed for
+    private List<string>?   _OliverClips;
+
+    // Oliver clips of the window when the Oliver voice is chosen, else null (then the original recording, if any, plays)
+    private List<string>? OliverClips(GameplayWindow window)
+    {
+        if (Audio.Narration != NarrationVoice.Oliver) return null;
+        if (!ReferenceEquals(window, _OliverWindow))
+        {
+            _OliverWindow = window;
+            _OliverClips  = Narration.Clips(GlobalData, window);
+        }
+
+        return _OliverClips;
+    }
 
     private void UpdateVoiceOver(ScreenChangeInfo info)
     {
         // info.Presented is null while a mirror question is open
         if (_VoiceState != VoiceState.Idle && !ReferenceEquals(info.Presented, _VoiceWindow)) StopVoice();
 
-        if (info.Presented is not GameplayWindow { VoiceOver: not null } window || ReferenceEquals(window, _VoiceWindow)) return;
+        if (info.Presented is not GameplayWindow window || !HasNarration(window) || ReferenceEquals(window, _VoiceWindow)) return;
 
         _VoiceWindow = window;
         _VoicePlayed = false;
         _VoiceState  = VoiceState.Idle;
-        if (info.Change != ScreenChange.None && WillAutoplay(info.Suppressed)) StartVoice(true);
+        if (info.Change != ScreenChange.None && WillAutoplay(window, info.Suppressed)) StartVoice(true);
         StateHasChanged();
     }
 
     private void StartVoice(bool leadIn)
     {
-        if (_VoiceWindow?.VoiceOver == null) return;
+        if (_VoiceWindow == null) return;
 
-        // Off has no chosen voice: its Play button uses the female voice
-        NarrationVoice voice = Audio.Narration == NarrationVoice.Male ? NarrationVoice.Male : NarrationVoice.Female;
-        _VoiceRequest = Audio.VoicePlay(_VoiceWindow.VoiceOver, voice, _VoiceWindow.IsAiVoiceOver, leadIn);
+        if (OliverClips(_VoiceWindow) is { } clips)
+        {
+            _VoiceRequest = Audio.VoicePlayList(clips);
+        }
+        else
+        {
+            if (_VoiceWindow.VoiceOver == null) return;
+
+            // Off has no chosen voice: its Play button uses the female voice. Oliver falls back to the male recording.
+            NarrationVoice voice = Audio.Narration is NarrationVoice.Male or NarrationVoice.Oliver ? NarrationVoice.Male : NarrationVoice.Female;
+            _VoiceRequest = Audio.VoicePlay(_VoiceWindow.VoiceOver, voice, leadIn);
+        }
+
         _VoiceState   = _VoiceRequest != 0 ? VoiceState.Starting : VoiceState.Idle;
     }
 

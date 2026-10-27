@@ -233,7 +233,7 @@ public static partial class ATimeOfWar
         Vars(globalData).MetGuard = true;
 
         globalData.ActiveWindow = new GameplayWindow(globalData);
-        globalData.ActiveWindow.AddCustomContent(globalData.GetScenarioLocalizedTag("Secret_Content"));
+        globalData.ActiveWindow.AddStoryContent("Secret_Content");
         globalData.ActiveWindow.AddOnceYouAreReady(RumorD1Revealed);
     }
 
@@ -259,7 +259,7 @@ public static partial class ATimeOfWar
     {
         globalData.SaveToUndo();
         globalData.ActiveWindow = new GameplayWindow(globalData);
-        globalData.ActiveWindow.AddCustomContent(globalData.GetScenarioLocalizedTag("Secret_Content"));
+        globalData.ActiveWindow.AddStoryContent("Secret_Content");
         globalData.ActiveWindow.AddOnceYouAreReady(RumorD2Revealed);
     }
 
@@ -287,7 +287,7 @@ public static partial class ATimeOfWar
         Vars(globalData).HeardMonarchists = true;
 
         globalData.ActiveWindow = new GameplayWindow(globalData);
-        globalData.ActiveWindow.AddCustomContent(globalData.GetScenarioLocalizedTag("Secret_Content"));
+        globalData.ActiveWindow.AddStoryContent("Secret_Content");
         globalData.ActiveWindow.AddOnceYouAreReady(RumorD3Revealed);
     }
 
@@ -316,7 +316,7 @@ public static partial class ATimeOfWar
         Vars(globalData).HeardSeparatists = true;
 
         globalData.ActiveWindow = new GameplayWindow(globalData);
-        globalData.ActiveWindow.AddCustomContent(globalData.GetScenarioLocalizedTag("Secret_Content"));
+        globalData.ActiveWindow.AddStoryContent("Secret_Content");
         globalData.ActiveWindow.AddOnceYouAreReady(RumorD4Revealed);
     }
 
@@ -339,7 +339,7 @@ public static partial class ATimeOfWar
         Vars(globalData).WoodenFigures += 1;
 
         globalData.ActiveWindow = new GameplayWindow(globalData);
-        globalData.ActiveWindow.AddCustomContent(globalData.GetScenarioLocalizedTag("Secret_Content"));
+        globalData.ActiveWindow.AddStoryContent("Secret_Content");
         globalData.ActiveWindow.AddOnceYouAreReady(RumorD5Revealed);
     }
 
@@ -362,7 +362,7 @@ public static partial class ATimeOfWar
     {
         globalData.SaveToUndo();
         globalData.ActiveWindow = new GameplayWindow(globalData);
-        globalData.ActiveWindow.AddCustomContent(globalData.GetScenarioLocalizedTag("Secret_Content"));
+        globalData.ActiveWindow.AddStoryContent("Secret_Content");
         globalData.ActiveWindow.AddOnceYouAreReady(RumorD6GunsRevealed);
     }
 

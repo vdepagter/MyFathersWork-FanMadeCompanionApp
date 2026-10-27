@@ -357,7 +357,7 @@ public static partial class FearOfTheUnknown
     {
         globalData.SaveToUndo();
         globalData.ActiveWindow = new GameplayWindow(globalData);
-        globalData.ActiveWindow.AddCustomContent(Tag(globalData, "Secret_Content"));
+        globalData.ActiveWindow.AddStoryContent("Secret_Content");
         globalData.ActiveWindow.AddOnceYouAreReady(RumorRevealed);
     }
 

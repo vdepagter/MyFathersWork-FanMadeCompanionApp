@@ -82,6 +82,7 @@ public sealed class AudioService(IJSRuntime js)
     {
         "female" => NarrationVoice.Female,
         "off"    => NarrationVoice.Off,
+        "oliver" => NarrationVoice.Oliver,
         _        => NarrationVoice.Male
     };
 
@@ -92,11 +93,13 @@ public sealed class AudioService(IJSRuntime js)
         InvokeVoid("mfwAudio.setVoice", VoiceName(narration));
     }
 
-    // Plays the clip of a narrated window (GameplayWindow.VoiceOver) in the given voice (Off plays the female voice),
-    // or the AI recording (one voice, no lead-in), optionally after the thunder lead-in. Returns the request id reported
-    // to the listener, or 0 when nothing started.
-    public int VoicePlay(string clip, NarrationVoice voice, bool ai, bool leadIn) =>
-        Invoke("mfwAudio.voicePlay", 0, clip, ai ? "ai" : voice == NarrationVoice.Male ? "male" : "female", leadIn && !ai);
+    // Plays the original recording of a narrated window (GameplayWindow.VoiceOver) in the given voice (Male or Female),
+    // optionally after the thunder lead-in. Returns the request id reported to the listener, or 0 when nothing started.
+    public int VoicePlay(string clip, NarrationVoice voice, bool leadIn) =>
+        Invoke("mfwAudio.voicePlay", 0, clip, voice == NarrationVoice.Male ? "male" : "female", leadIn);
+
+    // Plays the Oliver clips of a window (Narration.Clips) one after the other, without a lead-in
+    public int VoicePlayList(IReadOnlyList<string> urls) => Invoke("mfwAudio.voicePlayList", 0, urls);
 
     public void VoiceStop()   => InvokeVoid("mfwAudio.voiceStop");
     public void VoicePause()  => InvokeVoid("mfwAudio.voicePause");
@@ -110,6 +113,7 @@ public sealed class AudioService(IJSRuntime js)
     {
         NarrationVoice.Female => "female",
         NarrationVoice.Off    => "off",
+        NarrationVoice.Oliver => "oliver",
         _                     => "male"
     };
 
