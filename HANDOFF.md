@@ -81,7 +81,8 @@ Next steps:
 Rules and commands: CLAUDE.md "AI narration", `docs/AUDIO_TRANSITIONS_MAP.md` 8.4, docstrings of `tools/narration/chunks.py`
 and `elevenlabs.py`.
 
-State (27 Oct 2026, branch `claude/oliver-v4-narration`, merged into local `main`, **not pushed**):
+State (27 Oct 2026, branch `claude/oliver-v4-narration`, merged and pushed; deployed and live, first deploy with the
+LFS cache step succeeded - cache ~158 MB):
 - Voice setting "Oliver (AI, whole story)" next to Female / Male / Off. Male and Female play only the original recordings
   (the 7 v3 intro clips in `wwwroot/audio/vo/ai/` are gone). Oliver plays chunk clips per window, falls back to the
   original male recording where a window has none, and never autoplays private screens (Play only).
@@ -111,4 +112,4 @@ Next steps:
    scenarios will be ~300 MB of clips; 64 kbps mono would cut that by a third if Pages/LFS limits bite.
 3. Play-test the other scenarios with Oliver once rendered: console lines "Oliver narration: no clips for <Tag>" show
    windows whose text code changes beyond placeholders (not narrated); fix the split or accept.
-4. Push main after the user's OK and check the deploy (first run with the LFS cache step).
+4. User play-test of Fear of the Unknown with Oliver first; the other scenarios start in a new session.
