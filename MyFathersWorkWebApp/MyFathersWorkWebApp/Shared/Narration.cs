@@ -87,7 +87,7 @@ public static class Narration
 
             if (chunk != string.Empty)
             {
-                int index = rendered.IndexOf(chunk, position, StringComparison.Ordinal);
+                int index = Find(manifest, rendered, chunk, position, placeholders);
                 if (index < 0) return false;
                 if (placeholders > 0) AddValue(manifest, folder, rendered[position..index], urls);
                 if (!manifest.Clips.TryGetValue(Hash(chunk), out string? script)) return false;
@@ -101,6 +101,22 @@ public static class Narration
 
         if (placeholders > 0) AddValue(manifest, folder, rendered[position..], urls);
         return true;
+    }
+
+    // Where a static chunk follows in the rendered text. After one placeholder, a short chunk (" " between two either/or
+    // sentences) can also occur inside the value: prefer the first position where the value before it has a clip, else
+    // the first occurrence (player names have no clip).
+    private static int Find(Manifest manifest, string rendered, string chunk, int position, int placeholders)
+    {
+        int first = rendered.IndexOf(chunk, position, StringComparison.Ordinal);
+        if (placeholders != 1) return first;
+
+        for (int index = first; index >= 0; index = rendered.IndexOf(chunk, index + 1, StringComparison.Ordinal))
+        {
+            if (manifest.Clips.ContainsKey(Hash(rendered[position..index]))) return index;
+        }
+
+        return first;
     }
 
     // A placeholder's value is narrated when it has a clip (a fixed variant or name); anything else (player names) is skipped

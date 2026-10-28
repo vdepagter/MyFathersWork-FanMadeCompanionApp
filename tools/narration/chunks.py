@@ -231,7 +231,8 @@ def stand_ins(parts):
         nxt = i + 2 * group - 1  # static after the group
         after = parts[nxt][1] if nxt < len(parts) else ""
         before = plain("".join(r for _, r in parts[:i]))
-        possessive = after.startswith("'s")
+        numeral = re.match(r" (II|III|IV)\b", after) if k == "Oliver" else None  # "<name> II" -> "a cousin"
+        possessive = after[numeral.end() if numeral else 0:].startswith("'s")
         in_header = 0 <= header_end and offsets[i] < header_end
         if (in_header and not possessive) or (in_header and plain(parts[i - 1][1]).strip() in
                                               [plain(h).strip() for h in HEADERS]):
@@ -253,7 +254,9 @@ def stand_ins(parts):
             result[j] = ("", "", True)
         if k == "Town" and re.search(r"\bthe\s*$", before, re.I):  # "the <village> Jail" -> "the village Jail"
             words = "village"
-        if k == "Town" and re.search(r"\btown of\s*$", before):  # "the town of <village>" -> "the town"
+        if k == "Oliver" and group == 1 and re.search(r"\bdear\s*$", before, re.I):  # "My dear <name>" -> "My dear cousin"
+            words = "cousin"
+        if k == "Town" and re.search(r"\b(town|village) of\s*$", before):  # "the town of <village>" -> "the town"
             result[i - 1] = ("", "", "of")
             words = ""
         if words:
@@ -262,7 +265,7 @@ def stand_ins(parts):
             # Only a possessive, or a value with no speaking clip before it, begins the next clip.
             if not possessive and i > 0 and normalize(parts[i - 1][1]):
                 result[i - 1] = ("", " " + words, False)
-            elif nxt < len(parts) and normalize(after[2:] if possessive else after):
+            elif nxt < len(parts) and normalize(after[(numeral.end() if numeral else 0) + 2:] if possessive else after):
                 result[nxt] = (words + " ", "", possessive)
             elif i > 0:
                 result[i - 1] = ("", " " + words, False)
@@ -278,6 +281,8 @@ def tag_chunks(scenario, tag, text):
     out, i, dollars = [], 0, False
     for n, (kind, raw) in enumerate(parts):
         if kind == "s":
+            # "<name> II" / "<name> III's": the generation numeral goes with the skipped name
+            body = re.sub(r"^ (II|III|IV)\b", "", raw) if n and stand_in_kind(parts[n - 1][1]) == "Oliver" else raw
             # "$<b>{{0=3}}</b> in donations": the amount is a value clip, so "dollars" moves behind it
             money = n + 1 < len(parts) and re.search(r"\$(</?b>)*$", raw) is not None
             if i in overrides:
@@ -287,15 +292,15 @@ def tag_chunks(scenario, tag, text):
                 if flag is True and not prefix:  # " and " said by a group stand-in
                     spoken = ""
                 elif flag is True:  # possessive: "'s" belongs to the stand-in
-                    spoken = prefix + normalize(raw[2:], False) if normalize(raw[2:]) else prefix.strip()
+                    spoken = prefix + normalize(body[2:], False) if normalize(body[2:]) else prefix.strip()
                 else:
-                    spoken = normalize(raw, not prefix)
+                    spoken = normalize(body, not prefix)
                     if flag == "of":
                         spoken = re.sub(r"\s+of$", "", spoken)
                     spoken = (prefix + spoken + suffix).strip() if spoken or prefix or suffix else ""
                     spoken = re.sub(r"(?<=\w) +(?=[.,;:!?])", "", spoken)  # "the village ." -> "the village."
                 if dollars:
-                    spoken = re.sub(r"(?<=\w) +(?=[.,;:!?])", "", "dollars " + normalize(raw, False)).strip()
+                    spoken = re.sub(r"(?<=\w) +(?=[.,;:!?])", "", "dollars " + normalize(body, False)).strip()
                 if money:
                     spoken = re.sub(r"\s*\$$", "", spoken)
                 free = False
@@ -332,7 +337,7 @@ def windows(scenario):
             if "new GameplayWindow" not in body:
                 continue
             tags = []
-            for c in re.finditer(r"\.(AddDefaultContent|AddNextContentWithLinks|AddNextContent)\((\d*)", body):
+            for c in re.finditer(r"\.(AddDefaultContent|AddNextContentWithLinks|AddNextContent)\((\d*(?=\s*[,)]))?", body):
                 if c.group(1) == "AddDefaultContent":
                     tags.append(m.group(1) + "_Content")
                 elif c.group(2):

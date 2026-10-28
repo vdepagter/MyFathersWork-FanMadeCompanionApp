@@ -104,6 +104,13 @@ LFS cache step succeeded - cache ~158 MB):
 - Masters (192 kbps) are in the git-ignored `tools/narration/out/master/oliver/` of the main checkout - keep them.
   Older comparison renders: `.claude/worktrees/elevenlabs-voice-narration-3a3e64/tools/narration/out/`.
 
+Play-test fixes (28 Oct 2026, branch `claude/playtest-feedback-fotu`): `chunks.py` drops "of" in "the village of <village>",
+says "My dear cousin" for "My dear <name>", drops the generation numeral after a skipped name ("<name> II"), and lists every
+`<Method>_Content<n>` when the index is computed (`1 + vars.ProgramType`); `CureDenied` is private; `Narration.cs` finds
+a static chunk that also occurs inside the previous value (`PatientEntry`: " " between two either/or sentences).
+**To render** (Fear of the Unknown, 14 clips, ~3.8k characters sent, ~1.7k billed): `chunks.py render FearOfTheUnknown`
+on the laptop, then commit the clips and the manifest.
+
 Next steps:
 1. The Cost of Disease (~126k characters sent, ~57k billed) and A Time of War (~106k, ~48k billed); private sections of
    each last. Cost of Disease fits roughly in the remaining quota; A Time of War after the reset. Both need a `values.txt`,
