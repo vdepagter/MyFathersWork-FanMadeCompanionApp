@@ -8,8 +8,10 @@ namespace MyFathersWorkWebApp;
 // made by tools/narration/chunks.py: the story text of a tag is cut at "<b>CHOOSE" and split around its placeholders;
 // every static chunk is one clip named after the FNV-1a 64 hash of its CSV text, and the text a placeholder was formatted
 // with (an either/or variant, an NPC name) is looked up the same way ("value clip"; player names have none and are
-// skipped). wwwroot/audio/vo/oliver/<Scenario>.json lists the clips: hash -> script hash ("" = silent chunk). Keep the
-// regex, the cut and the hash identical to chunks.py.
+// skipped). wwwroot/audio/vo/oliver/<Scenario>.json lists the clips: hash -> script hash ("" = silent chunk), and per
+// scenario whether window titles and the leading letter / journal header line are narrated, and per tag where the
+// narration stops (choices and rules lines: chunks.auto_cut). Keep the regex, the cuts, the header rule and the hash
+// identical to chunks.py.
 public static class Narration
 {
     private const string Cut = "<b>CHOOSE";
@@ -20,6 +22,9 @@ public static class Narration
     {
         public Dictionary<string, string> Clips   { get; set; } = new();
         public List<string>               Private { get; set; } = new();
+        public bool                       Titles  { get; set; }
+        public bool                       Headers { get; set; } = true;
+        public Dictionary<string, string> Cuts    { get; set; } = new();
     }
 
     private static readonly Dictionary<ScenarioId, Manifest> Manifests = new();
@@ -52,13 +57,16 @@ public static class Narration
     // rendered yet, another text language, or text changed by code in a way the split cannot follow).
     public static List<string>? Clips(GlobalData globalData, GameplayWindow window)
     {
-        if (window.StoryTexts.Count == 0 || !Manifests.TryGetValue(globalData.ScenarioId, out Manifest? manifest) || manifest.Clips.Count == 0) return null;
+        if (!Manifests.TryGetValue(globalData.ScenarioId, out Manifest? manifest) || manifest.Clips.Count == 0) return null;
+
+        List<(string Tag, string Text)> stories = window.StoryTexts.Where(story => manifest.Titles || !story.Tag.EndsWith("_Title")).ToList();
+        if (stories.Count == 0) return null;
 
         string        folder = Folder(globalData.ScenarioId);
         List<string>  urls   = new();
-        foreach ((string tag, string text) in window.StoryTexts)
+        foreach ((string tag, string text) in stories)
         {
-            if (!globalData.Scenario_Localization.TryGetValue(tag, out string? source) || !AddTag(manifest, folder, source, text, urls))
+            if (!globalData.Scenario_Localization.TryGetValue(tag, out string? source) || !AddTag(manifest, folder, tag, source, text, urls))
             {
                 Console.WriteLine($"Oliver narration: no clips for {tag}");
                 return null;
@@ -72,35 +80,60 @@ public static class Narration
     public static bool IsPrivate(GlobalData globalData, GameplayWindow window) =>
         Manifests.TryGetValue(globalData.ScenarioId, out Manifest? manifest) && window.StoryTexts.Any(story => manifest.Private.Contains(story.Tag));
 
-    private static bool AddTag(Manifest manifest, string folder, string source, string rendered, List<string> urls)
+    // Every chunk is matched (the split must follow the whole text), but only the part between the header line (when
+    // headers are not narrated) and the cut is played: chunks that end after the header and start before the cut, values
+    // whose placeholder lies in between.
+    private static bool AddTag(Manifest manifest, string folder, string tag, string source, string rendered, List<string> urls)
     {
         source   = Before(source,   Cut);
         rendered = Before(rendered, Cut);
 
+        int from = manifest.Headers || tag.EndsWith("_Title") ? 0 : HeaderEnd(source);
+        int to   = source.Length;
+        if (manifest.Cuts.TryGetValue(tag, out string? marker))
+        {
+            int cut = marker == string.Empty ? 0 : source.IndexOf(marker, StringComparison.Ordinal);
+            if (cut >= 0) to = cut;
+        }
+
         int position     = 0;
         int placeholders = 0;
+        int valueStart   = 0;
         int last         = 0;
         foreach (Match? match in Placeholder.Matches(source).Append(null))
         {
-            string chunk = match == null ? source[last..] : source[last..match.Index];
+            int    chunkStart = last;
+            string chunk      = match == null ? source[last..] : source[last..match.Index];
             if (match != null) last = match.Index + match.Length;
 
             if (chunk != string.Empty)
             {
                 int index = Find(manifest, rendered, chunk, position, placeholders);
                 if (index < 0) return false;
-                if (placeholders > 0) AddValue(manifest, folder, rendered[position..index], urls);
+                if (placeholders > 0 && valueStart >= from && valueStart < to) AddValue(manifest, folder, rendered[position..index], urls);
                 if (!manifest.Clips.TryGetValue(Hash(chunk), out string? script)) return false;
-                if (script != string.Empty) urls.Add(Url(folder, chunk, script));
+                if (script != string.Empty && chunkStart + chunk.Length > from && chunkStart < to) urls.Add(Url(folder, chunk, script));
                 position     = index + chunk.Length;
                 placeholders = 0;
             }
 
-            if (match != null) ++placeholders;
+            if (match != null && placeholders++ == 0) valueStart = match.Index;
         }
 
-        if (placeholders > 0) AddValue(manifest, folder, rendered[position..], urls);
+        if (placeholders > 0 && valueStart >= from && valueStart < to) AddValue(manifest, folder, rendered[position..], urls);
         return true;
+    }
+
+    // End of the leading bold header line ("<b>Letter from <name> - <i>date</i></b><br />"), or 0 (chunks.header_end)
+    private static int HeaderEnd(string text)
+    {
+        if (!text.StartsWith("<b>", StringComparison.Ordinal)) return 0;
+
+        int index = text.IndexOf("</b>", StringComparison.Ordinal);
+        if (index < 0) return 0;
+
+        string rest = text[(index + 4)..].TrimStart();
+        return rest == string.Empty || rest.StartsWith("<br", StringComparison.Ordinal) ? index + 4 : 0;
     }
 
     // Where a static chunk follows in the rendered text. After one placeholder, a short chunk (" " between two either/or

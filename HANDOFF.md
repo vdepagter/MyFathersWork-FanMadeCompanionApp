@@ -108,8 +108,15 @@ Play-test fixes (28 Oct 2026, branch `claude/playtest-feedback-fotu`): `chunks.p
 says "My dear cousin" for "My dear <name>", drops the generation numeral after a skipped name ("<name> II"), and lists every
 `<Method>_Content<n>` when the index is computed (`1 + vars.ProgramType`); `CureDenied` is private; `Narration.cs` finds
 a static chunk that also occurs inside the previous value (`PatientEntry`: " " between two either/or sentences).
-**To render** (Fear of the Unknown, 14 clips, ~3.8k characters sent, ~1.7k billed): `chunks.py render FearOfTheUnknown`
-on the laptop, then commit the clips and the manifest.
+Narration logic check (29 Oct): choices and rules lines are no longer narrated (`auto_cut`, `cuts.txt`), headers fixed
+("Correspondence from <name>" -> "Correspondence.", "Anonymous Editorial", "Excerpt", "Case File"), "the 1800's" ->
+"the eighteen hundreds", "<b><name></b> must suffer" -> "One of the cousins must suffer", "due to the <program>
+Program" -> "due to the Program". Titles / headers per scenario (CLAUDE.md). Not changed: "Vlad III" is sent as written
+(check by listening that v4 says "the Third"). **To render**: ~10k characters sent (~4.5k billed), `chunks.py render
+FearOfTheUnknown` on the laptop, then commit the clips and the manifest.
+For the next scenarios: review the `_Title` texts with placeholders (Cost of Disease has dates and names in titles,
+e.g. "Upon a Secret Meeting - Letter - <date>") before rendering; Cost of Disease is now ~157k characters sent
+(titles on, headers off), more than one month of quota.
 
 Next steps:
 1. The Cost of Disease (~126k characters sent, ~57k billed) and A Time of War (~106k, ~48k billed); private sections of

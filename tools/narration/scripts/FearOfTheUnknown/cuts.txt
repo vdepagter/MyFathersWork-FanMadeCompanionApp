@@ -1,0 +1,5 @@
+# Tags whose narration stops early or is skipped, besides the automatic cut at choices and rules lines
+# (chunks.auto_cut). 'Tag' = not narrated, 'Tag | <text>' = stop at <text>, 'Tag | -' = no cut.
+# Rules-only windows:
+PenaltyForDefiance_Content2
+Preparations_Content

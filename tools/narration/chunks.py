@@ -17,6 +17,7 @@ hand-written override in scripts/<Scenario>/<Tag>.txt (see read_overrides).
 
   python tools/narration/chunks.py plan <Scenario> [--private]   # windows, chunks, characters still to render
   python tools/narration/chunks.py show <Scenario> <Tag>         # chunks of a tag with hash and spoken text
+  python tools/narration/chunks.py sync <Scenario>               # manifest: private tags, cuts, settings, silent chunks
 """
 import json
 import os
@@ -34,6 +35,28 @@ SCRIPTS = os.path.join(HERE, "scripts")
 # Same as Shared/Narration.cs. One level of nesting ({{6=?|Vlad|{{0=Name}}}}) is one placeholder.
 PLACEHOLDER = re.compile(r"\{\{\d+=(?:[^{}]|\{\{[^{}]*\}\})*\}\}")
 CUT = "<b>CHOOSE"
+
+
+def settings(scenario):
+    """scripts/<Scenario>/settings.json: "titles" (the window title is narrated first) and "headers" (the leading
+    letter / journal header line with its date is narrated). Fear of the Unknown was rendered before both choices:
+    titles false, headers true. New scenarios: titles true, headers false."""
+    path = os.path.join(SCRIPTS, scenario, "settings.json")
+    result = {"titles": True, "headers": False}
+    if os.path.exists(path):
+        with open(path, encoding="utf-8") as f:
+            result.update(json.load(f))
+    return result
+
+
+def header_end(text):
+    """End of the leading bold header line ("<b>Letter from <name> - <i>date</i></b><br />"), or 0. Same rule as
+    Narration.HeaderEnd: the text starts with <b> and the first </b> is followed by a line break or ends the text."""
+    if not text.startswith("<b>"):
+        return 0
+    i = text.find("</b>")
+    rest = text[i + 4:].lstrip() if i >= 0 else "x"
+    return i + 4 if rest == "" or rest.startswith("<br") else 0
 
 
 def fnv64(text):
@@ -106,7 +129,9 @@ def ordinal(n):
 
 
 def year(n):
-    if 1100 <= n <= 1999 and n % 100 != 0:
+    if 1100 <= n <= 1999 and n % 100 == 0:  # 1800 -> "eighteen hundred"
+        return cardinal(n // 100) + " hundred"
+    if 1100 <= n <= 1999:
         return cardinal(n // 100) + " " + ("oh-" + ONES[n % 100] if n % 100 < 10 else cardinal(n % 100))
     return cardinal(n)
 
@@ -115,6 +140,7 @@ def numbers(text):
     months = "|".join(MONTHS)
     text = re.sub(rf"\b(\d{{1,2}}) ({months})\b", lambda m: f"the {ordinal(int(m.group(1)))} of {m.group(2)}", text)
     text = re.sub(rf"\b({months}) (\d{{1,2}})\b(?!\d)", lambda m: f"{m.group(1)} {ordinal(int(m.group(2)))}", text)
+    text = re.sub(r"\b(1[0-9]00)'?s\b", lambda m: year(int(m.group(1))) + "s", text)  # "the 1800's" -> "eighteen hundreds"
     text = re.sub(r"\b(1[0-9]\d\d)s\b", lambda m: year(int(m.group(1))).replace("ty", "ties").replace("sixties", "sixties"), text)
     text = re.sub(r"\b(1[0-9]\d\d)\b", lambda m: year(int(m.group(1))), text)
     text = re.sub(r"\$(\d+)", lambda m: cardinal(int(m.group(1))) + (" dollar" if m.group(1) == "1" else " dollars"), text)
@@ -137,6 +163,11 @@ HEADERS = {
     "<b>Newsprint - ": "Newsprint.",
     "<b>Collected Letters - ": "Collected letters.",
     "<b>Brief Journal Excerpt - ": "A brief journal excerpt.",
+    "<b>Anonymous Editorial - ": "An anonymous editorial.",
+    "<b>Excerpt - ": "An excerpt.",
+    "<b>Correspondence - ": "Correspondence.",
+    "<b>Correspondence from ": "Correspondence.",
+    "<b>Case File: ": "A case file.",
 }
 
 
@@ -183,6 +214,82 @@ def read_overrides(scenario, tag):
     return chunks
 
 
+# ---- Where the story ends: choices and rules are not narrated -------------------------------------------------------
+
+BREAKS = re.compile(r"(?:<br\s*/?>\s*)+")
+RULE_WORDS = re.compile(r"(\bVP\b|End of the Generation|End of the Round|\b[Gg]ain\b|\b[Ll]ose\b|Storybook|[Cc]hoose|[Cc]lick|\bRULES?\b|\bRules?\b)")
+
+
+def auto_cut(text):
+    """Offset where the narration of a tag stops, or None: the first paragraph (split at line breaks) that is
+    - a choice: starts with a link, is "OR", or has a link after an unfinished sentence ("If we created the X, <link>"),
+    - or a rules line: a whole bold paragraph after the first that ends with ":" ("Please choose your name:", "Choose:"),
+      reads like a heading ("SPECIAL RULE", "Accepting the Offer") or names VP / gain / lose ("At the End of the
+      Generation, ..."). Bold questions ("Did we create the Puppy?") and bold story sentences stay.
+    The cut is at the line break before that paragraph (or 0 when it is the first one)."""
+    starts, ends = [0], []
+    for m in BREAKS.finditer(text):
+        ends.append(m.start())
+        starts.append(m.end())
+    ends.append(len(text))
+    for k, (a, b) in enumerate(zip(starts, ends)):
+        para = text[a:b].strip()
+        words = plain(re.sub(r"\{\{\d+=[^|}]*\|([^|}]*)[^}]*\}\}", r"\1", para)).strip()
+        if not words:
+            continue
+        choice = para.startswith("<link=") or words == "OR" or (
+            "<link=" in para and not re.search(r"[.!?\"']\s*$", plain(para.split("<link=")[0]).strip()))
+        rules = k > 0 and re.fullmatch(r"<b>.*</b>", para) is not None and "</b>" not in para[3:-4] \
+            and not words.endswith("?") and (words.endswith(":") or not re.search(r"[.!?\"]$", words) or RULE_WORDS.search(words))
+        if choice or rules:
+            return a if k == 0 else ends[k - 1]
+    return None
+
+
+def cuts(scenario):
+    """scripts/<Scenario>/cuts.txt: 'Tag' (not narrated at all), 'Tag | <text>' (stop at <text>), 'Tag | -' (no cut)."""
+    path = os.path.join(SCRIPTS, scenario, "cuts.txt")
+    result = {}
+    if os.path.exists(path):
+        with open(path, encoding="utf-8") as f:
+            for line in f:
+                if line.strip() and not line.startswith("#"):
+                    tag, _, marker = line.rstrip("\r\n").partition(" | ")
+                    result[tag.strip()] = None if marker == "-" else marker
+    return result
+
+
+def cut_marker(scenario, tag, text):
+    """The text where the narration of a tag stops ("" = not narrated, None = no cut). The app cuts at the first
+    occurrence of the marker (Narration.cs), so the marker is the static text from the cut on, long enough to be unique."""
+    manual = cuts(scenario)
+    text = text.split(CUT)[0]
+    if tag in manual:
+        return "" if manual[tag] == "" else manual[tag]
+    pos = auto_cut(text)
+    if pos is None:
+        return None
+    if pos == 0:
+        return ""
+    static = PLACEHOLDER.split(text[pos:])[0]
+    for n in range(12, len(static) + 1):
+        if text.find(static[:n]) == pos:
+            return static[:n]
+    sys.exit(f"{scenario} {tag}: no unique cut marker at {text[pos:pos + 40]!r}; add it to cuts.txt")
+
+
+def span(scenario, tag, text):
+    """(lo, hi): the part of a tag's text that is narrated - after the header line (when headers are not narrated)
+    and before the cut."""
+    text = text.split(CUT)[0]
+    marker = cut_marker(scenario, tag, text)
+    hi = len(text) if marker is None else (0 if marker == "" else text.find(marker))
+    if hi < 0:
+        sys.exit(f"{scenario} {tag}: cut marker {marker!r} not in the text")
+    lo = 0 if settings(scenario)["headers"] or tag.endswith("_Title") else header_end(text)
+    return lo, hi
+
+
 # Values nobody can render (typed in by the players) are replaced by a stand-in spoken inside the neighbouring clip:
 # (singular, plural). Keyed by the placeholder's preview text.
 STAND_INS = {
@@ -204,7 +311,7 @@ def plain(html):
     return re.sub(r"<[^>]+>", "", re.sub(r"<br\s*/?>", "\n", html))
 
 
-def stand_ins(parts):
+def stand_ins(parts, lo=0, hi=None):
     """{part index of a static: (prefix, suffix)} - the stand-in words around typed-in values.
 
     Not in a header (the leading <b>...</b> line: "Letter from <name>" is read as "A letter."), except a possessive
@@ -212,7 +319,8 @@ def stand_ins(parts):
     names joined by " and " / ", " -> "two of the cousins" / "the cousins". "the town of <village>" -> "the town". The
     words go in front of the next static, or after the previous one when the next one is silent."""
     text = "".join(raw for _, raw in parts)
-    header_end = text.find("</b>") if text.startswith("<b>") else -1
+    head = header_end(text) - 4 if header_end(text) else -1  # the </b> of the header line
+    hi = len(text) if hi is None else hi
     result, pos, i = {}, 0, 0
     offsets = []
     for _, raw in parts:
@@ -221,7 +329,7 @@ def stand_ins(parts):
     while i < len(parts):
         kind, raw = parts[i]
         k = stand_in_kind(raw) if kind == "p" else None
-        if not k:
+        if not k or not lo <= offsets[i] < hi:  # not narrated: in a skipped header or after the cut
             i += 1
             continue
         group = 1  # names joined by " and " / ", "
@@ -233,7 +341,7 @@ def stand_ins(parts):
         before = plain("".join(r for _, r in parts[:i]))
         numeral = re.match(r" (II|III|IV)\b", after) if k == "Oliver" else None  # "<name> II" -> "a cousin"
         possessive = after[numeral.end() if numeral else 0:].startswith("'s")
-        in_header = 0 <= header_end and offsets[i] < header_end
+        in_header = 0 <= head and offsets[i] < head
         if (in_header and not possessive) or (in_header and plain(parts[i - 1][1]).strip() in
                                               [plain(h).strip() for h in HEADERS]):
             i += 2 * group - 1
@@ -254,6 +362,10 @@ def stand_ins(parts):
             result[j] = ("", "", True)
         if k == "Town" and re.search(r"\bthe\s*$", before, re.I):  # "the <village> Jail" -> "the village Jail"
             words = "village"
+        elif words.startswith("the ") and re.search(r"\bthe\s*$", before, re.I):  # "due to the <program>"
+            words = words[4:]
+        if k == "Iron Will" and re.match(r"(</?b>|\s)*Program", after):  # "the <name> Program" -> "the Program"
+            words = ""
         if k == "Oliver" and group == 1 and re.search(r"\bdear\s*$", before, re.I):  # "My dear <name>" -> "My dear cousin"
             words = "cousin"
         if k == "Town" and re.search(r"\b(town|village) of\s*$", before):  # "the town of <village>" -> "the town"
@@ -277,10 +389,29 @@ def tag_chunks(scenario, tag, text):
     """[(kind, raw, hash, spoken, free)] for the statics (kind "s") and placeholder values (kind "v")."""
     overrides = read_overrides(scenario, tag)
     parts = segment(text)
-    extra = stand_ins(parts)
-    out, i, dollars = [], 0, False
+    lo, hi = span(scenario, tag, text)
+    extra = stand_ins(parts, lo, hi)
+    out, i, dollars, off = [], 0, False, 0
     for n, (kind, raw) in enumerate(parts):
-        if kind == "s":
+        start, off = off, off + len(raw)
+        if kind == "s" and (off <= lo or start >= hi) and i not in overrides:  # skipped header or after the cut
+            out.append(("s", raw, fnv64(raw), "", False))
+            dollars = False
+            i += 1
+        elif kind == "s" and (start < lo or off > hi) and i not in overrides:  # partly narrated
+            part = raw[max(0, lo - start):min(len(raw), hi - start)]
+            prefix, suffix, flag = extra.get(n, ("", "", False))
+            prefix = "" if start < lo else prefix
+            suffix = "" if off > hi else suffix
+            part = part[2:] if flag is True and prefix else part  # possessive: "'s" belongs to the stand-in
+            spoken = normalize(part, not prefix)
+            spoken = re.sub(r"(?<=\w) +(?=[.,;:!?])", "", (prefix + spoken + suffix).strip()) if spoken or prefix or suffix else ""
+            out.append(("s", raw, fnv64(raw), spoken, False))
+            dollars = False
+            i += 1
+        elif kind == "p" and not lo <= start < hi:  # a value in a skipped header or after the cut: not played
+            continue
+        elif kind == "s":
             # "<name> II" / "<name> III's": the generation numeral goes with the skipped name
             body = re.sub(r"^ (II|III|IV)\b", "", raw) if n and stand_in_kind(parts[n - 1][1]) == "Oliver" else raw
             # "$<b>{{0=3}}</b> in donations": the amount is a value clip, so "dollars" moves behind it
@@ -337,6 +468,11 @@ def windows(scenario):
             if "new GameplayWindow" not in body:
                 continue
             tags = []
+            if settings(scenario)["titles"]:  # the window title first (GameplayWindow.AddDefaultTitle / AddDefaultBaseTitle)
+                if ".AddDefaultTitle(" in body:
+                    tags.append(m.group(1) + "_Title")
+                elif ".AddDefaultBaseTitle(" in body:
+                    tags.append(m.group(1).split("_")[0] + "_Title")
             for c in re.finditer(r"\.(AddDefaultContent|AddNextContentWithLinks|AddNextContent)\((\d*(?=\s*[,)]))?", body):
                 if c.group(1) == "AddDefaultContent":
                     tags.append(m.group(1) + "_Content")
@@ -406,6 +542,29 @@ def plan(scenario, include_private=True):
     return [x for x in items if include_private or not x[2]]
 
 
+def sync_manifest(scenario):
+    """Manifest fields that need no rendering: private tags, the cut markers, the title / header settings, and silent
+    chunks ("" - also a chunk that was narrated before a cut moved). Saved; returns the manifest."""
+    manifest = load_manifest(scenario)
+    items = plan(scenario)
+    story = load_csv(scenario)
+    manifest["private"] = sorted(set(manifest["private"]) | {tag for m, tag, p, c in items if p})
+    manifest["titles"] = settings(scenario)["titles"]
+    manifest["headers"] = settings(scenario)["headers"]
+    manifest["cuts"] = {}
+    for method, tag, is_private, chunks in items:
+        if tag in story and (marker := cut_marker(scenario, tag, story[tag])) is not None:
+            manifest["cuts"][tag] = marker
+    manifest["cuts"] = dict(sorted(manifest["cuts"].items()))
+    speaking = {h for m, t, p, c in items for kind, raw, h, spoken, free in c if spoken}
+    for m, t, p, c in items:
+        for kind, raw, h, spoken, free in c:
+            if not spoken and h not in speaking:
+                manifest["clips"][h] = ""
+    save_manifest(scenario, manifest)
+    return manifest
+
+
 def script_hash(spoken):
     return fnv64(spoken)[:8] if spoken else ""
 
@@ -432,7 +591,7 @@ def check_all():
     bad = 0
     for scenario in sorted(os.listdir(SCRIPTS)):
         for name in sorted(os.listdir(os.path.join(SCRIPTS, scenario))):
-            if name.endswith(".txt") and name not in ("values.txt", "private.txt", "skip.txt"):
+            if name.endswith(".txt") and name not in ("values.txt", "private.txt", "skip.txt", "cuts.txt"):
                 problems = check(scenario, name[:-4])
                 bad += bool(problems)
                 print(f"{scenario}/{name[:-4]}: " + ("ok" if not problems else "DRIFT\n  " + "\n  ".join(problems)))
@@ -461,8 +620,7 @@ def render(scenario, reserve=6000, limit=None, include_private=True, only=None, 
     model, settings, tags = voice["model"], voice["settings"], voice.get("audio_tags", True)
     if check_all():
         sys.exit("Script overrides drift from the on-screen text (see above).")
-    manifest = load_manifest(scenario)
-    manifest["private"] = sorted(set(manifest["private"]) | {tag for m, tag, p, c in plan(scenario) if p})
+    manifest = sync_manifest(scenario)
     master = os.path.join(HERE, "out", "master", "oliver", scenario)
     ship = os.path.join(WEB, scenario)
     os.makedirs(master, exist_ok=True)
@@ -481,7 +639,6 @@ def render(scenario, reserve=6000, limit=None, include_private=True, only=None, 
         spoken_all = [c[3] for c in chunks if c[0] == "s"]
         for kind, raw, h, spoken, free in chunks:
             if not spoken:
-                manifest["clips"].setdefault(h, "")
                 continue
             if manifest["clips"].get(h) == script_hash(spoken) and os.path.exists(os.path.join(ship, h + ".mp3")):
                 continue
@@ -555,6 +712,8 @@ if __name__ == "__main__":
         for kind, raw, h, spoken, free in tag_chunks(a[1], a[2], text):
             print(f"[{f'## {i}' if kind == 's' else 'value'} {h}{' free' if free else ''}] {raw[:80]!r}\n    -> {spoken!r}")
             i += kind == "s"
+    elif len(a) == 2 and a[0] == "sync":
+        sync_manifest(a[1])
     elif a and a[0] == "check":
         sys.exit(1 if check_all() else 0)
     elif len(a) >= 2 and a[0] == "render":

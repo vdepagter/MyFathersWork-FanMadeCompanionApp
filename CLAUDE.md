@@ -174,6 +174,13 @@ original recordings only.
   check`** after editing an override or the CSV text (word-level diff per chunk; render refuses on drift).
 - A CSV text change makes new hashes: render the scenario again (only the changed chunks are sent) and commit the clips
   and `wwwroot/audio/vo/oliver/<Scenario>.json`.
+- What is narrated (28 Oct 2026): story only. `chunks.auto_cut` stops a tag at the first choice paragraph (a link,
+  "OR") or bold rules line ("Choose:", "Please choose your name:", "SPECIAL RULE", "At the End of the Generation ...
+  VP"); bold questions stay. Manual cuts in `scripts/<Scenario>/cuts.txt`. `scripts/<Scenario>/settings.json`:
+  `titles` (window title narrated first) and `headers` (leading "Letter from <name> - <date>" line narrated). New
+  scenarios: titles on, headers off. Fear of the Unknown was rendered with titles off and headers on and keeps that
+  (changing it would re-render ~41k characters). Cuts and settings go into the manifest (`chunks.py sync`), and
+  `Narration.cs` applies the same header rule and cut markers.
 
 ## Build, run, test
 

@@ -19,7 +19,8 @@ public class GameplayWindow(GlobalData globalData)
     public string? VoiceOver { get; private set; }
 
     // Story text of this window for the Oliver narration (Shared/Narration.cs): every tag of the scenario story CSV
-    // added with AddDefaultContent / AddNextContent*, with the text as formatted (before the links are split off).
+    // added with AddDefaultTitle / AddDefaultBaseTitle (narrated only where the scenario's clip list says so) and
+    // AddDefaultContent / AddNextContent*, with the text as formatted (before the links are split off).
     public List<(string Tag, string Text)> StoryTexts { get; } = new();
 
     public void SetCue(SoundCue cue) => Cue = cue;
@@ -38,6 +39,7 @@ public class GameplayWindow(GlobalData globalData)
         string title                        = globalData.GetScenarioLocalizedTag(callerName + "_Title");
         if (contentProcessor != null) title = contentProcessor(title);
         Title = title;
+        AddStoryText(callerName + "_Title", title);
     }
 
     public void AddDefaultBaseTitle(Func<string, string>? contentProcessor = null, [CallerMemberName] string callerName = "")
@@ -45,6 +47,7 @@ public class GameplayWindow(GlobalData globalData)
         string title                        = globalData.GetScenarioLocalizedTag(callerName.Split('_')[0] + "_Title");
         if (contentProcessor != null) title = contentProcessor(title);
         Title = title;
+        AddStoryText(callerName.Split('_')[0] + "_Title", title);
     }
 
     public void AddGameplayTitle(string titleTag)
