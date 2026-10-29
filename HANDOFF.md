@@ -83,7 +83,7 @@ and `elevenlabs.py`.
 
 State (27 Oct 2026, branch `claude/oliver-v4-narration`, merged and pushed; deployed and live, first deploy with the
 LFS cache step succeeded - cache ~158 MB):
-- Voice setting "Oliver (AI, whole story)" next to Female / Male / Off. Male and Female play only the original recordings
+- Voice setting "Oliver" (was "Oliver (AI, whole story)") next to Female / Male / Off. Male and Female play only the original recordings
   (the 7 v3 intro clips in `wwwroot/audio/vo/ai/` are gone). Oliver plays chunk clips per window, falls back to the
   original male recording where a window has none, and never autoplays private screens (Play only).
 - Model `eleven_v4`, stability 0.8, similarity 0.8 (user's choice). Verified: v4 accepts but ignores style, speed and
