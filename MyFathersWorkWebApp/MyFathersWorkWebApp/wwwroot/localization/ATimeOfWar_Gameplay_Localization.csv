@@ -147,7 +147,7 @@ ParadoxTimeRandom_0_Content;{{2=|All players <b>draw a C-level Experiment</b> an
 ParadoxTimeRandom_0_Flip;{{0=...|Anna|...}} must flip their Giant Masterwork face-down.<br />
 ParadoxEvent_0_Content;{{0=?|The player who has moved the furthest along the <icon=Insanity_Icon> Track <b>gains the In Memoriam</b> Estate Upgrade.|The player with the most completed Utopian Experiments <b>gains the In Memoriam</b> Estate Upgrade.}} <i>If there is a tie, the one with the fewest VP receives the tile. If still tied, the tile is discarded.</i> This upgrade can be placed into a new slot at no expansion cost.
 //====== Scoring ======;
-Scoring_Content;Each Estate Upgrade is worth 1VP.<br />Add any additional points from Vanity Estate Upgrades.<br />Score -3VP for any Maladjustments gained at the End of this Generation.<br /><br />
+Scoring_Content;Each Estate Upgrade is worth 1VP.<br />Add any additional points from Vanity Estate Upgrades.<br />Score -3VP for any Maladjustments gained at the End of this Generation. <i>(The Catacombs do not prevent this: ignoring the effects of your Maladjustments does not remove this penalty.)</i><br /><br />
 Scoring_Content1;<b>Time Machine:</b><br />If the player with the Time Machine Masterwork has not completed it, they must lose 5VP.<br /><br />
 Scoring_Content2;THE PLAYER WITH THE MOST POINTS IS THE WINNER OF THE GAME.
 Scoring_Content3;<link=0>Click to tabulate scores for posterity...</link>
