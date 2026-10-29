@@ -8,7 +8,7 @@
     z-index: 1001;
 }
 
-.back-button, .pause-button {
+.back-button, .pause-button, .logbook-open-button {
     background-color: #5c4633;
     color: #e0d3b8;
     padding: 0.5rem 1rem;
@@ -20,12 +20,12 @@
     transition: background-color 0.3s, transform 0.1s;
 }
 
-.back-button:hover, .pause-button:hover {
+.back-button:hover, .pause-button:hover, .logbook-open-button:hover {
     background-color: #7a5a3c;
     transform: scale(1.05);
 }
 
-.back-button:active, .pause-button:active {
+.back-button:active, .pause-button:active, .logbook-open-button:active {
     transform: scale(0.95);
 }
 

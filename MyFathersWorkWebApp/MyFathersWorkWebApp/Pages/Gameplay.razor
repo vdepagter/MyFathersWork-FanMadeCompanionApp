@@ -5,11 +5,19 @@
 @inject HttpClient        Http
 @inject AudioService      Audio
 @inject GalleryService    Gallery
+@inject LogBookService    LogBook
 @implements IDisposable
 
 <div class="header-buttons" xmlns="http://www.w3.org/1999/html">
     <button class="back-button" disabled="@GlobalData.IsUndoDisabled" @onclick="GoBack">⬅</button>
     <button class="pause-button" @onclick="Pause">⏸</button>
+    @if (LogBookService.HasLogBook(GlobalData))
+    {
+        <button class="logbook-open-button"
+                aria-label="@GlobalData.GetLocalizedUITag(GlobalTags.LogBook_Open)"
+                title="@GlobalData.GetLocalizedUITag(GlobalTags.LogBook_Open)"
+                @onclick="OpenLogBook">📖</button>
+    }
 </div>
 
 <SaveNotification Visible="@_ShowSaveNotification" GlobalData="GlobalData"/>
@@ -190,6 +198,12 @@
     GlobalData="@GlobalData"
     IsThereAnySavedState="@_IsThereAnySavedState"/>
 
+<LogBookPopup
+    Visible="@_ShowLogBook"
+    Entries="@_LogBookEntries"
+    GlobalData="@GlobalData"
+    OnClose="CloseLogBook"/>
+
 <SavePopup 
     Visible="@_ShowSavePopup" 
     Base64Save="@_Base64EncodedGame" 
@@ -237,6 +251,8 @@
             await GlobalData.LoadGameAsync(string.Empty, Nav, Http, Js);
         }
 
+        if (LogBookService.HasLogBook(GlobalData)) await LogBook.LoadAsync();
+
         _Initialized = true;
     }
 
@@ -252,7 +268,27 @@
         UpdateMusic();
         _ = GlobalData.PersistAsync(Js); // the game and its undo history, after every screen and every undo
         _ = NoteGalleryAsync();
+        LogBook.Note(GlobalData);
     }
+
+    #region Log Book (Shared/LogBook.cs)
+
+    private bool               _ShowLogBook;
+    private List<LogBookEntry> _LogBookEntries = [];
+
+    private void OpenLogBook()
+    {
+        Audio.PlayClick();
+        _LogBookEntries = LogBook.Entries(GlobalData);
+        _ShowLogBook    = true;
+    }
+
+    private void CloseLogBook()
+    {
+        _ShowLogBook = false;
+    }
+
+    #endregion Log Book
 
     #region Endings Gallery
 

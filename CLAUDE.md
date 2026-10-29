@@ -164,6 +164,7 @@ Details per branch: the "Ported" notes in `docs/ATOW_PORT_MAP.md` 2.1-2.8; sourc
 - Help (`Pages/Help.razor`, main menu): the official app's tabs (How to use, Story Actions, End of Round, its text
   kept) plus Setup, End of Generation, Secret pages, Bids and votes, and This app. Text in `UI_Localization.csv`
   (`Help_Tab_<Page>` label, `Help_<Page>` HTML); the page list is in the razor file.
+- Log Book (📖 in the header, Cost of Disease only): see "Log Book" below.
 
 ## Endings Gallery
 
@@ -179,6 +180,26 @@ ending and the hub hook in `Pages/Gameplay.razor` (`NoteGalleryAsync`), name chi
   an ending or hub changes. Cost of Disease ending 4 is reachable from A Taste of Evil and Prosperity.
 - Export / Import (base64 JSON) merges: players, games by id, branches and ticks are combined. The original Unity app
   kept ending titles in PlayerPrefs `GameEndingsData`, matched by title text (village names made duplicates).
+
+## Log Book (Cost of Disease)
+
+Ported from the official app (`ViewLogBook.cs`, data `UnityOriginalApp/Assets/CSV/Updated Features MFW - Log Book Data (1).csv`).
+`Shared/LogBook.cs` (`LogBookService`), `Shared/LogBookPopup.razor`, data `wwwroot/localization/TheCostOfDisease_LogBook.csv`
+(`Screens;Title;Location;Summary`, English only; 119 events).
+
+- An event is logged the first time one of its screens is shown. `Screens` are screen methods (the caller of `SaveToUndo`,
+  `GlobalData.ResumeMethod`): the Unity passages that set `locationName` in `TheCostofDiseaseLatest.cs`, renamed to our
+  methods. A screen listed under several events logs the one whose title is in the window title (`HuntersChoice`). A
+  renamed or new screen method must be updated in the CSV.
+- `Pages/Gameplay.razor` notes the screen after it is rendered (never scenario code). Logged titles live in
+  `TheCostOfDiseaseVars.LogBook`, so undo forgets screens it goes back over and load/New Game behave like the game state.
+- As in Unity: six per page, oldest first, the event on display is left out while it is the newest, `Xvillage` -> village
+  name (Unity did this only for Financial Woes). Not ported: the per-title location icons (the sprites are not in the
+  repository copy of the Unity project) and the lorem-ipsum "setup" button.
+- Deviations: exact title match for "logged once" (Unity's `Contains` skipped e.g. "Published" after "A Weapon
+  Published"); "The Order Revealed" also logs on the Prosperity intro (Unity only on Gloomy Gothic); "Vote!" (`UniEvent2`,
+  unreachable in the source) is left out. The summaries are as shipped, including "A Call for Assistance" repeating the
+  summary of "The Work is Complete".
 
 ## AI narration (tools/narration)
 

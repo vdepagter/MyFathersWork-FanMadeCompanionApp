@@ -178,6 +178,14 @@ public static class GlobalTags
 
     // Help
     public const string MainMenu_Help = "MainMenu_Help"; // pages: Help_Tab_<Page> (tab label) and Help_<Page>, listed in Pages/Help.razor
+    // Log Book (The Cost of Disease)
+    public const string LogBook_Title    = "LogBook_Title";
+    public const string LogBook_Open     = "LogBook_Open";
+    public const string LogBook_Empty    = "LogBook_Empty";
+    public const string LogBook_Page     = "LogBook_Page";
+    public const string LogBook_Previous = "LogBook_Previous";
+    public const string LogBook_Next     = "LogBook_Next";
+    public const string LogBook_Close    = "LogBook_Close";
 
     // Others
     public const string GameplayStartTag = "Gameplay_";

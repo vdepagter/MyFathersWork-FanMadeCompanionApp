@@ -1,0 +1,81 @@
+@inject AudioService Audio
+
+@* Log Book (Shared/LogBook.cs): the logged events, six per page and oldest first as in the official app (ViewLogBook.cs) *@
+@if (Visible)
+{
+    <div class="logbook-overlay" @onclick="Close">
+        <div class="logbook" @onclick:stopPropagation="true">
+            <h2>@GlobalData.GetLocalizedUITag(GlobalTags.LogBook_Title)</h2>
+
+            @if (Entries.Count == 0)
+            {
+                <p class="logbook-empty">@GlobalData.GetLocalizedUITag(GlobalTags.LogBook_Empty)</p>
+            }
+            else
+            {
+                <ol class="logbook-entries" start="@(_Page * _PAGE_SIZE + 1)">
+                    @foreach (LogBookEntry entry in Entries.Skip(_Page * _PAGE_SIZE).Take(_PAGE_SIZE))
+                    {
+                        <li class="logbook-entry">
+                            <div class="logbook-entry-head">
+                                <span class="logbook-entry-title">@entry.Title</span>
+                                <span class="logbook-entry-location">@entry.Location</span>
+                            </div>
+                            <div class="logbook-entry-summary">@entry.Summary</div>
+                        </li>
+                    }
+                </ol>
+            }
+
+            <div class="logbook-nav">
+                <button class="logbook-button" disabled="@(_Page == 0)" @onclick="Previous">◀ @GlobalData.GetLocalizedUITag(GlobalTags.LogBook_Previous)</button>
+                @if (PageCount > 1)
+                {
+                    <span class="logbook-page">@GlobalData.GetLocalizedUITag(GlobalTags.LogBook_Page).FormatWithReplacement(0, (_Page + 1).ToString()).FormatWithReplacement(1, PageCount.ToString())</span>
+                }
+                <button class="logbook-button" disabled="@(_Page >= PageCount - 1)" @onclick="Next">@GlobalData.GetLocalizedUITag(GlobalTags.LogBook_Next) ▶</button>
+            </div>
+
+            <button class="logbook-button logbook-close" @onclick="Close">@GlobalData.GetLocalizedUITag(GlobalTags.LogBook_Close)</button>
+        </div>
+    </div>
+}
+
+@code {
+    [Parameter] public bool               Visible    { get; set; }
+    [Parameter] public List<LogBookEntry> Entries    { get; set; } = [];
+    [Parameter] public GlobalData         GlobalData { get; set; } = null!;
+    [Parameter] public EventCallback      OnClose    { get; set; }
+
+    private const int _PAGE_SIZE = 6;
+
+    private int  _Page;
+    private bool _WasVisible;
+
+    private int PageCount => Math.Max(1, (Entries.Count + _PAGE_SIZE - 1) / _PAGE_SIZE);
+
+    // Opens on the first page, as Unity did
+    protected override void OnParametersSet()
+    {
+        if (Visible && !_WasVisible) _Page = 0;
+        _WasVisible = Visible;
+    }
+
+    private void Previous()
+    {
+        Audio.PlayClick();
+        if (_Page > 0) _Page--;
+    }
+
+    private void Next()
+    {
+        Audio.PlayClick();
+        if (_Page < PageCount - 1) _Page++;
+    }
+
+    private Task Close()
+    {
+        Audio.PlayClick();
+        return OnClose.InvokeAsync();
+    }
+}
