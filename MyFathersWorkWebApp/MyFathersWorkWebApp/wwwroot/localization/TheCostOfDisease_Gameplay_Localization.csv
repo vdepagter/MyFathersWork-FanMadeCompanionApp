@@ -374,7 +374,7 @@ ElecY_0_Content;<b>Each player (regardless of their vote) must choose and discar
 ElecN_0_Content;Return the <icon=AngryMob_Icon> token to its starting location.<br /><br />{{0=?|The player that won the vote also receives <b>1 Ingredient or Knowledge</b> of their choice.|Any player that voted <b>Yay</b> receives <b>1 Ingredient or Knowledge</b> of their choice.}}
 NoUni3b_Content1;Any player with a token that is not currently overtaken by the <icon=AngryMob_Icon> receives <b>one final Perform Experiment action</b>.<br /><br /><link=0>Click to continue to Final Scoring...</link>
 //====== Gen3 - Scoring and Endings ======;
-Scoring_Content;Each Estate Upgrade is worth 1VP.<br />Add any additional points from Vanity Estate Upgrades.<br />Score -3VP for any Maladjustments gained at the End of this Generation.<br />
+Scoring_Content;Each Estate Upgrade is worth 1VP.<br />Add any additional points from Vanity Estate Upgrades.<br />Score -3VP for any Maladjustments gained at the End of this Generation. <i>(The Catacombs do not prevent this: ignoring the effects of your Maladjustments does not remove this penalty.)</i><br />
 Scoring_Content1;Check to make sure the player with <b>Lycanthropic Strength</b> completed their Masterwork. If they did not, they <b>lose 5VP.</b><br />
 Scoring_Content2;Check to make sure the player with <b>Immortality</b> completed their Masterwork. If they did not, they <b>lose 5VP.</b><br />
 Scoring_Content3;<link=0>Click to tabulate scores for posterity...</link>

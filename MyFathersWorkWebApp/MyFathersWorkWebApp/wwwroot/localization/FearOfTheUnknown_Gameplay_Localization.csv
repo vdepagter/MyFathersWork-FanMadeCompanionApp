@@ -94,7 +94,7 @@ ExpeditionResult_Content1;<link=0>Yes.</link><br /><br /><link=1>No.</link>
 CreatureKilled_0_Content;Each player on the successful expedition receives <b>5VP.</b><br /><br />Collect and return all Hunt tokens <icon=S2_HuntTokenFRONT> to the Scenario box.
 CreatureEscapes_0_Content;{{0=?|Collect all Hunt tokens <icon=S2_HuntTokenFRONT> from all players. Turn them all so the yellow crosshairs are face-up.<br /><br />Shuffle them and randomly place one token on each Location shown on the Village Chronicle without looking at the opposite side. Keep any remaining tokens in a supply nearby. There will be another expedition at the end of this round.|Collect and return all Hunt tokens <icon=S2_HuntTokenFRONT> to the Scenario box.}}
 //====== Scoring ======;
-Scoring_Content;Each Estate Upgrade is worth 1VP.<br />Add any additional points from Vanity Estate Upgrades.<br />Score -3VP for any Maladjustments gained at the End of this Generation.<br /><br />
+Scoring_Content;Each Estate Upgrade is worth 1VP.<br />Add any additional points from Vanity Estate Upgrades.<br />Score -3VP for any Maladjustments gained at the End of this Generation. <i>(The Catacombs do not prevent this: ignoring the effects of your Maladjustments does not remove this penalty.)</i><br /><br />
 Scoring_Content1;<b>Creature Masterwork</b><br />The player with <b>The Creature</b> Masterwork loses <b>5VP</b> if the experiment is not completed.<br /><br />
 Scoring_Content2;THE PLAYER WITH THE MOST POINTS IS THE WINNER OF THE GAME.
 Scoring_Content3;<link=0>Click to tabulate scores for posterity...</link>
