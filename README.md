@@ -24,7 +24,7 @@ What is being worked on right now is tracked in [`HANDOFF.md`](HANDOFF.md).
 - Play-test **Fear of the Unknown** at the table.
 - Port **A Time of War** (its story text is in `MyFathersWorkConsole/.../Processor/ATimeOfWar.txt`; it relies on time-travel mechanics).
 - Abridged (TL;DR) story option.
-- More languages: the menus exist in English and Polish, the story text only in English.
+- More languages: menus and story text exist only in English.
 - Possible source flaw kept as-is in The Cost of Disease: the Generation III evil branch puts back building tiles that were exposed by a single vote.
 - Fear of the Unknown fixes several bugs of the original story (for example the battle); the full list is in `CLAUDE.md`.
 - Nice-to-haves from the official app: endings and achievements gallery, sharing, voice-over.

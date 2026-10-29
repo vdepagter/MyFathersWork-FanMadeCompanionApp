@@ -20,15 +20,18 @@
         <button @onclick="ShowLoadPopup">@GlobalData.GetLocalizedUITag(GlobalTags.MainMenu_LoadGame)</button>
         <button @onclick="OpenGallery">@GlobalData.GetLocalizedUITag(GlobalTags.MainMenu_Gallery)</button>
 
-        <div class="language-select">
-            <label for="language">@GlobalData.GetLocalizedUITag(GlobalTags.MainMenu_Language):</label>
-            <select id="language" value="@GlobalData.Language" @onchange="OnLanguageChanges">
-                @foreach (string lang in GlobalData.UI_Localization.Keys)
-                {
-                    <option value="@lang">@GlobalData.GetLocalizedUITag(lang)</option>
-                }
-            </select>
-        </div>
+        @if (GlobalData.UI_Localization.Count > 1)
+        {
+            <div class="language-select">
+                <label for="language">@GlobalData.GetLocalizedUITag(GlobalTags.MainMenu_Language):</label>
+                <select id="language" value="@GlobalData.Language" @onchange="OnLanguageChanges">
+                    @foreach (string lang in GlobalData.UI_Localization.Keys)
+                    {
+                        <option value="@lang">@GlobalData.GetLocalizedUITag(lang)</option>
+                    }
+                </select>
+            </div>
+        }
     </div>
 </div>
 

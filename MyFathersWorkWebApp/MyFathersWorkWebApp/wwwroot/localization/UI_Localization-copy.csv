@@ -1,57 +1,56 @@
-﻿Tag;English;Polish
-//====== Main Menu ======;;
-MainMenu_NewGame;New Game;Nowa Gra
-MainMenu_LoadGame;Load Game;Wczytaj Grę
-MainMenu_Continue;Continue;Kontynuuj
-MainMenu_Language;Language;Język
-MainMenu_Back;Back;Wróć
-MainMenu_PasteSaveDataHere;Paste saved game data here...;Wklej dane zapisanej gry tutaj...
-MainMenu_FanMade;This is a fan-made project and is not affiliated with Renegade Game Studios or Hasbro.;Jest to projekt fanowski i nie jest on powiązany z Renegade Game Studios ani Hasbro.
-//====== Languages ======;;
-English;English;Angielski
-Polish;Polish;Polski
-//====== Scenario Screen ======;;
-Scenario_Subtitle;Choose a Scenario for {{0=...|2|3|4|...}} players:;Wybierz scenariusz dla {{0=...|2|3|4|...}} graczy:
-Scenario_TheCostOfDisease;The Cost of Disease;Koszt Choroby
-Scenario_TheCostOfDisease_Desc;SCENARIO NOT READY! DO NOT USE TO PLAY!<br /><br />The Yellow Fever had struck the village. Any visit to its somber limits forced the young heirs to keep a cloth handkerchief about their mouth and nostrils to protect themselves from the miasma. This seemed the perfect — if macabre — backdrop in which to advance their father’s dreadful business.;SCENARIUSZ NIE GOTOWY! NIE UŻYWAJ DO GRANIA!<br /><br />Żółta febra zaatakowała wioskę. Każda wizyta w jej ponurych granicach zmuszała młodych spadkobierców do trzymania chustki na ustach i nozdrzach, aby chronić się przed wyziewami. Wydawało się to idealnym — choć makabrycznym — tłem do rozwijania okropnych interesów ich ojca.
-Scenario_FearOfTheUnknown;Fear of the Unknown;Strach Przed Nieznanym
-Scenario_FearOfTheUnknown_Desc;SCENARIO NOT READY! DO NOT USE TO PLAY!<br /><br />The region was rife with superstitious traditions... traditions that did not mix well with the Church's rigid moral compass. Accusations of witchcraft and voodooism erupted with increasing fervor, and the paranoia stifled the heirs' ability to work without interruption.;SCENARIUSZ NIE GOTOWY! NIE UŻYWAJ DO GRANIA!<br /><br />Region był pełen przesądnych tradycji... tradycji, które nie pasowały do sztywnego moralnego kompasu Kościoła. Oskarżenia o czary i voodooizm wybuchały z coraz większym zapałem, a paranoja tłumiła zdolność spadkobierców do nieprzerwanej pracy.
-Scenario_ATimeOfWar;A Time of War;Czas Wojny
-Scenario_ATimeOfWar_Desc;SCENARIO NOT READY! DO NOT USE TO PLAY!<br /><br />The specter of war haunted the small village. The heirs felt trepidatious yet enthusiastic as they began to realize the potential boon that warfare could provide for their research. Perhaps contributing to the resolution of the conflict could aid them in furthering their scientific endeavors.;SCENARIUSZ NIE GOTOWY! NIE UŻYWAJ DO GRANIA!<br /><br />Widmo wojny nawiedzało małą wioskę. Spadkobiercy byli niespokojni, ale pełni entuzjazmu, gdy zaczęli zdawać sobie sprawę z potencjalnych korzyści, jakie wojna może zapewnić ich badaniom. Być może przyczynienie się do rozwiązania konfliktu mogłoby pomóc im w dalszym rozwijaniu ich naukowych wysiłków.
-//====== Scenario Language Screen ======;;
-ScenarioLanguage_Title;Scenario Language;Język scenariusza
-ScenarioLanguage_Subtitle;Please select the language in which the scenario will be presented.;Proszę wybrać język, w którym będzie prezentowany scenariusz.
-//====== Scenario Settings ======;;
-ScenarioLang_English_Source;English - Source;Angielski - Źródłowy
-ScenarioLang_English_Simple;English - Simple;Angielski - Prostrzy
-ScenarioLang_English_Short;English - Short;Angielski - Krótszy
-ScenarioLang_Italian_Source;Italian - Source;Włoski - Źródłowy
-//====== Gameplay ======;;
-Gameplay_Yes;Yes;Tak
-Gameplay_No;No;Nie
-Gameplay_GameSaved;Game has been saved;Gra Zapisana
-Gameplay_PauseMenu;Pause Menu;Menu Pauzy
-Gameplay_Resume;Resume;Powrót
-Gameplay_ReturnToMainMenu;Return to Main Menu;Powrót do Menu Głównego
-Gameplay_LocalSaveGame;Local Save Game;Zapisz grę lokalnie
-Gameplay_SaveGame;Save Game;Zapisz Grę
-Gameplay_Copy;Copy;Kopiuj
-Gameplay_DownloadFile;Download File;Pobierz Plik
-Gameplay_ClickHereToContinue;Click here to continue...;Kliknij tutaj aby kontynuować...
-Gameplay_ClickHereContinueNextRound;Click here to continue to the next round...;Kliknij tutaj aby kontynuować do następnej rundy...
-Gameplay_ClickHere;Click Here;Kliknij Tutaj
-Gameplay_ClickHereForReward;Click Here for a special Reward;Kliknij Tutaj aby otrzymać specjalną Nagrodę
-Gameplay_OnceYouAreReady;Once you are ready, click here to reveal your secret conversation.;Kiedy będziesz gotów, kliknij tutaj aby odkryć swoją tajną rozmowę.
-Gameplay_SpecialSetup;SPECIAL SETUP;SPECJALNE PRZYGOTOWANIE
-Gameplay_Accept;Accept;Akceptuj
-Gameplay_Confirm;Confirm;Potwierdź
-Gameplay_Choose;CHOOSE:;WYBIERZ:
-Gameplay_HandStorybookTo;Carefully hand this storybook device to {{0=...|Oliver|James|Olivia|...}}. This text (and its choice if any) should be read aloud and made in full view of all players.;Ostrożnie przekaż to urządzenie osobie o imieniu {{0=...|Oliver|James|Olivia|...}}. Ten tekst (i wybór jeśli jakiś jest) powinien być przeczytany na głos, tak aby wszyscy gracze mogli go usłyszeć.
-Gameplay_DoNotOtherPlayersSee;Carefully hand this storybook device to {{0=...|Oliver|James|Olivia|...}} and do not allow any other players to see the screen.;Ostrożnie przekaż to urządzenie osobie o imieniu {{0=...|Oliver|James|Olivia|...}} i nie pozwól aby inni gracze zobaczyli zawartość następnego ekranu.
-Gameplay_EndOfRound_Title;End of the Round;Koniec Rundy
-Gameplay_EndOfRound_Content;The {{0=|Early Years|Middle Years|Late Years| }} of the {{1=|First Generation|Second Generation|Third Generation}} has ended.{{2=?|<br />Perform all End of Round actions.<br />Then, perform all Start of Round actions for the {{3=|Early Years|Middle Years|Late Years| }} before continuing.|<br />Perform all End of Round actions before continuing.}};{{0=|Wczesne Lata|Środkowe Lata|Późne Lata| }} {{1=|Pierwszego Pokolenia|Drugiego Pokolenia|Trzeciego Pokolenia}} zakończyły się.{{2=?|<br />Wykonaj wszystkie akcje Końca Rundy.<br />Następnie wykonaj wszystkie akcje Startu Rundy {{3=|Wczesnych Lat|Środkowych Lat|Późnych Lat| }} przed kontynuaowaniem.|<br />Wykonaj wszystkie akcjie Końca Rundy przed kontynuowaniem.}}
-Gameplay_ClickHereAfterBid;Click here after resolving the bid...;Kliknij tutaj po tym jak zakończycie licytację...
-Gameplay_EndOfGeneration_Title;End of Generation;Koniec Pokolenia
-Gameplay_ClickAtTheEndOfGeneration;Click here at the end of the Generation to continue...;Kliknij tutaj na końcu Pokolenia aby kontynuować...
-Gameplay_DrJr;Dr. {{0=...|Oliver|James|Olivia|...}} Jr.;Dr. {{0=...|Oliver|James|Olivia|...}} Jr.
-Gameplay_Dr;Dr. {{0=...|Oliver|James|Olivia|...}};Dr. {{0=...|Oliver|James|Olivia|...}}
+﻿Tag;English
+//====== Main Menu ======;
+MainMenu_NewGame;New Game
+MainMenu_LoadGame;Load Game
+MainMenu_Continue;Continue
+MainMenu_Language;Language
+MainMenu_Back;Back
+MainMenu_PasteSaveDataHere;Paste saved game data here...
+MainMenu_FanMade;This is a fan-made project and is not affiliated with Renegade Game Studios or Hasbro.
+//====== Languages ======;
+English;English
+//====== Scenario Screen ======;
+Scenario_Subtitle;Choose a Scenario for {{0=...|2|3|4|...}} players:
+Scenario_TheCostOfDisease;The Cost of Disease
+Scenario_TheCostOfDisease_Desc;SCENARIO NOT READY! DO NOT USE TO PLAY!<br /><br />The Yellow Fever had struck the village. Any visit to its somber limits forced the young heirs to keep a cloth handkerchief about their mouth and nostrils to protect themselves from the miasma. This seemed the perfect — if macabre — backdrop in which to advance their father’s dreadful business.
+Scenario_FearOfTheUnknown;Fear of the Unknown
+Scenario_FearOfTheUnknown_Desc;SCENARIO NOT READY! DO NOT USE TO PLAY!<br /><br />The region was rife with superstitious traditions... traditions that did not mix well with the Church's rigid moral compass. Accusations of witchcraft and voodooism erupted with increasing fervor, and the paranoia stifled the heirs' ability to work without interruption.
+Scenario_ATimeOfWar;A Time of War
+Scenario_ATimeOfWar_Desc;SCENARIO NOT READY! DO NOT USE TO PLAY!<br /><br />The specter of war haunted the small village. The heirs felt trepidatious yet enthusiastic as they began to realize the potential boon that warfare could provide for their research. Perhaps contributing to the resolution of the conflict could aid them in furthering their scientific endeavors.
+//====== Scenario Language Screen ======;
+ScenarioLanguage_Title;Scenario Language
+ScenarioLanguage_Subtitle;Please select the language in which the scenario will be presented.
+//====== Scenario Settings ======;
+ScenarioLang_English_Source;English - Source
+ScenarioLang_English_Simple;English - Simple
+ScenarioLang_English_Short;English - Short
+ScenarioLang_Italian_Source;Italian - Source
+//====== Gameplay ======;
+Gameplay_Yes;Yes
+Gameplay_No;No
+Gameplay_GameSaved;Game has been saved
+Gameplay_PauseMenu;Pause Menu
+Gameplay_Resume;Resume
+Gameplay_ReturnToMainMenu;Return to Main Menu
+Gameplay_LocalSaveGame;Local Save Game
+Gameplay_SaveGame;Save Game
+Gameplay_Copy;Copy
+Gameplay_DownloadFile;Download File
+Gameplay_ClickHereToContinue;Click here to continue...
+Gameplay_ClickHereContinueNextRound;Click here to continue to the next round...
+Gameplay_ClickHere;Click Here
+Gameplay_ClickHereForReward;Click Here for a special Reward
+Gameplay_OnceYouAreReady;Once you are ready, click here to reveal your secret conversation.
+Gameplay_SpecialSetup;SPECIAL SETUP
+Gameplay_Accept;Accept
+Gameplay_Confirm;Confirm
+Gameplay_Choose;CHOOSE:
+Gameplay_HandStorybookTo;Carefully hand this storybook device to {{0=...|Oliver|James|Olivia|...}}. This text (and its choice if any) should be read aloud and made in full view of all players.
+Gameplay_DoNotOtherPlayersSee;Carefully hand this storybook device to {{0=...|Oliver|James|Olivia|...}} and do not allow any other players to see the screen.
+Gameplay_EndOfRound_Title;End of the Round
+Gameplay_EndOfRound_Content;The {{0=|Early Years|Middle Years|Late Years| }} of the {{1=|First Generation|Second Generation|Third Generation}} has ended.{{2=?|<br />Perform all End of Round actions.<br />Then, perform all Start of Round actions for the {{3=|Early Years|Middle Years|Late Years| }} before continuing.|<br />Perform all End of Round actions before continuing.}}
+Gameplay_ClickHereAfterBid;Click here after resolving the bid...
+Gameplay_EndOfGeneration_Title;End of Generation
+Gameplay_ClickAtTheEndOfGeneration;Click here at the end of the Generation to continue...
+Gameplay_DrJr;Dr. {{0=...|Oliver|James|Olivia|...}} Jr.
+Gameplay_Dr;Dr. {{0=...|Oliver|James|Olivia|...}}

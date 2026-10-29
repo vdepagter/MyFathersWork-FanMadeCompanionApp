@@ -93,7 +93,8 @@ public partial class GlobalData
 
     public string GetLocalizedUITag(string tag)
     {
-        if (UI_Localization.TryGetValue(Language, out Dictionary<string, string>? value))
+        // A menu language that no longer exists (Polish was removed) falls back to English
+        if (UI_Localization.TryGetValue(Language, out Dictionary<string, string>? value) || UI_Localization.TryGetValue("English", out value))
         {
             if (value.TryGetValue(tag, out string? translation)) return translation;
             return $"Missing Translation -> {Language}/{tag}";
@@ -226,7 +227,7 @@ public partial class GlobalData
 
     private static readonly Dictionary<string, string> _LanguageCodes = new(StringComparer.OrdinalIgnoreCase)
     {
-        ["English"] = "en", ["Polish"] = "pl", ["Dutch"] = "nl", ["German"] = "de", ["French"] = "fr", ["Spanish"] = "es",
+        ["English"] = "en", ["Dutch"] = "nl", ["German"] = "de", ["French"] = "fr", ["Spanish"] = "es",
         ["Italian"] = "it", ["Portuguese"] = "pt", ["Czech"] = "cs", ["Russian"] = "ru", ["Ukrainian"] = "uk",
         ["Chinese"] = "zh", ["Japanese"] = "ja", ["Korean"] = "ko"
     };

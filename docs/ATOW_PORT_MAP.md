@@ -113,7 +113,7 @@ CSVs: `wwwroot/localization/ATimeOfWar_Localization.csv` (story) and `ATimeOfWar
   `ScenarioId != FearOfUnknown` also exclude `TimeOfWar`); cases in `ScenarioVars`, `ScenarioType`, `ResetScenarioVars`,
   `StartScenario`, `ShowFinalEnding`, `GetHubMethod`, `LoadScenarioLanguagesOptionsAsync` (CSV paths).
 - `PopUpIcon` constants (section 6), `ATimeOfWarHubId`, `WarFaction`.
-- Menu description "WORK IN PROGRESS" for ATOW in `UI_Localization.csv` (English + Polish) once playable.
+- Menu description "WORK IN PROGRESS" for ATOW in `UI_Localization.csv` once playable.
 - `tools/test-save-helpers.js`: `mkSaveATOW(hubId, opts)` (all per-player dictionaries of section 3 must be present).
 - `AudioService.ScenarioTheme` currently has no ATOW track (map says the Unity scene reuses the Cost of Disease theme).
 
