@@ -52,6 +52,24 @@ public static class Extensions
         return Regex.Replace(text, pattern2, replacement2);
     }
 
+    // Wraps each name (whole word, outside HTML tags) in <span translate="no">. Longest names first, so "Ann" does not
+    // split "Anna".
+    public static string ProtectNames(this string text, GlobalData globalData)
+    {
+        string[] names = globalData.ProtectedNames().OrderByDescending(name => name.Length).ToArray();
+        if (names.Length == 0 || text.Length == 0) return text;
+
+        Regex nameRegex = new(@"(?<![\w])(" + string.Join("|", names.Select(Regex.Escape)) + @")(?![\w])");
+        string[] parts  = Regex.Split(text, "(<[^>]*>)");
+
+        for (int i = 0; i < parts.Length; i++)
+        {
+            if (!parts[i].StartsWith('<')) parts[i] = nameRegex.Replace(parts[i], "<span translate=\"no\">$1</span>");
+        }
+
+        return string.Concat(parts);
+    }
+
     public static string FormatWithIndex(this string text, int id, int index)
     {
         string pattern = @"\{\{(";

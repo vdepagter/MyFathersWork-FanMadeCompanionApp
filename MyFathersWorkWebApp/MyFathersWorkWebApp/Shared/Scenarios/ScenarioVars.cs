@@ -25,6 +25,9 @@ public abstract class ScenarioVars(int randomCount)
 
     protected GlobalData _GlobalData = null!;
 
+    // Names the players typed in during play; the page marks them translate="no" (GlobalData.ProtectedNames)
+    public virtual IEnumerable<string> TypedNames() => [];
+
     public bool RandomBool(int index)
     {
         return RandomSlot(index, 2, value => value == 1 ? "true" : "false") == 1;

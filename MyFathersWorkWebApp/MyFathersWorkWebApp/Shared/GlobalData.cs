@@ -183,6 +183,31 @@ public partial class GlobalData
         return result;
     }
 
+    // Player, village and typed-in names: wrapped in translate="no" so the browser's own translation leaves them alone
+    public IEnumerable<string> ProtectedNames()
+    {
+        string[] setupNames = [PlayerAName, PlayerBName, PlayerCName, PlayerDName, TownName];
+        return setupNames.Concat(ScenarioVars.TypedNames())
+                         .Where(name => !string.IsNullOrWhiteSpace(name))
+                         .Select(name => name.Trim())
+                         .Distinct();
+    }
+
+    // Value for <html lang>: the story language on /Gameplay, the menu language elsewhere. Lets the browser offer
+    // "Translate this page" from the right language.
+    public string PageLanguageCode(bool gameplay)
+    {
+        string language = (gameplay ? ScenarioLanguage : Language).Replace("_Source", "");
+        return _LanguageCodes.GetValueOrDefault(language, "en");
+    }
+
+    private static readonly Dictionary<string, string> _LanguageCodes = new(StringComparer.OrdinalIgnoreCase)
+    {
+        ["English"] = "en", ["Polish"] = "pl", ["Dutch"] = "nl", ["German"] = "de", ["French"] = "fr", ["Spanish"] = "es",
+        ["Italian"] = "it", ["Portuguese"] = "pt", ["Czech"] = "cs", ["Russian"] = "ru", ["Ukrainian"] = "uk",
+        ["Chinese"] = "zh", ["Japanese"] = "ja", ["Korean"] = "ko"
+    };
+
     public async Task<bool> IsContinueAvailableAsync(IJSRuntime js)
     {
         string? base64 = await js.InvokeAsync<string?>("localStorage.getItem", "continue");

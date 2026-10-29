@@ -8,7 +8,7 @@
 
 <div class="village-confirmation-container">
     <div class="text-box">
-        @GlobalData.GetLocalizedUITag(GlobalTags.VillageConfirm_Content).FormatWithReplacement(0, GlobalData.TownName).AsMarkup()
+        @GlobalData.GetLocalizedUITag(GlobalTags.VillageConfirm_Content).FormatWithReplacement(0, GlobalData.TownName).ProtectNames(GlobalData).AsMarkup()
     </div>
 
     <button class="continue-button" @onclick="Continue">

@@ -9,7 +9,7 @@
 <div class="player-welcome-container">
     <div class="text-box">
         <p>
-            @GetWelcomeText().AsMarkup()
+            @GetWelcomeText().ProtectNames(GlobalData).AsMarkup()
         </p>
     </div>
 

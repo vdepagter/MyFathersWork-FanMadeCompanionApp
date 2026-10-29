@@ -48,10 +48,20 @@
     // Setup / menu pages fade in and rise after each navigation (js/transitions.js, "page"). /Gameplay has its own
     // screen transitions. The layout re-renders with the new page on every navigation.
     private string? _LastEnteredPath;
+    private string  _PageLanguage = "en"; // <html lang> in index.html
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         string path = CurrentPath;
+
+        // Language changes navigate, so the layout re-renders and <html lang> follows the menu / story language
+        string language = _GlobalData.PageLanguageCode(IsGameplay(path));
+        if (language != _PageLanguage)
+        {
+            _PageLanguage = language;
+            await Js.InvokeVoidAsync("mfwSetPageLanguage", language);
+        }
+
         if (path == _LastEnteredPath) return;
         _LastEnteredPath = path;
         if (IsGameplay(path)) return;

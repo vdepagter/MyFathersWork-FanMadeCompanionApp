@@ -119,6 +119,8 @@ public class TheCostOfDiseaseVars() : ScenarioVars(300 + 1)
     public const string WOLVES_EVIL_TOWN_NAME  = "Rage";
     public const string HUNTERS_EVIL_TOWN_NAME = "Kraven";
 
+    public override IEnumerable<string> TypedNames() => MwName.Values;
+
     public void DrawAffiliations()
     {
         if (!AffiliationsPending) return;
