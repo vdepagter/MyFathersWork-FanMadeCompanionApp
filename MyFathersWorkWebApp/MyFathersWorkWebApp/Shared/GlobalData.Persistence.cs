@@ -113,11 +113,22 @@ public partial class GlobalData
         for (int i = points.Length; i < _StoredIds.Count; i++) await js.InvokeVoidAsync("localStorage.removeItem", UndoKey(_StorageOffset + i));
 
         await js.InvokeVoidAsync("localStorage.setItem", _UNDO_META_KEY, $"{_StorageOffset + first}|{_StorageOffset + points.Length}");
-        await js.InvokeVoidAsync("localStorage.setItem", _CONTINUE_KEY, Convert.ToBase64String(System.Text.Encoding.UTF8.GetBytes(points[^1].JsonData)));
+        await js.InvokeVoidAsync("localStorage.setItem", _CONTINUE_KEY, Convert.ToBase64String(System.Text.Encoding.UTF8.GetBytes(WithCurrentLanguage(points[^1].JsonData))));
 
         _StoredFirst = first;
         _StoredIds.Clear();
         _StoredIds.AddRange(points.Select(point => point.Id));
+    }
+
+    // An undo point can be older than the language picked in the pause menu; "continue" keeps the current one, as Undo does
+    private string WithCurrentLanguage(string json)
+    {
+        JObject jo = JObject.Parse(json);
+        if ((string?)jo[nameof(Language)] == Language && (string?)jo[nameof(ScenarioLanguage)] == ScenarioLanguage) return json;
+
+        jo[nameof(Language)]         = Language;
+        jo[nameof(ScenarioLanguage)] = ScenarioLanguage;
+        return jo.ToString(Formatting.None);
     }
 
     // New game: forget the saved game and its undo history
