@@ -18,6 +18,7 @@
 
         <button @onclick="OnNewGameClick">@GlobalData.GetLocalizedUITag(GlobalTags.MainMenu_NewGame)</button>
         <button @onclick="ShowLoadPopup">@GlobalData.GetLocalizedUITag(GlobalTags.MainMenu_LoadGame)</button>
+        <button @onclick="OpenGallery">@GlobalData.GetLocalizedUITag(GlobalTags.MainMenu_Gallery)</button>
 
         <div class="language-select">
             <label for="language">@GlobalData.GetLocalizedUITag(GlobalTags.MainMenu_Language):</label>
@@ -65,6 +66,12 @@
     }
 
     private void HideLoadPopup() => _ShowLoadGame = false;
+
+    private void OpenGallery()
+    {
+        Audio.PlayClick();
+        Nav.NavigateTo("EndingsGallery");
+    }
 
     private async Task OnNewGameClick()
     {

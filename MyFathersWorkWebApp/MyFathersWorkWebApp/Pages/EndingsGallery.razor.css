@@ -1,0 +1,368 @@
+/* Back Button (as on the other menu pages) */
+.back-button {
+    position: fixed;
+    top: 1rem;
+    left: 1rem;
+    background-color: #5c4633;
+    color: #e0d3b8;
+    padding: 0.5rem 1rem;
+    border: 2px solid #2e1f14;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: bold;
+    box-shadow: 0 0 8px rgba(0,0,0,0.6);
+    transition: background-color 0.3s, transform 0.1s;
+    z-index: 10;
+}
+
+.back-button:hover {
+    background-color: #7a5a3c;
+    transform: scale(1.05);
+}
+
+.gallery-container {
+    width: 560px;
+    max-width: 100vw;
+    padding: 4.5rem 1rem 2rem;
+    color: #e0d3b8;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.gallery-container h1 {
+    font-size: 2rem;
+    font-weight: normal;
+    color: gold;
+    text-shadow: 2px 2px 4px black;
+}
+
+.gallery-container h2 {
+    margin-top: 1rem;
+    font-size: 1.1rem;
+    font-weight: normal;
+    color: #b3a68c;
+}
+
+.gallery-note {
+    font-size: 0.85rem;
+    line-height: 1.45;
+    color: #a99c84;
+}
+
+/* Players / Endings */
+.gallery-tabs {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    border: 1px solid #5c4633;
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+.gallery-tabs button {
+    min-height: 44px;
+    border: none;
+    background: transparent;
+    color: #b3a68c;
+    font-family: inherit;
+    font-size: 1rem;
+    cursor: pointer;
+}
+
+.gallery-tabs button.selected {
+    background-color: #5c4633;
+    color: #f3ead8;
+}
+
+/* Win tally */
+.tally-row {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 44px 44px 44px 52px 32px;
+    align-items: center;
+    gap: 4px;
+    padding: 0 12px;
+}
+
+.tally-head {
+    font-size: 0.75rem;
+    color: #a99c84;
+}
+
+.tally-head span:not(:first-child),
+.tally-cell {
+    text-align: center;
+}
+
+.tally-card {
+    min-height: 52px;
+    padding: 8px 12px;
+    background-color: #1d1813;
+    border: 1px solid #3a2e24;
+    border-radius: 10px;
+}
+
+.tally-card.family {
+    background: transparent;
+    border: 1px dashed #5c4633;
+}
+
+.tally-name {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    min-width: 0;
+    font-size: 1.05rem;
+}
+
+.tally-sub {
+    font-size: 0.75rem;
+    color: #a99c84;
+}
+
+.tally-cell {
+    color: #cfc2a6;
+}
+
+.tally-wins {
+    text-align: right;
+    font-size: 1.35rem;
+    color: #e6c27a;
+}
+
+.tally-head .tally-wins {
+    font-size: 0.75rem;
+    color: #a99c84;
+}
+
+.tally-forget {
+    width: 32px;
+    height: 32px;
+    border: none;
+    background: transparent;
+    color: #8f8574;
+    font-size: 1.2rem;
+    cursor: pointer;
+}
+
+.tally-forget:hover {
+    color: #e0d3b8;
+}
+
+.recent-game {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 8px 0;
+    border-bottom: 1px solid #2c241c;
+}
+
+.recent-winner {
+    color: #e6c27a;
+    white-space: nowrap;
+}
+
+/* Buttons, export and import */
+.gallery-buttons {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.6rem;
+}
+
+.gallery-button {
+    min-height: 44px;
+    padding: 0 1rem;
+    background-color: #5c4633;
+    color: #e0d3b8;
+    border: 2px solid #2e1f14;
+    border-radius: 8px;
+    font-family: inherit;
+    font-size: 0.95rem;
+    cursor: pointer;
+}
+
+.gallery-button:hover {
+    background-color: #7a5a3c;
+}
+
+.gallery-button.small {
+    padding: 0 0.75rem;
+    background-color: #1d1813;
+    border: 1px solid #4a3c2f;
+    color: #cfc2a6;
+    font-size: 0.85rem;
+}
+
+.gallery-box {
+    width: 100%;
+    height: 6rem;
+    padding: 0.5rem;
+    background-color: #222;
+    color: #e0d3b8;
+    border: 2px solid #2e1f14;
+    border-radius: 8px;
+    font-size: 0.75rem;
+    word-break: break-all;
+}
+
+/* Endings tree */
+.scenario-tabs {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 6px;
+}
+
+.scenario-tabs button {
+    min-height: 56px;
+    padding: 6px 4px;
+    border: 1px solid #3a2e24;
+    border-radius: 8px;
+    background: transparent;
+    color: #e0d3b8;
+    font-family: inherit;
+    font-size: 0.8rem;
+    line-height: 1.2;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 3px;
+    cursor: pointer;
+}
+
+.scenario-tabs button.selected {
+    background-color: #2a211a;
+    border-color: #c9a45c;
+}
+
+.scenario-count {
+    color: #e6c27a;
+}
+
+.tree-toolbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    font-size: 0.9rem;
+    color: #b3a68c;
+}
+
+.tree {
+    display: flex;
+    flex-direction: column;
+}
+
+.tree-row {
+    display: flex;
+    align-items: stretch;
+    min-height: 56px;
+}
+
+.tree-rail {
+    width: 22px;
+    flex-shrink: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.tree-line {
+    width: 2px;
+    height: 14px;
+    background-color: #3a2e24;
+}
+
+.tree-line.grow {
+    flex-grow: 1;
+}
+
+.tree-line.hidden {
+    background: transparent;
+}
+
+.tree-node {
+    width: 12px;
+    height: 12px;
+    flex-shrink: 0;
+    border: 2px solid #5a4e40;
+    border-radius: 6px;
+}
+
+.tree-node.ending {
+    border-radius: 2px;
+}
+
+.tree-node.lit {
+    background-color: #e6c27a;
+    border-color: #e6c27a;
+}
+
+.tree-text {
+    flex-grow: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 2px;
+    padding: 6px 8px;
+}
+
+.tree-kicker {
+    font-size: 0.7rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: #a99c84;
+}
+
+.tree-label {
+    color: #b3a68c;
+}
+
+.tree-label.lit {
+    color: #f0e4c8;
+}
+
+.tree-label.locked {
+    color: #958c7c;
+    font-style: italic;
+}
+
+.tree-status {
+    font-size: 0.75rem;
+    color: #a99c84;
+}
+
+.tree-status.done {
+    color: #e6c27a;
+}
+
+.tree-action {
+    display: flex;
+    align-items: center;
+    flex-shrink: 0;
+}
+
+.tree-star {
+    width: 44px;
+    text-align: center;
+    color: #e6c27a;
+    font-size: 1.4rem;
+}
+
+.tree-tick {
+    width: 44px;
+    height: 44px;
+    border: 1px solid #7a5a3c;
+    border-radius: 8px;
+    background: transparent;
+    color: #111;
+    font-size: 1.3rem;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.tree-tick.ticked {
+    background-color: #d9b36c;
+    border-color: #d9b36c;
+}

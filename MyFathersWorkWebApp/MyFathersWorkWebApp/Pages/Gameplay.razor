@@ -4,6 +4,7 @@
 @inject NavigationManager Nav
 @inject HttpClient        Http
 @inject AudioService      Audio
+@inject GalleryService    Gallery
 @implements IDisposable
 
 <div class="header-buttons" xmlns="http://www.w3.org/1999/html">
@@ -97,6 +98,23 @@
                 }
             }
         </div>
+
+        @if (GlobalData.ActiveWindow.IsFinalEnding && _GalleryCard != null && ReferenceEquals(_GalleryNoted, GlobalData.ActiveWindow))
+        {
+            // What the Endings Gallery recorded for this playthrough (Shared/Gallery.cs)
+            <div class="gallery-card">
+                <div class="gallery-card-head">
+                    <span class="gallery-star" aria-hidden="true">★</span>
+                    <div>
+                        <div>@GlobalData.GetLocalizedUITag(_GalleryCard.NewEnding ? GlobalTags.Gallery_NewEnding : GlobalTags.Gallery_EndingRecorded)</div>
+                        <div class="gallery-card-sub">@_GalleryCard.Progress</div>
+                    </div>
+                </div>
+                <div>@_GalleryCard.WinLine</div>
+                <div class="gallery-card-sub">@GlobalData.GetLocalizedUITag(GlobalTags.Gallery_RecordedNote)</div>
+                <button class="gallery-card-button" @onclick="OpenGallery">@GlobalData.GetLocalizedUITag(GlobalTags.MainMenu_Gallery)</button>
+            </div>
+        }
     }
     else if (GlobalData.ActiveMirrorQuestion == null && GlobalData.ActivePopup == null && GlobalData.ActiveInputPopup == null && GlobalData.ActiveHub != null)
     {
@@ -232,7 +250,64 @@
         PlayScreenTransition(info);
         UpdateMusic();
         _ = GlobalData.PersistAsync(Js); // the game and its undo history, after every screen and every undo
+        _ = NoteGalleryAsync();
     }
+
+    #region Endings Gallery
+
+    private record GalleryCard(bool NewEnding, string Progress, string WinLine);
+
+    private object?      _GalleryNoted; // the hub or final ending window last passed to the gallery
+    private GalleryCard? _GalleryCard;
+
+    // Remembers players and branches on every hub, and records the playthrough when its final ending is shown. Undo and
+    // load show the ending again with a new window object, which replaces the record (keyed by FlavorSeed).
+    private async Task NoteGalleryAsync()
+    {
+        if (GlobalData.ActiveMirrorQuestion != null || GlobalData.ActivePopup != null || GlobalData.ActiveInputPopup != null) return;
+
+        try
+        {
+            if (GlobalData.ActiveWindow is { IsFinalEnding: true } window)
+            {
+                if (ReferenceEquals(_GalleryNoted, window)) return;
+                _GalleryNoted = window;
+
+                (GalleryGame game, bool newEnding) = await Gallery.RecordGameAsync(GlobalData, window.Title);
+                GalleryData data = await Gallery.GetAsync();
+                int         wins = data.Games.Count(other => !other.FamilyWinner && other.Winner == game.Winner);
+
+                _GalleryCard = new GalleryCard(newEnding,
+                                               GlobalData.GetLocalizedUITag(GlobalTags.Gallery_ScenarioProgress)
+                                                         .FormatWithReplacement(0, GalleryTrees.Name(game.Scenario))
+                                                         .FormatWithReplacement(1, GalleryService.EndingsDone(data, game.Scenario).Count.ToString()),
+                                               game.FamilyWinner
+                                                   ? GlobalData.GetLocalizedUITag(GlobalTags.Gallery_FamilyWin)
+                                                   : GlobalData.GetLocalizedUITag(GlobalTags.Gallery_WinFor)
+                                                               .FormatWithReplacement(0, game.Winner)
+                                                               .FormatWithReplacement(1, wins.ToString()));
+                StateHasChanged();
+            }
+            else if (GlobalData.ActiveWindow == null && GlobalData.ActiveHub != null)
+            {
+                if (ReferenceEquals(_GalleryNoted, GlobalData.ActiveHub)) return;
+                _GalleryNoted = GlobalData.ActiveHub;
+                await Gallery.NoteHubAsync(GlobalData);
+            }
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine($"Gallery: {e.Message}");
+        }
+    }
+
+    private void OpenGallery()
+    {
+        Audio.PlayClick();
+        Nav.NavigateTo("EndingsGallery");
+    }
+
+    #endregion Endings Gallery
 
     #region Screen change detection (audio and screen transitions)
 

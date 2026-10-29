@@ -145,3 +145,58 @@
     transform: scale(0.95);
 }
 
+
+/* Endings Gallery: remembered players */
+.same-table {
+    background-color: #1d1813;
+    border: 1px solid #5c4633;
+    border-radius: 10px;
+    padding: 1rem 1.25rem;
+    margin-bottom: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.6rem;
+    max-width: 420px;
+}
+
+.same-table-names {
+    color: #b3a68c;
+}
+
+.remembered {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.6rem;
+    margin: -1rem 0 2rem;
+    max-width: 480px;
+}
+
+.remembered-label {
+    color: #b3a68c;
+}
+
+.remembered-names {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.6rem;
+}
+
+.name-chip {
+    min-height: 44px;
+    padding: 0 1.1rem;
+    border-radius: 22px;
+    border: 1px solid #7a5a3c;
+    background-color: #2a211a;
+    color: #e0d3b8;
+    font-family: inherit;
+    font-size: 1rem;
+    cursor: pointer;
+}
+
+.name-chip:hover,
+.name-chip.picked {
+    background-color: #5c4633;
+}

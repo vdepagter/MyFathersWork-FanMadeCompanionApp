@@ -1,6 +1,7 @@
 ﻿@page "/PlayersNameEntry/{PlayerIndex:int}"
 @inject NavigationManager Nav
 @inject AudioService      Audio
+@inject GalleryService    Gallery
 
 <div class="back-button" @onclick="GoBack">
     ⬅ @GlobalData.GetLocalizedUITag(GlobalTags.MainMenu_Back)
@@ -15,7 +16,30 @@
         @GlobalData.GetLocalizedUITag(GlobalTags.PlayersNameEntry_SubTitle).FormatWithIndex(0, PlayerIndex).AsMarkup()
     </div>
 
+    @if (_LastTable.Count > 0)
+    {
+        // Endings Gallery: the players of the last game, in seat order
+        <div class="same-table">
+            <div>@GlobalData.GetLocalizedUITag(GlobalTags.PlayersNameEntry_SameTable)</div>
+            <div class="same-table-names">@string.Join(", ", _LastTable)</div>
+            <button class="name-chip" @onclick="UseLastTable">@GlobalData.GetLocalizedUITag(GlobalTags.PlayersNameEntry_UseTable)</button>
+        </div>
+    }
+
     <input class="name-input" @bind="_PlayerName" placeholder="@GlobalData.GetLocalizedUITag(GlobalTags.PlayersNameEntry_Placeholder)"/>
+
+    @if (_Remembered.Count > 0)
+    {
+        <div class="remembered">
+            <div class="remembered-label">@GlobalData.GetLocalizedUITag(GlobalTags.PlayersNameEntry_Remembered)</div>
+            <div class="remembered-names">
+                @foreach (string name in _Remembered)
+                {
+                    <button class="name-chip @(name == _PlayerName ? "picked" : "")" @onclick="() => PickName(name)">@name</button>
+                }
+            </div>
+        </div>
+    }
 
     <button class="continue-button" @onclick="Continue">
         @GlobalData.GetLocalizedUITag(GlobalTags.MainMenu_Continue)
@@ -49,6 +73,36 @@
     [Parameter] public int PlayerIndex { get; set; }
 
     private string _PlayerName = string.Empty;
+
+    private List<string> _Remembered = [];
+    private List<string> _LastTable  = [];
+
+    protected override async Task OnParametersSetAsync()
+    {
+        GalleryData data = await Gallery.GetAsync();
+
+        // Names already taken by earlier players of this game are left out
+        _Remembered = (await Gallery.PlayerNamesAsync())
+                      .Where(name => !Enumerable.Range(0, PlayerIndex).Any(x => string.Equals(GlobalData.GetPlayerNameByIndex(x), name, StringComparison.CurrentCultureIgnoreCase)))
+                      .ToList();
+        _LastTable = PlayerIndex == 0 && data.LastTable.Count == GlobalData.PlayersNum ? data.LastTable : [];
+    }
+
+    private void PickName(string name)
+    {
+        Audio.PlayClick();
+        _PlayerName = name;
+    }
+
+    private void UseLastTable()
+    {
+        Audio.PlayClick();
+        GlobalData.PlayerAName = _LastTable[0];
+        GlobalData.PlayerBName = _LastTable[1];
+        GlobalData.PlayerCName = _LastTable.Count >= 3 ? _LastTable[2] : string.Empty;
+        GlobalData.PlayerDName = _LastTable.Count >= 4 ? _LastTable[3] : string.Empty;
+        Nav.NavigateTo("PlayersVillage");
+    }
     private bool   _ShowPopup;
     private bool   _ShowPopUp2;
 

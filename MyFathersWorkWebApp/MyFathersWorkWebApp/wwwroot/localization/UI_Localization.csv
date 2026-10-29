@@ -115,3 +115,47 @@ Gameplay_ClickAtTheEndOfGeneration;Click here at the end of the Generation to co
 Gameplay_DrJr;Dr. {{0=...|Oliver|James|Olivia|...}} Jr.;Dr. {{0=...|Oliver|James|Olivia|...}} Jr.
 Gameplay_Dr;Dr. {{0=...|Oliver|James|Olivia|...}};Dr. {{0=...|Oliver|James|Olivia|...}}
 Gameplay_Third;{{0=...|Oliver|James|Olivia|...}} III;{{0=...|Oliver|James|Olivia|...}} III
+//====== Endings Gallery ======;;
+MainMenu_Gallery;Endings Gallery;Galeria zakończeń
+PlayersNameEntry_Remembered;Or pick someone who played before:;Lub wybierz kogoś, kto już grał:
+PlayersNameEntry_SameTable;Same table as last time?;Ten sam stół co ostatnio?
+PlayersNameEntry_UseTable;Use these players;Użyj tych graczy
+Gallery_Players;Players;Gracze
+Gallery_Endings;Endings;Zakończenia
+Gallery_Player;Player;Gracz
+Gallery_Wins;Wins;Wygrane
+Gallery_GamesPlayed;Games: {{0=...|3}};Gry: {{0=...|3}}
+Gallery_Family;The Family;Rodzina
+Gallery_FamilyNote;shared win, counted once;wspólna wygrana, liczona raz
+Gallery_RecentGames;Recent games;Ostatnie gry
+Gallery_NoGames;No finished games yet. A game is recorded when it reaches its final ending.;Brak ukończonych gier. Gra zostaje zapisana, gdy dojdzie do zakończenia.
+Gallery_Forget;Remove {{0=...|Anna}} from the name suggestions;Usuń {{0=...|Anna}} z podpowiedzi imion
+Gallery_EndingsCount;{{0=...|3}} of 8 endings;{{0=...|3}} z 8 zakończeń
+Gallery_ShowAll;Show all;Pokaż wszystko
+Gallery_HideSpoilers;Hide spoilers;Ukryj spoilery
+Gallery_Reveal;Reveal;Odkryj
+Gallery_LockedEnding;Locked ending;Zablokowane zakończenie
+Gallery_LockedBranch;Locked branch;Zablokowana gałąź
+Gallery_Ending;Ending;Zakończenie
+Gallery_Generation;Generation {{0=|I|II|III}};Pokolenie {{0=|I|II|III}}
+Gallery_Played;Played {{0=...|26 Oct}};Rozegrane {{0=...|26 Oct}}
+Gallery_TickedByHand;Ticked off by hand;Odhaczone ręcznie
+Gallery_NotReached;Not reached yet;Jeszcze nieosiągnięte
+Gallery_Reached;Reached;Osiągnięte
+Gallery_AlsoElsewhere;also reachable from another branch;osiągalne także z innej gałęzi
+Gallery_TickOff;Tick off {{0=...|Committed}};Odhacz {{0=...|Committed}}
+Gallery_Untick;Untick {{0=...|Committed}};Cofnij odhaczenie {{0=...|Committed}}
+Gallery_Legend;Star: reached in this app. Check box: ticked off by hand, for games played before the gallery existed or with the official app. A branch lights up once you reach it or tick off an ending below it.;Gwiazdka: osiągnięte w tej aplikacji. Pole wyboru: odhaczone ręcznie, dla gier rozegranych przed powstaniem galerii lub w oficjalnej aplikacji. Gałąź zostaje podświetlona, gdy do niej dotrzesz lub odhaczysz zakończenie pod nią.
+Gallery_Backup;Back up or move to another device;Kopia zapasowa lub przeniesienie na inne urządzenie
+Gallery_BackupNote;The gallery is stored on this device only and is not part of saved games. Export it to keep a copy, then import it here or on another device: the two are merged.;Galeria jest przechowywana tylko na tym urządzeniu i nie jest częścią zapisanych gier. Wyeksportuj ją, aby zachować kopię, a potem zaimportuj tutaj lub na innym urządzeniu: obie zostaną scalone.
+Gallery_Export;Export;Eksportuj
+Gallery_Import;Import;Importuj
+Gallery_PasteHere;Paste gallery export here...;Wklej tutaj eksport galerii...
+Gallery_ImportDone;Gallery imported and merged.;Galeria zaimportowana i scalona.
+Gallery_ImportFailed;This is not a gallery export.;To nie jest eksport galerii.
+Gallery_NewEnding;New ending unlocked;Nowe zakończenie odblokowane
+Gallery_EndingRecorded;Ending recorded;Zakończenie zapisane
+Gallery_ScenarioProgress;{{0=...|Fear of the Unknown}} · {{1=...|3}} of 8 endings;{{0=...|Fear of the Unknown}} · {{1=...|3}} z 8 zakończeń
+Gallery_WinFor;Win for {{0=...|Anna}}: win number {{1=...|5}};Wygrana: {{0=...|Anna}}, wygrana nr {{1=...|5}}
+Gallery_FamilyWin;Shared win for the family;Wspólna wygrana rodziny
+Gallery_RecordedNote;Saved in the Endings Gallery on this device. Going back with Undo and correcting a score replaces this result, so a game is never counted twice.;Zapisano w Galerii zakończeń na tym urządzeniu. Cofnięcie i poprawienie wyniku zastępuje ten rezultat, więc gra nigdy nie jest liczona dwa razy.

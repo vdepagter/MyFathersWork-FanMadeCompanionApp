@@ -152,7 +152,22 @@ Details per branch: the "Ported" notes in `docs/ATOW_PORT_MAP.md` 2.1-2.8; sourc
 - "A Return to Evil" keeps the end-of-generation prompt (source jumped straight to scoring).
 - Gen II Hospital: when everybody visited the Hospital the source skips "A Steady Focus"; the web app shows it.
 - End of Generation texts of Gen II (`DevastationEndOfGeneration`, `HospitalEndOfGeneration`) are separate popups, as the official app shows them on their own screen.
-- Not ported: endings/achievements gallery, sharing, voice audio, 5-player games.
+- Not ported: the original achievements list, sharing, 5-player games. The Endings Gallery replaces the original endings list (see below).
+
+## Endings Gallery
+
+`Shared/Gallery.cs` (`GalleryService`, `GalleryTrees`), `Pages/EndingsGallery.razor` (main menu), the card under the final
+ending and the hub hook in `Pages/Gameplay.razor` (`NoteGalleryAsync`), name chips in `Pages/PlayersNameEntry.razor`.
+
+- Stored in localStorage key `gallery`, never in `GlobalData` (New Game, load and undo must not touch it). UI code only,
+  never scenario code (mirror sandbox, undo replays).
+- A game is keyed by `<ScenarioId>:<FlavorSeed>`; every showing of its final ending replaces the record, so undo and a
+  corrected score never count a game twice. Hubs record the players ("same table as last time", name suggestions) and
+  the branch (hub id) reached.
+- The endings trees (branch = hub title, endings = `Vars.Ending` numbers) are in `GalleryTrees.Tree`; update them when
+  an ending or hub changes. Cost of Disease ending 4 is reachable from A Taste of Evil and Prosperity.
+- Export / Import (base64 JSON) merges: players, games by id, branches and ticks are combined. The original Unity app
+  kept ending titles in PlayerPrefs `GameEndingsData`, matched by title text (village names made duplicates).
 
 ## AI narration (tools/narration)
 

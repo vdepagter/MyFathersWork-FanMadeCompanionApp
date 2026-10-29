@@ -126,6 +126,51 @@ public static class GlobalTags
     public const string Gameplay_Dr                         = "Gameplay_Dr";
     public const string Gameplay_Third                      = "Gameplay_Third";
 
+    // Endings Gallery
+    public const string MainMenu_Gallery            = "MainMenu_Gallery";
+    public const string PlayersNameEntry_Remembered = "PlayersNameEntry_Remembered";
+    public const string PlayersNameEntry_SameTable  = "PlayersNameEntry_SameTable";
+    public const string PlayersNameEntry_UseTable   = "PlayersNameEntry_UseTable";
+    public const string Gallery_Players             = "Gallery_Players";
+    public const string Gallery_Endings             = "Gallery_Endings";
+    public const string Gallery_Player              = "Gallery_Player";
+    public const string Gallery_Wins                = "Gallery_Wins";
+    public const string Gallery_GamesPlayed         = "Gallery_GamesPlayed";
+    public const string Gallery_Family              = "Gallery_Family";
+    public const string Gallery_FamilyNote          = "Gallery_FamilyNote";
+    public const string Gallery_RecentGames         = "Gallery_RecentGames";
+    public const string Gallery_NoGames             = "Gallery_NoGames";
+    public const string Gallery_Forget              = "Gallery_Forget";
+    public const string Gallery_EndingsCount        = "Gallery_EndingsCount";
+    public const string Gallery_ShowAll             = "Gallery_ShowAll";
+    public const string Gallery_HideSpoilers        = "Gallery_HideSpoilers";
+    public const string Gallery_Reveal              = "Gallery_Reveal";
+    public const string Gallery_LockedEnding        = "Gallery_LockedEnding";
+    public const string Gallery_LockedBranch        = "Gallery_LockedBranch";
+    public const string Gallery_Ending              = "Gallery_Ending";
+    public const string Gallery_Generation          = "Gallery_Generation";
+    public const string Gallery_Played              = "Gallery_Played";
+    public const string Gallery_TickedByHand        = "Gallery_TickedByHand";
+    public const string Gallery_NotReached          = "Gallery_NotReached";
+    public const string Gallery_Reached             = "Gallery_Reached";
+    public const string Gallery_AlsoElsewhere       = "Gallery_AlsoElsewhere";
+    public const string Gallery_TickOff             = "Gallery_TickOff";
+    public const string Gallery_Untick              = "Gallery_Untick";
+    public const string Gallery_Legend              = "Gallery_Legend";
+    public const string Gallery_Backup              = "Gallery_Backup";
+    public const string Gallery_BackupNote          = "Gallery_BackupNote";
+    public const string Gallery_Export              = "Gallery_Export";
+    public const string Gallery_Import              = "Gallery_Import";
+    public const string Gallery_PasteHere           = "Gallery_PasteHere";
+    public const string Gallery_ImportDone          = "Gallery_ImportDone";
+    public const string Gallery_ImportFailed        = "Gallery_ImportFailed";
+    public const string Gallery_NewEnding           = "Gallery_NewEnding";
+    public const string Gallery_EndingRecorded      = "Gallery_EndingRecorded";
+    public const string Gallery_ScenarioProgress    = "Gallery_ScenarioProgress";
+    public const string Gallery_WinFor              = "Gallery_WinFor";
+    public const string Gallery_FamilyWin           = "Gallery_FamilyWin";
+    public const string Gallery_RecordedNote        = "Gallery_RecordedNote";
+
     // Others
     public const string GameplayStartTag = "Gameplay_";
 }
