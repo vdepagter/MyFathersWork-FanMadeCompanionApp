@@ -34,6 +34,9 @@
     <script src="_framework/blazor.webassembly.js"></script>
 
     <script>
+        // <html lang> follows the chosen language (Layout/MainLayout.razor) so the browser offers the right translation
+        window.mfwSetPageLanguage = (code) => { document.documentElement.lang = code; };
+
         window.BlazorDownloadFile = (fileName, contentType, textData) => {
             const blob = new Blob([textData], { type: contentType });
             const url = URL.createObjectURL(blob);

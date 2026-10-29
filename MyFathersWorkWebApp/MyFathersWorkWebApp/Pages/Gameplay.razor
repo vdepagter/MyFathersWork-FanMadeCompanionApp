@@ -41,11 +41,11 @@
     @if (GlobalData.ActiveMirrorQuestion == null && GlobalData.ActivePopup == null && GlobalData.ActiveInputPopup == null && GlobalData.ActiveWindow != null)
     {
         _SaveGame = true;
-        <h1>@GlobalData.ActiveWindow.Title.InsertImages().AsMarkup()</h1>
+        <h1>@GlobalData.ActiveWindow.Title.InsertImages().ProtectNames(GlobalData).AsMarkup()</h1>
 
         @if (GlobalData.ActiveWindow.Subtitle != string.Empty)
         {
-            <h2>@GlobalData.ActiveWindow.Subtitle.InsertImages().AsMarkup()</h2>
+            <h2>@GlobalData.ActiveWindow.Subtitle.InsertImages().ProtectNames(GlobalData).AsMarkup()</h2>
         }
 
         @if (HasNarration(GlobalData.ActiveWindow))
@@ -89,7 +89,7 @@
 
                 if (element.Callback == null)
                 {
-                    @element.Content.InsertImages().AsMarkup()
+                    @element.Content.InsertImages().ProtectNames(GlobalData).AsMarkup()
                 }
                 else
                 {
@@ -107,11 +107,11 @@
             _SaveGame = false;
         }
 
-        <h1>@GlobalData.ActiveHub.Title.InsertImages().AsMarkup()</h1>
+        <h1>@GlobalData.ActiveHub.Title.InsertImages().ProtectNames(GlobalData).AsMarkup()</h1>
 
         @if (GlobalData.ActiveHub.Subtitle != string.Empty)
         {
-            <h2>@GlobalData.ActiveHub.Subtitle.InsertImages().AsMarkup()</h2>
+            <h2>@GlobalData.ActiveHub.Subtitle.InsertImages().ProtectNames(GlobalData).AsMarkup()</h2>
         }
 
         foreach (GameplayHubSection hubSection in GlobalData.ActiveHub.Sections)
@@ -121,11 +121,11 @@
                 <div class="@(hubSection.Main ? "main-panel" : "section-panel")">
                     @if (hubSection.Main)
                     {
-                        <h3>@hubSection.Title.InsertImages().AsMarkup()</h3>
+                        <h3>@hubSection.Title.InsertImages().ProtectNames(GlobalData).AsMarkup()</h3>
                     }
                     else
                     {
-                        <h4>@hubSection.Title.InsertImages().AsMarkup()</h4>
+                        <h4>@hubSection.Title.InsertImages().ProtectNames(GlobalData).AsMarkup()</h4>
                     }
 
                     @foreach (GameplayElement element in hubSection.Elements)
@@ -138,7 +138,7 @@
 
                         if (element.Callback == null)
                         {
-                            @element.Content.InsertImages().AsMarkup()
+                            @element.Content.InsertImages().ProtectNames(GlobalData).AsMarkup()
                         }
                         else
                         {

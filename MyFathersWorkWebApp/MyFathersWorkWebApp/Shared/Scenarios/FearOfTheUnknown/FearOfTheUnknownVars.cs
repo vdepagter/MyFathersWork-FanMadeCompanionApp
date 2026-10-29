@@ -100,6 +100,8 @@ public class FearOfTheUnknownVars() : ScenarioVars(900)
 
     public const string SUSPECT = "#Suspect"; // the Apprentice who can be the witch with 2 or 3 players
 
+    public override IEnumerable<string> TypedNames() => WarriorName.Values.Append(ProgramName);
+
     public void Reset(GlobalData globalData)
     {
         ResetBase(globalData);

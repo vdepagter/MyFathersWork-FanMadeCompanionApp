@@ -3,7 +3,7 @@
 <div class="popup-overlay">
     <div class="popup-box input-popup">
         <div class="popup-content input-content">
-            <p>@GameplayPopUp.Message.InsertImages().AsMarkup()</p>
+            <p>@GameplayPopUp.Message.InsertImages().ProtectNames(GlobalData).AsMarkup()</p>
 
             <input @bind="_Value" 
                    @bind:event="oninput"

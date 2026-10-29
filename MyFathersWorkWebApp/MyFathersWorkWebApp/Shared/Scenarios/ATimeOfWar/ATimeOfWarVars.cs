@@ -90,6 +90,8 @@ public class ATimeOfWarVars() : ScenarioVars(300)
     // Endings
     public int Ending { get; set; } // 1 - 8 (originally ATOW-End1...)
 
+    public override IEnumerable<string> TypedNames() => Titles.Values.Append(NewMeat);
+
     public void Reset(GlobalData globalData)
     {
         ResetBase(globalData);
