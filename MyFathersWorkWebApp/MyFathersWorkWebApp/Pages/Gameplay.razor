@@ -231,6 +231,7 @@
         UpdateVoiceOver(info);
         PlayScreenTransition(info);
         UpdateMusic();
+        _ = GlobalData.PersistAsync(Js); // the game and its undo history, after every screen and every undo
     }
 
     #region Screen change detection (audio and screen transitions)
@@ -531,7 +532,7 @@
 
     private async void SaveGameAsync()
     {
-        GlobalData.SaveGame(Js);
+        GlobalData.SaveGame();
 
         _ShowSaveNotification = true;
         StateHasChanged();
