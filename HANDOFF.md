@@ -112,8 +112,9 @@ Narration logic check (29 Oct): choices and rules lines are no longer narrated (
 ("Correspondence from <name>" -> "Correspondence.", "Anonymous Editorial", "Excerpt", "Case File"), "the 1800's" ->
 "the eighteen hundreds", "<b><name></b> must suffer" -> "One of the cousins must suffer", "due to the <program>
 Program" -> "due to the Program". Titles / headers per scenario (CLAUDE.md). Not changed: "Vlad III" is sent as written
-(check by listening that v4 says "the Third"). **To render**: ~10k characters sent (~4.5k billed), `chunks.py render
-FearOfTheUnknown` on the laptop, then commit the clips and the manifest.
+(speech-to-text: v4 says "Vlad the Third"). **Rendered 29 Oct** (37 clips, 9,979 characters, 4,189 billed; ~51.7k left
+until 16 Nov). Flagged "ends mid-sound", to listen to: Gen1FateVictim_Content1 / _Content2 and Gen1FateMob_Content2
+(chunk ending "My dear cousin"), FinalEnding_Content8 (chunk ending "due to the" before "Program"). Merged to main.
 For the next scenarios: review the `_Title` texts with placeholders (Cost of Disease has dates and names in titles,
 e.g. "Upon a Secret Meeting - Letter - <date>") before rendering; Cost of Disease is now ~157k characters sent
 (titles on, headers off), more than one month of quota.
