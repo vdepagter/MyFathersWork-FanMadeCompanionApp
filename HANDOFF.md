@@ -3,16 +3,6 @@
 Only work in progress lives here. When a section is finished, move it to [`HANDOFF_ARCHIVE.md`](HANDOFF_ARCHIVE.md)
 (newest first) and delete it from this file. Conventions are in [`CLAUDE.md`](CLAUDE.md).
 
-## Endings Gallery (October 2026)
-
-Written in the cloud without a .NET SDK (branch `claude/endings-gallery`), so it still needs a build and a browser test.
-Design mockups: https://claude.ai/artifact/UHhtp9HGMdMVJmnYeSZo7L. Notes in `CLAUDE.md` "Endings Gallery".
-
-Next steps:
-- Build, fix compile errors, play a crafted save through scoring into a final ending (all three scenarios): the card
-  under the ending, the gallery tabs, ticking, reveal, export / import, "same table as last time" and the name chips.
-- Undo from the ending back to score entry, change the winner, continue: the game must be replaced, not added.
-
 ## A Time of War port (October 2026)
 
 Spec: [`docs/ATOW_PORT_MAP.md`](docs/ATOW_PORT_MAP.md) (one task per section 2.x). Status: **fully ported** - scaffold,

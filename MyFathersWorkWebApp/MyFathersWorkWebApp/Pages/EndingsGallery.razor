@@ -271,7 +271,7 @@
 
             string kicker = node.IsEnding
                                 ? GlobalData.GetLocalizedUITag(GlobalTags.Gallery_Ending)
-                                : GlobalData.GetLocalizedUITag(GlobalTags.Gallery_Generation).FormatWithIndex(0, node.Depth + 1);
+                                : GlobalData.GetLocalizedUITag(GlobalTags.Gallery_Generation).FormatWithIndex(0, node.Depth);
 
             bool hasChild = i + 1 < tree.Length && tree[i + 1].Depth > node.Depth;
             yield return new TreeRow(node, key, kicker, label, status, known, lit, lastPlayed != null, isTicked, hasChild);

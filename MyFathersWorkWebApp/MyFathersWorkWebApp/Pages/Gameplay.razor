@@ -268,7 +268,8 @@
 
         try
         {
-            if (GlobalData.ActiveWindow is { IsFinalEnding: true } window)
+            // Ending 0: no ending was decided (only seen with crafted saves), nothing to record
+            if (GlobalData.ActiveWindow is { IsFinalEnding: true } window && GalleryTrees.Ending(GlobalData) > 0)
             {
                 if (ReferenceEquals(_GalleryNoted, window)) return;
                 _GalleryNoted = window;

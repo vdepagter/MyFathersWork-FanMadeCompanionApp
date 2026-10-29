@@ -2,6 +2,19 @@
 
 Finished work moved out of [`HANDOFF.md`](HANDOFF.md), newest first. Kept short: what was done and where it is documented.
 
+## Endings Gallery (October 2026)
+
+- Remembered players, win tally, endings trees; notes in `CLAUDE.md` "Endings Gallery". Design mockups:
+  https://claude.ai/artifact/UHhtp9HGMdMVJmnYeSZo7L.
+- Built clean (written without a .NET SDK). Fixed: the Endings tab crashed on the "Generation I/II/III" label
+  (`FormatWithIndex` got depth + 1); a final ending with `Ending == 0` (crafted saves only) is no longer recorded.
+- Browser-tested: empty gallery, Reveal / Show all / ticks (persist after reload, light the branch path); New Game hub
+  records players and branch, "same table as last time" and name chips (taken names left out); crafted saves into a
+  final ending for all three scenarios (single winner, family win, repeat ending = "Ending recorded", village name in
+  the title); undo to score entry with a new winner replaces the record; export, text and file import after clearing,
+  saved-game text rejected; forget player; Polish UI. tagcheck 0 missing. Re-tested on top of the persistent undo
+  history: reloading on the ending keeps one record, undo to score entry with a new winner still replaces it.
+
 ## Cost of Disease playtest findings (October 2026)
 
 - Findings, causes and a recurrence checklist in [`PLAYTEST_FINDINGS.md`](PLAYTEST_FINDINGS.md); new `tools/sourcecheck.py`.
