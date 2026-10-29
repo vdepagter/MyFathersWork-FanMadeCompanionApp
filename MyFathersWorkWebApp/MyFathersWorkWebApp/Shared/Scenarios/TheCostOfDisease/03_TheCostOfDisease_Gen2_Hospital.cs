@@ -877,9 +877,10 @@ public static partial class TheCostOfDisease
 
     private static void HospitalNegative(GlobalData globalData)
     {
+        // Everybody visited: no penalty and no "A Steady Focus" bonus (as the source)
         if (globalData.TheCostOfDiseaseVars.HospCount == globalData.PlayersNum)
         {
-            NoHospitalCons(globalData);
+            HospitalEndOfGeneration(globalData);
             return;
         }
 
@@ -922,9 +923,10 @@ public static partial class TheCostOfDisease
 
         string content = "";
 
+        // The players who skipped the Hospital (and lost 6VP) advance their Journal, not the visitors
         foreach (string name in globalData.GetActivePlayers())
         {
-            if (!globalData.TheCostOfDiseaseVars.Hosp[name]) continue;
+            if (globalData.TheCostOfDiseaseVars.Hosp[name]) continue;
             content += globalData.GetScenarioLocalizedTag(_NO_HOSPITAL_CONS_0_CONTENT).FormatWithReplacement(0, name);
         }
 

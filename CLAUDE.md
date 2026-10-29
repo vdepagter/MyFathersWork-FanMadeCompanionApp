@@ -150,7 +150,15 @@ Details per branch: the "Ported" notes in `docs/ATOW_PORT_MAP.md` 2.1-2.8; sourc
 - "Still Wary" popup lists Wolves allies only (source always appended the first player due to an always-true condition).
 - Ties follow the rulebook (End of the Game): most points, then completed Masterwork, then most Estate Upgrades, else the family shares the win. Tie-breakers pick the winner without changing scores (the original app added +1 / the entered number to the score). Rankings (shared `FinalScoring`) give equal players the same place: the score, then Masterwork, then Estate Upgrades (when asked) separate them, so a shared win shows several "1st".
 - "A Return to Evil" keeps the end-of-generation prompt (source jumped straight to scoring).
-- Gen II Hospital: when everybody visited the Hospital the source skips "A Steady Focus"; the web app shows it.
+- Gen II Hospital end: players who skipped the Hospital lose 6VP and an Estate Upgrade ("Lack of Hospitality"), then
+  "A Steady Focus" moves those same players 1 level on a Journal Track. When everybody visited, both are skipped. (Until
+  October 2026 the port gave the Journal level to the visitors and showed "A Steady Focus" to everyone.)
+- Gen I/II were compared passage by passage with the decompiled source in October 2026. Intended differences from the
+  source: the Gen I start player can be any player (source left out player C in 4-player games); a Gen II Sealed Envelope
+  password works once and ignores case and surrounding spaces (source: exact or capitalised only, reusable); "The Secret
+  to Immortality" only lists players who have not used it and disappears when all have; the Immortality Masterwork
+  Update discard line in "Escaping The Curse" is shown (source never set its `$tmmasterwork` flag, so it never showed);
+  random draws are made where they become visible (factions, buildings, Fever cure rewards, Symposium target).
 - End of Generation texts of Gen II (`DevastationEndOfGeneration`, `HospitalEndOfGeneration`) are separate popups, as the official app shows them on their own screen.
 - Not ported: the original achievements list, sharing, 5-player games. The Endings Gallery replaces the original endings list (see below).
 

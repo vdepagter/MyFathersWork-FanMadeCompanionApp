@@ -232,9 +232,9 @@ public static partial class TheCostOfDisease
     private static void EnvPasscode(GlobalData globalData)
     {
         globalData.SaveToUndo();
-        globalData.ActiveInputPopup = new GameplayInputPopup(globalData, "EnvPasscode_Placeholder", PopUpButton.Confirm, pass => pass.Length > 1, pass =>
+        globalData.ActiveInputPopup = new GameplayInputPopup(globalData, "EnvPasscode_Placeholder", PopUpButton.Confirm, pass => pass.Trim().Length > 1, pass =>
         {
-            pass = pass.ToLower();
+            pass = pass.Trim().ToLower(); // phone keyboards often add a trailing space
 
             int index = -1;
 
