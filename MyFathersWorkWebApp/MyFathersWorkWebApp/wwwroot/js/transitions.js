@@ -8,6 +8,8 @@
 //                  "popup" (GameplayPopup), "input" (GameplayInputPopup), "same" (window -> window, hub -> hub),
 //                  "page" (setup / menu page after a navigation, from Layout/MainLayout.razor).
 //   scrollTop()  - back to the top of the page when a new story window or a new round's hub is shown.
+//   restoreScroll() - back to where the last click on the page was (not on a popup): the hub is not rendered while a
+//                  popup covers it, so the page shrinks and the browser cuts the scroll position back.
 // Both restart their animation (remove class, force reflow, add class) and clear it on animationend (or a timer). With
 // prefers-reduced-motion the overlay is skipped; the entrances become a short opacity fade (CSS).
 (function () {
@@ -85,5 +87,17 @@
         window.scrollTo({ top: 0, left: 0, behavior: "instant" });
     }
 
-    window.mfwTransitions = { run: run, enter: enter, scrollTop: scrollTop };
+    let clickedAt = 0; // scroll position of the last click in the page itself (a hub link), not on a popup
+
+    document.addEventListener("click", e => {
+        if (e.target instanceof Element && e.target.closest(".gameplay-container") && !document.querySelector(".popup-box")) {
+            clickedAt = window.scrollY;
+        }
+    }, true);
+
+    function restoreScroll() {
+        window.scrollTo({ top: clickedAt, left: 0, behavior: "instant" });
+    }
+
+    window.mfwTransitions = { run: run, enter: enter, scrollTop: scrollTop, restoreScroll: restoreScroll };
 })();

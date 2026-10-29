@@ -424,7 +424,8 @@
     }
 
     // A new story window, or a hub reached from a window or in a new round, starts at the top of the page. A hub rebuilt
-    // in the same round (after a hub link's popup) keeps its scroll position, so players don't lose their place.
+    // in the same round (after a hub link's popup) goes back to where the link was clicked, so players don't lose their
+    // place (the hub is not rendered under a popup, so the browser cut the scroll position back).
     private int _LastHubRound = -1;
 
     private void ScrollToTop(ScreenChangeInfo info)
@@ -433,7 +434,12 @@
 
         if (info.Presented is GameplayHub)
         {
-            if (info.Change == ScreenChange.SameKind && _LastHubRound == CurrentRoundIndex) return;
+            if (info.Change == ScreenChange.SameKind && _LastHubRound == CurrentRoundIndex)
+            {
+                _ = Js.InvokeVoidAsync("mfwTransitions.restoreScroll");
+                return;
+            }
+
             _LastHubRound = CurrentRoundIndex;
         }
 
