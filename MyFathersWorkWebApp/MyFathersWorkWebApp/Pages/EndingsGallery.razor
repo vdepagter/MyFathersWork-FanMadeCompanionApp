@@ -265,7 +265,7 @@
                 status = lastPlayed != null ? GlobalData.GetLocalizedUITag(GlobalTags.Gallery_Played).FormatWithReplacement(0, FormatDate(lastPlayed.Date))
                        : isTicked           ? GlobalData.GetLocalizedUITag(GlobalTags.Gallery_TickedByHand)
                        : GlobalData.GetLocalizedUITag(GlobalTags.Gallery_NotReached);
-                if (node.AlsoElsewhere) status += " · " + GlobalData.GetLocalizedUITag(GlobalTags.Gallery_AlsoElsewhere);
+                if (node.SameAs != string.Empty) status += " · " + GlobalData.GetLocalizedUITag(GlobalTags.Gallery_AlsoElsewhere).FormatWithReplacement(0, node.SameAs);
             }
             else if (lit) status = GlobalData.GetLocalizedUITag(GlobalTags.Gallery_Reached);
 

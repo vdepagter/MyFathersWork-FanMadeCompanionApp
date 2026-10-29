@@ -37,8 +37,9 @@ public class GalleryGame
     public bool                    FamilyWinner { get; set; }
 }
 
-// One row of a scenario's endings tree: a branch (hub) or an ending
-public record GalleryNode(int Depth, string Label, int HubId = 0, int Ending = 0, bool AlsoElsewhere = false)
+// One row of a scenario's endings tree: a branch (hub) or an ending. SameAs: the other branch that leads to the same
+// ending (shown twice, ticked and counted once)
+public record GalleryNode(int Depth, string Label, int HubId = 0, int Ending = 0, string SameAs = "")
 {
     public bool IsEnding => Ending > 0;
 }
@@ -66,11 +67,11 @@ public static class GalleryTrees
             new(3, "Their Own Destiny", Ending: 1),
             new(3, "Overshadowed and Exploited", Ending: 2),
             new(3, "Local Legends", Ending: 3),
-            new(3, "The Spread of Evil", Ending: 4, AlsoElsewhere: true),
+            new(3, "The Spread of Evil", Ending: 4, SameAs: "The Good Fight / Moving Forward"),
             new(2, "The Good Fight / Moving Forward", HubId: (int)CostOfDiseaseHubId.Prosperity),
             new(3, "To Be Rid of Evil", Ending: 5),
             new(3, "There Could Never Be Peace", Ending: 6),
-            new(3, "The Spread of Evil", Ending: 4, AlsoElsewhere: true),
+            new(3, "The Spread of Evil", Ending: 4, SameAs: "A Taste of Evil"),
             new(1, "Thriving in Adversity", HubId: (int)CostOfDiseaseHubId.Hospital),
             new(2, "Search for the Cure", HubId: (int)CostOfDiseaseHubId.University),
             new(3, "Editor's note - August 1923", Ending: 8),

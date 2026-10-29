@@ -142,7 +142,7 @@ Gallery_Played;Played {{0=...|26 Oct}};Rozegrane {{0=...|26 Oct}}
 Gallery_TickedByHand;Ticked off by hand;Odhaczone ręcznie
 Gallery_NotReached;Not reached yet;Jeszcze nieosiągnięte
 Gallery_Reached;Reached;Osiągnięte
-Gallery_AlsoElsewhere;also reachable from another branch;osiągalne także z innej gałęzi
+Gallery_AlsoElsewhere;the same ending as under {{0=...|Prosperity}}, counted once;to samo zakończenie co pod {{0=...|Prosperity}}, liczone raz
 Gallery_TickOff;Tick off {{0=...|Committed}};Odhacz {{0=...|Committed}}
 Gallery_Untick;Untick {{0=...|Committed}};Cofnij odhaczenie {{0=...|Committed}}
 Gallery_Legend;Star: reached in this app. Check box: ticked off by hand, for games played before the gallery existed or with the official app. A branch lights up once you reach it or tick off an ending below it.;Gwiazdka: osiągnięte w tej aplikacji. Pole wyboru: odhaczone ręcznie, dla gier rozegranych przed powstaniem galerii lub w oficjalnej aplikacji. Gałąź zostaje podświetlona, gdy do niej dotrzesz lub odhaczysz zakończenie pod nią.
