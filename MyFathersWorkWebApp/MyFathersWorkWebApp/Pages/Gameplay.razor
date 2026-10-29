@@ -93,7 +93,7 @@
                 }
                 else
                 {
-                    <a @onclick="() => InvokeWindowCallback(element.Callback)">[@element.Content]</a>
+                    <a @onclick="() => InvokeWindowCallback(element.Callback)">[@LinkText(element.Content)]</a>
                 }
             }
         </div>
@@ -143,7 +143,7 @@
                         else
                         {
                             <a class="gameplay-link"
-                               @onclick="() => InvokeWindowCallback(element.Callback)">[@element.Content]</a>
+                               @onclick="() => InvokeWindowCallback(element.Callback)">[@LinkText(element.Content)]</a>
                         }
                     }
                 </div>
@@ -197,7 +197,10 @@
     ];
 
     private int CurrentRoundIndex => (int)GlobalData.Generation * 3 + (int)GlobalData.Years;
-    
+
+    // Link labels are plain text (often a player name): encode, then mark the names translate="no"
+    private MarkupString LinkText(string content) => System.Net.WebUtility.HtmlEncode(content).ProtectNames(GlobalData).AsMarkup();
+
     private void HidePauseMenu()
     {
         _ShowPauseMenu = false;
