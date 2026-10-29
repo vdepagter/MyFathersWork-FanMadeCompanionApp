@@ -70,7 +70,7 @@
     {
         Audio.PlayClick();
         Audio.Play(SoundCue.Footsteps);
-        await Js.InvokeAsync<string>("localStorage.removeItem", "continue");
+        await GlobalData.ClearSavedGameAsync(Js);
         GlobalData.ScenarioId  = ScenarioId.None;
         GlobalData.PlayersNum  = 0;
         GlobalData.PlayerAName = string.Empty;
@@ -78,7 +78,6 @@
         GlobalData.PlayerCName = string.Empty;
         GlobalData.PlayerDName = string.Empty;
         GlobalData.TownName    = string.Empty;
-        GlobalData.ResetUndo();
         Nav.NavigateTo("PlayersSelect");
     }
 

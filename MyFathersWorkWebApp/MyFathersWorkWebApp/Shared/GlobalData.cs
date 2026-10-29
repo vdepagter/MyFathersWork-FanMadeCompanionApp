@@ -10,9 +10,12 @@ public partial class GlobalData
 {
     private class UndoData
     {
-        public Action<GlobalData>? Callback { get; set; }
-        public string              JsonData { get; set; } = string.Empty;
-        public int                 Round    { get; set; } = -1; // hub saves only: (Generation, Years) of the shown hub
+        public Action<GlobalData>? Callback   { get; set; }
+        public string              Method     { get; set; } = string.Empty; // name of Callback, kept in the browser (GlobalData.Persistence.cs)
+        public string              JsonData   { get; set; } = string.Empty;
+        public string              RandomJson { get; set; } = string.Empty; // RandomArray as JSON, stored only when it changes
+        public int                 Round      { get; set; } = -1; // hub saves only: (Generation, Years) of the shown hub
+        public long                Id         { get; set; }
     }
 
     private int UndoRound => (int)Generation * 3 + (int)Years;
@@ -39,6 +42,9 @@ public partial class GlobalData
     public ATimeOfWarVars             ATimeOfWarVars       { get; }      = new();
     public Dictionary<string, object> TmpValues            { get; }      = new();
 
+    // Screen this state is shown on (the method that called SaveToUndo), empty on a hub. Load reopens it.
+    public string ResumeMethod { get; set; } = string.Empty;
+
     // The active scenario's random values and final scoring state
     [JsonIgnore] public ScenarioVars ScenarioVars => ScenarioId switch
     {
@@ -62,6 +68,7 @@ public partial class GlobalData
     [JsonIgnore] public bool IsUndoDisabled => ActiveMirrorQuestion == null && UndoStack.Count <= 1;
 
     [JsonIgnore] private bool _UndoInProgress;
+    [JsonIgnore] private long _NextUndoId;
 
     public GlobalData()
     {
@@ -105,7 +112,11 @@ public partial class GlobalData
 
     public T GetTmpValue<T>(string key)
     {
-        return (T)TmpValues.GetValueOrDefault(key)!;
+        object? value = TmpValues.GetValueOrDefault(key);
+
+        // After undo or load the values come from JSON (an int comes back as a long)
+        if (value is not T && value is IConvertible) return (T)Convert.ChangeType(value, typeof(T));
+        return (T)value!;
     }
 
     public void SaveToUndo([CallerMemberName] string methodName = "")
@@ -114,19 +125,31 @@ public partial class GlobalData
 
         if (ScenarioType == null) return;
 
-        const BindingFlags flags  = BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic;
-        MethodInfo         method = ScenarioType.GetMethod(methodName, flags) ?? typeof(FinalScoring).GetMethod(methodName, flags)!;
-        Action<GlobalData> action = (Action<GlobalData>)Delegate.CreateDelegate(typeof(Action<GlobalData>), method);
-        UndoStack.Push(new UndoData
-        {
-            Callback = action,
-            JsonData = JsonConvert.SerializeObject(this)
-        });
+        ResumeMethod = methodName;
+        UndoStack.Push(NewUndoData(ResolveScreen(methodName)!, methodName, JsonConvert.SerializeObject(this), -1));
     }
 
-    public void ResetUndo()
+    // A screen method by name, see SaveToUndo
+    private Action<GlobalData>? ResolveScreen(string methodName)
     {
-        UndoStack.Clear();
+        if (ScenarioType == null || methodName == string.Empty) return null;
+
+        const BindingFlags flags  = BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic;
+        MethodInfo?        method = ScenarioType.GetMethod(methodName, flags) ?? typeof(FinalScoring).GetMethod(methodName, flags);
+        return method == null ? null : (Action<GlobalData>)Delegate.CreateDelegate(typeof(Action<GlobalData>), method);
+    }
+
+    private UndoData NewUndoData(Action<GlobalData>? callback, string method, string json, int round)
+    {
+        return new UndoData
+        {
+            Callback   = callback,
+            Method     = callback == null ? string.Empty : method,
+            JsonData   = json,
+            RandomJson = JsonConvert.SerializeObject(ScenarioVars.RandomArray),
+            Round      = round,
+            Id         = ++_NextUndoId
+        };
     }
 
     public int LocalizedPlayerNumberIndex()
@@ -212,8 +235,13 @@ public partial class GlobalData
             ObjectCreationHandling = ObjectCreationHandling.Reuse,
             NullValueHandling      = NullValueHandling.Ignore
         };
+        // The language picked in the pause menu stays, the snapshot may be older than that choice
+        string language         = Language;
+        string scenarioLanguage = ScenarioLanguage;
         JsonConvert.PopulateObject(prev.JsonData, this, settings);
-        _UndoInProgress = false;
+        Language         = language;
+        ScenarioLanguage = scenarioLanguage;
+        _UndoInProgress  = false;
 
         RunScenarioAction(() =>
         {
@@ -231,33 +259,23 @@ public partial class GlobalData
         });
     }
 
-    public async void SaveGame(IJSRuntime js)
+    // Makes the shown hub an undo point. Every undo point is written to the browser by PersistAsync (GlobalData.Persistence.cs).
+    public void SaveGame()
     {
-        string json = JsonConvert.SerializeObject(this, Formatting.Indented);
-        await js.InvokeVoidAsync("localStorage.setItem", "continue", Convert.ToBase64String(System.Text.Encoding.UTF8.GetBytes(json)));
-        Console.WriteLine("Saving game");
         // A hub shown again in the same round (no undoable screen in between) is not saved twice. A hub of the next round
         // reached straight from the end-of-round popup is a new undo point, otherwise undo would skip back a round.
         if (_UndoInProgress || (UndoStack.Count != 0 && UndoStack.Peek().Callback == null && UndoStack.Peek().Round == UndoRound)) return;
-        UndoStack.Push(new UndoData
-        {
-            JsonData = json,
-            Callback = null,
-            Round    = UndoRound
-        });
+        ResumeMethod = string.Empty;
+        UndoStack.Push(NewUndoData(null, string.Empty, JsonConvert.SerializeObject(this), UndoRound));
     }
 
+    // data: a save code from the load popup; empty: the browser's save ("continue") and, when it belongs to it, the undo history
     public async Task LoadGameAsync(string data, NavigationManager nav, HttpClient http, IJSRuntime js)
     {
         UndoStack.Clear();
-        
-        string? base64;
 
-        if (string.IsNullOrEmpty(data))
-        {
-            base64 = await js.InvokeAsync<string?>("localStorage.getItem", "continue");
-        }
-        else base64 = data;
+        bool    fromBrowser = string.IsNullOrEmpty(data);
+        string? base64      = fromBrowser ? await js.InvokeAsync<string?>("localStorage.getItem", "continue") : data;
 
         if (string.IsNullOrEmpty(base64))
         {
@@ -271,6 +289,7 @@ public partial class GlobalData
         ActivePopup          = null;
         ActiveInputPopup     = null;
         ActiveMirrorQuestion = null;
+        ResumeMethod         = string.Empty; // saves from before ResumeMethod open on the hub
 
         string json = System.Text.Encoding.UTF8.GetString(Convert.FromBase64String(base64));
         JsonSerializerSettings settings = new JsonSerializerSettings
@@ -288,20 +307,31 @@ public partial class GlobalData
         Scenario_Gameplay_Localization = scenarioGameplayLocalizations[scenarioLocalizations[ScenarioLanguage]["Gameplay_Lang"]];
 
         Action<GlobalData>? activeHub = GetHubMethod();
+        Action<GlobalData>? screen    = ResolveScreen(ResumeMethod);
 
-        if (activeHub == null)
+        if (activeHub == null && screen == null)
         {
             nav.NavigateTo("");
             return;
         }
 
-        RunScenarioAction(() => activeHub(this));
-        UndoStack.Push(new UndoData
+        // The screen is rebuilt the way undo does it: from the state saved before its method ran
+        RunScenarioAction(() =>
         {
-            JsonData = json,
-            Callback = null,
-            Round    = UndoRound
+            _UndoInProgress = true;
+
+            try
+            {
+                activeHub?.Invoke(this);
+                screen?.Invoke(this);
+            }
+            finally
+            {
+                _UndoInProgress = false;
+            }
         });
+
+        await RestoreUndoHistoryAsync(js, fromBrowser, json, screen);
     }
 
     public async Task LoadScenarioLanguagesOptionsAsync(NavigationManager nav, HttpClient http, Dictionary<string, Dictionary<string, string>> scenarioLocalizations,
