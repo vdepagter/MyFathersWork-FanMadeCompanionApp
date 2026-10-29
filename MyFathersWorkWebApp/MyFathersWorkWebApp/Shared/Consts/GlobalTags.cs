@@ -74,6 +74,10 @@ public static class GlobalTags
     public const string Audio_SoundEffects = "Audio_SoundEffects";
     public const string Audio_Music        = "Audio_Music";
 
+    // Volume sliders (pause menu)
+    public const string Audio_Volume = "Audio_Volume";
+    public const string Audio_Speech = "Audio_Speech";
+
     // Voice-over: setting (scenario language screen, pause menu) and the indicator on narrated windows
     public const string Audio_Narration       = "Audio_Narration";
     public const string Audio_NarrationFemale = "Audio_NarrationFemale";

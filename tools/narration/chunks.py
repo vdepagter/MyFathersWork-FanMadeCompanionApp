@@ -59,6 +59,19 @@ def header_end(text):
     return i + 4 if rest == "" or rest.startswith("<br") else 0
 
 
+# Instructions to the reader at the start of a tag: who holds the device and who may see or hear the passage
+# ("<b>Carefully pick up this Storybook device and hand it to ...</b>", "<b>Do not read the passage below to the other
+# players.</b>", "<b>Reminder: Do not allow any other players to see this screen.</b>"). Not narrated.
+READER_NOTE = re.compile(r"(?:<b>(?:[^<]|<i>|</i>)*?(?:Storybook device|Do not read the passage|Do not allow any other players)"
+                         r"(?:[^<]|<i>|</i>|<b>)*?</b>(?:\s*<i>[^<]*</i>)?(?:\s*<b>[^<]*</b>)?\s*(?:<br\s*/?>\s*)*)+")
+
+
+def reader_note_end(text):
+    """End of the leading reader instructions (READER_NOTE), or 0."""
+    m = READER_NOTE.match(text)
+    return m.end() if m else 0
+
+
 def fnv64(text):
     h = 0xcbf29ce484222325
     for b in text.encode("utf-8"):
@@ -266,6 +279,8 @@ def cut_marker(scenario, tag, text):
     text = text.split(CUT)[0]
     if tag in manual:
         return "" if manual[tag] == "" else manual[tag]
+    if not plain(text[reader_note_end(text):]).strip():  # only instructions to the reader
+        return ""
     pos = auto_cut(text)
     if pos is None:
         return None
@@ -279,14 +294,15 @@ def cut_marker(scenario, tag, text):
 
 
 def span(scenario, tag, text):
-    """(lo, hi): the part of a tag's text that is narrated - after the header line (when headers are not narrated)
-    and before the cut."""
+    """(lo, hi): the part of a tag's text that is narrated - after the reader instructions and the header line (when
+    headers are not narrated), and before the cut."""
     text = text.split(CUT)[0]
     marker = cut_marker(scenario, tag, text)
     hi = len(text) if marker is None else (0 if marker == "" else text.find(marker))
     if hi < 0:
         sys.exit(f"{scenario} {tag}: cut marker {marker!r} not in the text")
-    lo = 0 if settings(scenario)["headers"] or tag.endswith("_Title") else header_end(text)
+    note = reader_note_end(text)
+    lo = note + (0 if settings(scenario)["headers"] or tag.endswith("_Title") else header_end(text[note:]))
     return lo, hi
 
 

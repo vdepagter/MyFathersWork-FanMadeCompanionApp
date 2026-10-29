@@ -8,6 +8,8 @@
 //             "Voice-over"), or the clips of the fan-made Oliver narration played one after the other. Own setting
 //             (female / male / oliver / off), independent of the music and effects toggles; the
 //             music is ducked while it plays. State changes are reported to one .NET listener (Pages/Gameplay.razor).
+// Volumes (pause menu sliders): music, effects and speech, 0-100 each, stored per device. The effects volume scales
+// every effect (page flips stay at 60% of it), the speech volume the narration and its thunder lead-in.
 // Browsers block audio until the first user gesture: the wanted music starts on the first gesture, effects requested
 // before it are dropped. Paths are relative so they resolve against <base href> (the site runs from a sub-path).
 (function () {
@@ -20,6 +22,7 @@
     const KEY_EFFECTS   = "audio.effects";
     const KEY_MUSIC     = "audio.music";
     const KEY_VOICE     = "audio.voice";
+    const KEY_VOLUME    = "audio.volume."; // + music | effects | voice
 
     const src = name => "audio/" + name + ".mp3";
 
@@ -58,7 +61,17 @@
         }
     }
 
+    function readVolume(kind) {
+        try {
+            const value = parseInt(localStorage.getItem(KEY_VOLUME + kind), 10);
+            return isNaN(value) ? 100 : Math.min(100, Math.max(0, value));
+        } catch (e) {
+            return 100;
+        }
+    }
+
     const settings = { effects: readSetting(KEY_EFFECTS), music: readSetting(KEY_MUSIC) };
+    const volumes  = { music: readVolume("music"), effects: readVolume("effects"), voice: readVolume("voice") };
     let unlocked = false;
 
     // ---- Effects --------------------------------------------------------------------------------------------------
@@ -68,9 +81,14 @@
         const element   = new Audio();
         element.preload = "auto";
         element.src     = src(name);
-        element.volume  = VOLUMES[name] ?? 1;
         clips[name]     = element;
     }
+
+    function applyEffectsVolume() {
+        for (const name of EFFECTS) clips[name].volume = (VOLUMES[name] ?? 1) * volumes.effects / 100;
+    }
+
+    applyEffectsVolume();
 
     const channels = {
         effects: { current: null, timer: 0 },
@@ -95,7 +113,9 @@
         if (!settings.effects || !unlocked || !clips[name]) return;
 
         if (channelName === "click") {
-            tryPlay(clips[name].cloneNode());
+            const clone  = clips[name].cloneNode();
+            clone.volume = clips[name].volume; // volume is not an attribute: cloneNode does not copy it
+            tryPlay(clone);
             return;
         }
 
@@ -134,10 +154,13 @@
     let switchingTo;             // track name (or null) a fade is switching to; undefined when no switch runs
     let fadeTimer   = 0;
     let musicEnded  = false;     // a non-looping track played to the end: do not restart it
-    let musicGain   = 1;         // full volume of the music element: 1, or MUSIC_DUCK while the voice-over plays
+    let musicGain   = 1;         // 1, or MUSIC_DUCK while the voice-over plays (times the music volume: musicLevel)
     let duckTimer   = 0;
 
     music.addEventListener("ended", () => { musicEnded = true; });
+
+    // Full volume of the music element: the music volume setting, ducked while the voice-over plays
+    const musicLevel = () => musicGain * volumes.music / 100;
 
     function cancelFade() {
         clearInterval(fadeTimer);
@@ -173,7 +196,7 @@
             clearInterval(duckTimer);
             duckTimer = 0;
             music.pause();
-            music.volume = musicGain;
+            music.volume = musicLevel();
             return;
         }
 
@@ -192,7 +215,7 @@
         fadeOut(() => {
             switchingTo = undefined;
             music.pause();
-            music.volume = musicGain;
+            music.volume = musicLevel();
             musicEnded   = false;
 
             if (!target) {
@@ -221,13 +244,18 @@
     const MUSIC_DUCK = 0.3;
 
     function duckMusic(on) {
-        const target = on ? MUSIC_DUCK : 1;
-        if (musicGain === target) return;
-        musicGain = target;
+        const gain = on ? MUSIC_DUCK : 1;
+        if (musicGain === gain) return;
+        musicGain = gain;
+        rampMusic();
+    }
 
+    // Moves the music element to musicLevel() in a short ramp (ducking, a volume change)
+    function rampMusic() {
+        const target = musicLevel();
         clearInterval(duckTimer);
         duckTimer = 0;
-        if (fadeTimer) return; // a track switch is fading out; it starts the next track at musicGain
+        if (fadeTimer) return; // a track switch is fading out; it starts the next track at musicLevel()
 
         // Short ramp instead of a jump
         duckTimer = setInterval(() => {
@@ -260,6 +288,7 @@
 
     const voiceElement   = new Audio();
     voiceElement.preload = "none";
+    voiceElement.volume  = volumes.voice / 100;
 
     const voice = {
         setting:  readVoice(),
@@ -445,6 +474,20 @@
             writeSetting(KEY_MUSIC, settings.music);
             applyMusic();
         },
+        // kind: "music" | "effects" | "voice"; value 0-100
+        getVolume: kind => volumes[kind] ?? 100,
+        setVolume: (kind, value) => {
+            if (!(kind in volumes)) return;
+            volumes[kind] = Math.min(100, Math.max(0, Math.round(Number(value) || 0)));
+            try {
+                localStorage.setItem(KEY_VOLUME + kind, String(volumes[kind]));
+            } catch (e) {
+                // Storage unavailable: keep the volume for this session only
+            }
+            if (kind === "effects") applyEffectsVolume();
+            else if (kind === "voice") voiceElement.volume = volumes.voice / 100;
+            else rampMusic();
+        },
         isUnlocked: () => unlocked,
         // Voice-over
         getVoice: () => voice.setting,
@@ -475,6 +518,7 @@
             musicLoop: music.loop,
             musicVolume: music.volume,
             musicGain: musicGain,
+            volumes: Object.assign({}, volumes),
             voice: voice.setting,
             voiceId: voice.id,
             voicePhase: voice.phase,

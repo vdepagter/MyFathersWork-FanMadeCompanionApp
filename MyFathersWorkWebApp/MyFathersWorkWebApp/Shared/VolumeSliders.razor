@@ -1,0 +1,50 @@
+@inject AudioService Audio
+
+@* Music, effects and speech volume (pause menu). Moving a slider changes the sound at once; releasing the effects
+   slider plays a click as a sample. *@
+<div class="volume-sliders">
+    <label class="volume-title">@GlobalData.GetLocalizedUITag(GlobalTags.Audio_Volume)</label>
+    @foreach ((AudioVolume kind, string tag) in _Channels)
+    {
+        <div class="volume-row">
+            <span>@GlobalData.GetLocalizedUITag(tag)</span>
+            <input type="range" min="0" max="100" step="5"
+                   aria-label="@GlobalData.GetLocalizedUITag(tag)"
+                   value="@_Values[kind]"
+                   @oninput="e => OnInput(kind, e)"
+                   @onchange="() => OnRelease(kind)"/>
+            <span class="volume-value">@_Values[kind]%</span>
+        </div>
+    }
+</div>
+
+@code
+{
+    [Parameter] public GlobalData GlobalData { get; set; } = null!;
+
+    private static readonly (AudioVolume, string)[] _Channels =
+    [
+        (AudioVolume.Music, GlobalTags.Audio_Music),
+        (AudioVolume.Effects, GlobalTags.Audio_SoundEffects),
+        (AudioVolume.Speech, GlobalTags.Audio_Speech)
+    ];
+
+    private readonly Dictionary<AudioVolume, int> _Values = new();
+
+    protected override void OnInitialized()
+    {
+        foreach ((AudioVolume kind, _) in _Channels) _Values[kind] = Audio.GetVolume(kind);
+    }
+
+    private void OnInput(AudioVolume kind, ChangeEventArgs e)
+    {
+        if (!int.TryParse(e.Value?.ToString(), out int value)) return;
+        _Values[kind] = value;
+        Audio.SetVolume(kind, value);
+    }
+
+    private void OnRelease(AudioVolume kind)
+    {
+        if (kind == AudioVolume.Effects) Audio.PlayClick();
+    }
+}

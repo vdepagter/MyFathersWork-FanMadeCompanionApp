@@ -123,11 +123,27 @@ mirror-mode Martial -> Reign run from a Gen I save.
 - **Fix:** hub undo entries remember their round (`UndoData.Round`); `SaveGame` only skips the push when the top hub
   entry is of the same round. Undo then goes Scoring -> Late hub -> Middle hub. Checked in all three scenarios.
 
+## Phone play test - Fear of the Unknown, 4 players (29 October 2026)
+
+### 8. III-1 shows "Missing Scenario Translation -> FinalEnding_Content0" / "THE END?" - FIXED
+
+- **Cause:** the Witch Hunt hub method set `Vars.Path = WitchHunt` (a side effect, against checklist item 1). Undo and
+  load rebuild the last shown hub before the restored screen, and between `ForeignersIntro` / `CreatureIntro` and the
+  first Generation II hub that is still the Witch Hunt hub. An undo or a reload there reset `Path` to WitchHunt for the
+  rest of the game. Foreigners code that branches on `Path` then took its fallbacks: after the Middle Years curse,
+  `CaravanNext` sent the game to the Tension hub (`_ => Tension`), whose end of round went to Generation III scoring
+  with `Ending == 0`, so the final window had no ending text.
+- **Seen in:** the save from the play test (`Path` 1 = WitchHunt, `HubId` 5 = Tension, `Generation` Third, `Years`
+  Early, `Cursed` 2).
+- **Fix:** `Path` is set in `WitchHuntSetup` (once, at the start of Generation I), not in the hub. No other hub method
+  of any scenario changes state (checked). A save already in this state cannot be repaired; start that game again.
+
 ## Checklist for porting / reviewing a scenario
 
 1. **Hub text vs. state** - hub text is formatted when the hub is built. `RunScenarioAction` rebuilds the shown hub
    after every action, so this is automatic as long as hub methods have no side effects (no state changes, no
-   `SaveToUndo`, no windows/popups) and only draw random values for sections that are shown. Still play-test round
+   `SaveToUndo`, no windows/popups) and only draw random values for sections that are shown. Undo and load also call
+   the hub method of the last shown hub, which can belong to the previous Generation (finding 8). Still play-test round
    transitions themselves, not only crafted saves.
 2. **Unity-only screens** - run `python tools/sourcecheck.py <Scenario> <CsvPrefix>`. Every `S_OnEndOfGeneration`,
    `S_OnEndOfGeneration2` and `S_OnSetSpecialSetup` text becomes its own popup (`PopUpTitle.EndOfGeneration` /

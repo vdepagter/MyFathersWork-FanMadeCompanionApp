@@ -61,6 +61,8 @@ Mirror_Roll;Roll for me;Losuj za mnie
 //====== Audio ======;;
 Audio_SoundEffects;Sound effects;Efekty dźwiękowe
 Audio_Music;Music;Muzyka
+Audio_Volume;Volume;Głośność
+Audio_Speech;Speech;Mowa
 Audio_Narration;Narration;Narracja
 Audio_NarrationFemale;Female voice;Głos kobiecy
 Audio_NarrationMale;Male voice;Głos męski

@@ -70,6 +70,17 @@ public sealed class AudioService(IJSRuntime js)
     public void SetEffectsOn(bool on) => InvokeVoid("mfwAudio.setEffectsOn", on);
     public void SetMusicOn(bool on)   => InvokeVoid("mfwAudio.setMusicOn",   on);
 
+    // Volume 0-100 per channel (pause menu sliders), stored per device by audio.js
+    public int  GetVolume(AudioVolume kind)            => Invoke("mfwAudio.getVolume", 100, VolumeName(kind));
+    public void SetVolume(AudioVolume kind, int value) => InvokeVoid("mfwAudio.setVolume", VolumeName(kind), value);
+
+    private static string VolumeName(AudioVolume kind) => kind switch
+    {
+        AudioVolume.Music   => "music",
+        AudioVolume.Effects => "effects",
+        _                   => "voice"
+    };
+
     // True after the first user gesture; before it the browser blocks playback
     public bool IsUnlocked => Invoke("mfwAudio.isUnlocked", false);
 

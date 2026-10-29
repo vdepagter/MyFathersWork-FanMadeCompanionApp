@@ -248,6 +248,7 @@
         PlayScreenSounds(info);
         UpdateVoiceOver(info);
         PlayScreenTransition(info);
+        ScrollToTop(info);
         UpdateMusic();
         _ = GlobalData.PersistAsync(Js); // the game and its undo history, after every screen and every undo
         _ = NoteGalleryAsync();
@@ -420,6 +421,23 @@
                 _ = Js.InvokeVoidAsync("mfwTransitions.enter", "input");
                 break;
         }
+    }
+
+    // A new story window, or a hub reached from a window or in a new round, starts at the top of the page. A hub rebuilt
+    // in the same round (after a hub link's popup) keeps its scroll position, so players don't lose their place.
+    private int _LastHubRound = -1;
+
+    private void ScrollToTop(ScreenChangeInfo info)
+    {
+        if (info.Change is not (ScreenChange.BaseKind or ScreenChange.SameKind)) return;
+
+        if (info.Presented is GameplayHub)
+        {
+            if (info.Change == ScreenChange.SameKind && _LastHubRound == CurrentRoundIndex) return;
+            _LastHubRound = CurrentRoundIndex;
+        }
+
+        _ = Js.InvokeVoidAsync("mfwTransitions.scrollTop");
     }
 
     // Scenario theme, or the end-game track while the final ending is shown. Idempotent (AudioService and audio.js only

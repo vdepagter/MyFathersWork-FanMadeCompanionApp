@@ -13,7 +13,6 @@ public static partial class FearOfTheUnknown
         FearOfTheUnknownVars vars = Vars(globalData);
 
         vars.HubId           = FearOfTheUnknownHubId.WitchHunt;
-        vars.Path            = FearOfTheUnknownHubId.WitchHunt;
         globalData.ActiveHub = new GameplayHub(globalData);
         globalData.ActiveHub.SetDefaultTitle();
         globalData.ActiveHub.SetSubtitle(globalData.Years);
@@ -78,7 +77,10 @@ public static partial class FearOfTheUnknown
     {
         globalData.SaveToUndo();
 
+        // Set here, not in the hub method: undo and load rebuild the last shown hub (still WitchHunt during the Generation II intro
+        // and setup), which reset Path and sent the Foreigners branch into the Tension hub and an ending-less final screen
         FearOfTheUnknownVars vars = Vars(globalData);
+        vars.Path = FearOfTheUnknownHubId.WitchHunt;
         vars.Tracker = globalData.PlayersNum switch
         {
             2 => 6,

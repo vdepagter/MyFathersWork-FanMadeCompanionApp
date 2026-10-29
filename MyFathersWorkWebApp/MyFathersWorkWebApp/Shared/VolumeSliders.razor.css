@@ -1,0 +1,30 @@
+.volume-sliders {
+    margin-top: 1rem;
+    text-align: left;
+}
+
+.volume-title {
+    display: block;
+    margin-bottom: 0.3rem;
+    color: #2e1f14;
+    font-weight: bold;
+}
+
+.volume-row {
+    display: grid;
+    grid-template-columns: 8rem 1fr 3rem;
+    align-items: center;
+    gap: 0.5rem;
+    color: #2e1f14;
+    font-size: 0.95rem;
+}
+
+.volume-row input[type="range"] {
+    width: 100%;
+    accent-color: #2e1f14;
+}
+
+.volume-value {
+    text-align: right;
+    font-variant-numeric: tabular-nums;
+}

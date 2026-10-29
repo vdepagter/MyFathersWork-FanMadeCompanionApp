@@ -7,6 +7,7 @@
 //   enter(kind)  - entrance animations of the elements on the new screen:
 //                  "popup" (GameplayPopup), "input" (GameplayInputPopup), "same" (window -> window, hub -> hub),
 //                  "page" (setup / menu page after a navigation, from Layout/MainLayout.razor).
+//   scrollTop()  - back to the top of the page when a new story window or a new round's hub is shown.
 // Both restart their animation (remove class, force reflow, add class) and clear it on animationend (or a timer). With
 // prefers-reduced-motion the overlay is skipped; the entrances become a short opacity fade (CSS).
 (function () {
@@ -79,5 +80,10 @@
         });
     }
 
-    window.mfwTransitions = { run: run, enter: enter };
+    // A new story page or round starts at the top (a long page left the next one scrolled down)
+    function scrollTop() {
+        window.scrollTo({ top: 0, left: 0, behavior: "instant" });
+    }
+
+    window.mfwTransitions = { run: run, enter: enter, scrollTop: scrollTop };
 })();
