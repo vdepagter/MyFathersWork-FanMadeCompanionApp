@@ -196,7 +196,7 @@ explanations, warrior statistics, battles) are left out. Check with `python tool
   (`HuntersChoice`, title variants like `Gen1FateVictim`). A renamed or new screen method must be updated in the CSV.
 - `Pages/Gameplay.razor` notes the screen after it is rendered (never scenario code). Logged titles live in
   `ScenarioVars.LogBook`, so undo forgets screens it goes back over and load/New Game behave like the game state.
-- As in Unity: six per page, oldest first, the event on display is left out while it is the newest, `Xvillage` -> village
+- As in Unity: six per page, oldest first, the event on display is left out while it is the newest, `Xvillage` (location or summary) -> village
   name (Unity did this only for Financial Woes). Not ported: the per-title location icons (the sprites are not in the
   repository copy of the Unity project) and the lorem-ipsum "setup" button.
 - Cost of Disease deviations: exact title match for "logged once" (Unity's `Contains` skipped e.g. "Published" after "A

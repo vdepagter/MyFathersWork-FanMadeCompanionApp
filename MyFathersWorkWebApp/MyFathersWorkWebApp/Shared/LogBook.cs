@@ -97,6 +97,9 @@ public class LogBookService(HttpClient http)
         if (!vars.LogBook.Contains(entry.Title)) vars.LogBook = [..vars.LogBook, entry.Title];
     }
 
+    private static LogBookEntry WithVillage(LogBookEntry entry, string town) =>
+        entry with { Location = entry.Location.Replace("Xvillage", town), Summary = entry.Summary.Replace("Xvillage", town) };
+
     // The logged events, oldest first. Like Unity, the event on display is left out while it is the newest one.
     public List<LogBookEntry> Entries(GlobalData globalData)
     {
@@ -104,7 +107,7 @@ public class LogBookService(HttpClient http)
 
         List<LogBookEntry> entries = globalData.ScenarioVars.LogBook
                                                .Where(title => book.ByTitle.ContainsKey(title))
-                                               .Select(title => book.ByTitle[title] with { Summary = book.ByTitle[title].Summary.Replace("Xvillage", globalData.TownName) })
+                                               .Select(title => WithVillage(book.ByTitle[title], globalData.TownName))
                                                .ToList();
 
         if (entries.Count > 0 && CurrentEntry(globalData, book)?.Title == entries[^1].Title) entries.RemoveAt(entries.Count - 1);
