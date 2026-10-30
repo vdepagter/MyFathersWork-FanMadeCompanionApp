@@ -1,33 +1,28 @@
-﻿@page "/PlayersVillage"
+@page "/PlayersVillage"
+@using MyFathersWorkApp.Shared
 @inject NavigationManager Nav
 @inject AudioService      Audio
 
-<div class="back-button" @onclick="GoBack">
-    ⬅ @GlobalData.GetLocalizedUITag(GlobalTags.MainMenu_Back)
-</div>
-
-<div class="village-name-container">
-    <h1>@GlobalData.GetLocalizedUITag(GlobalTags.Village_Title)</h1>
-
-    <div class="description-box">
+<MenuPage Title="@GlobalData.GetLocalizedUITag(GlobalTags.Village_Title)" OnBack="GoBack" Class="centered">
+    <div class="mp-parchment mfw-zoom-in">
         @GlobalData.GetLocalizedUITag(GlobalTags.Village_Subtitle).AsMarkup()
     </div>
 
-    <input class="name-input" @bind="GlobalData.TownName" @bind:event="oninput"
+    <input class="mp-input" @bind="GlobalData.TownName" @bind:event="oninput"
            @onkeydown="@(e => { if (e.Key is "Enter" or "NumpadEnter") Continue(); })"
            placeholder="@GlobalData.GetLocalizedUITag(GlobalTags.Village_Placeholder)"/>
 
-    <button class="continue-button" @onclick="Continue">
+    <button class="mfw-button mp-button" @onclick="Continue">
         @GlobalData.GetLocalizedUITag(GlobalTags.MainMenu_Continue)
     </button>
-</div>
+</MenuPage>
 
 @if (_ShowPopup)
 {
-    <div class="popup-overlay">
-        <div class="popup-box">
+    <div class="mp-popup-overlay" @onclick="ClosePopup">
+        <div class="mp-popup mfw-parchment mfw-ink mfw-zoom-in">
             <p>@GlobalData.GetLocalizedUITag(GlobalTags.Village_PopUp)</p>
-            <button @onclick="ClosePopup">OK</button>
+            <button class="mfw-button mp-button" @onclick="ClosePopup">OK</button>
         </div>
     </div>
 }

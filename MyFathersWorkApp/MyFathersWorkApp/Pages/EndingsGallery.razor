@@ -1,22 +1,19 @@
 @page "/EndingsGallery"
+@using MyFathersWorkApp.Shared
 @using System.Globalization
 @inject NavigationManager Nav
 @inject IJSRuntime        Js
 @inject AudioService      Audio
 @inject GalleryService    Gallery
 
-<div class="back-button" @onclick="GoBack">
-    ⬅ @GlobalData.GetLocalizedUITag(GlobalTags.MainMenu_Back)
-</div>
-
+<MenuPage Title="@GlobalData.GetLocalizedUITag(GlobalTags.MainMenu_Gallery)" OnBack="GoBack">
 <div class="gallery-container">
-    <h1>@GlobalData.GetLocalizedUITag(GlobalTags.MainMenu_Gallery)</h1>
 
-    <div class="gallery-tabs" role="tablist">
-        <button role="tab" aria-selected="@(!_EndingsTab)" class="@(!_EndingsTab ? "selected" : "")" @onclick="() => SelectTab(false)">
+    <div class="mp-tabs gallery-tabs" role="tablist">
+        <button role="tab" aria-selected="@(!_EndingsTab)" class="mp-chip" @onclick="() => SelectTab(false)">
             @GlobalData.GetLocalizedUITag(GlobalTags.Gallery_Players)
         </button>
-        <button role="tab" aria-selected="@_EndingsTab" class="@(_EndingsTab ? "selected" : "")" @onclick="() => SelectTab(true)">
+        <button role="tab" aria-selected="@_EndingsTab" class="mp-chip" @onclick="() => SelectTab(true)">
             @GlobalData.GetLocalizedUITag(GlobalTags.Gallery_Endings)
         </button>
     </div>
@@ -59,11 +56,11 @@
             </div>
         }
 
-        <h2>@GlobalData.GetLocalizedUITag(GlobalTags.Gallery_RecentGames)</h2>
+        <h2 class="mp-section-title">@GlobalData.GetLocalizedUITag(GlobalTags.Gallery_RecentGames)</h2>
 
         @if (_Data.Games.Count == 0)
         {
-            <p class="gallery-note">@GlobalData.GetLocalizedUITag(GlobalTags.Gallery_NoGames)</p>
+            <p class="mp-note">@GlobalData.GetLocalizedUITag(GlobalTags.Gallery_NoGames)</p>
         }
 
         @foreach (GalleryGame game in _Data.Games.OrderByDescending(game => game.Date).Take(10))
@@ -77,35 +74,35 @@
             </div>
         }
 
-        <h2>@GlobalData.GetLocalizedUITag(GlobalTags.Gallery_Backup)</h2>
-        <p class="gallery-note">@GlobalData.GetLocalizedUITag(GlobalTags.Gallery_BackupNote)</p>
+        <h2 class="mp-section-title">@GlobalData.GetLocalizedUITag(GlobalTags.Gallery_Backup)</h2>
+        <p class="mp-note">@GlobalData.GetLocalizedUITag(GlobalTags.Gallery_BackupNote)</p>
 
         <div class="gallery-buttons">
-            <button class="gallery-button" @onclick="Export">@GlobalData.GetLocalizedUITag(GlobalTags.Gallery_Export)</button>
-            <button class="gallery-button" @onclick="ShowImport">@GlobalData.GetLocalizedUITag(GlobalTags.Gallery_Import)</button>
+            <button class="mp-chip" @onclick="Export">@GlobalData.GetLocalizedUITag(GlobalTags.Gallery_Export)</button>
+            <button class="mp-chip" @onclick="ShowImport">@GlobalData.GetLocalizedUITag(GlobalTags.Gallery_Import)</button>
         </div>
 
         @if (_Export != string.Empty)
         {
-            <textarea class="gallery-box" readonly>@_Export</textarea>
+            <textarea class="mp-input" readonly>@_Export</textarea>
             <div class="gallery-buttons">
-                <button class="gallery-button" @onclick="CopyExport">@GlobalData.GetLocalizedUITag(GlobalTags.Gameplay_Copy)</button>
-                <button class="gallery-button" @onclick="DownloadExport">@GlobalData.GetLocalizedUITag(GlobalTags.Gameplay_DownloadFile)</button>
+                <button class="mp-chip" @onclick="CopyExport">@GlobalData.GetLocalizedUITag(GlobalTags.Gameplay_Copy)</button>
+                <button class="mp-chip" @onclick="DownloadExport">@GlobalData.GetLocalizedUITag(GlobalTags.Gameplay_DownloadFile)</button>
             </div>
         }
 
         @if (_ShowImport)
         {
-            <textarea class="gallery-box" @bind="_ImportText" placeholder="@GlobalData.GetLocalizedUITag(GlobalTags.Gallery_PasteHere)"></textarea>
+            <textarea class="mp-input" @bind="_ImportText" placeholder="@GlobalData.GetLocalizedUITag(GlobalTags.Gallery_PasteHere)"></textarea>
             <div class="gallery-buttons">
                 <InputFile OnChange="@LoadImportFile"/>
-                <button class="gallery-button" @onclick="Import">@GlobalData.GetLocalizedUITag(GlobalTags.Gallery_Import)</button>
+                <button class="mp-chip" @onclick="Import">@GlobalData.GetLocalizedUITag(GlobalTags.Gallery_Import)</button>
             </div>
         }
 
         @if (_ImportMessage != string.Empty)
         {
-            <p class="gallery-note">@_ImportMessage</p>
+            <p class="mp-note">@_ImportMessage</p>
         }
     }
     else
@@ -113,7 +110,7 @@
         <div class="scenario-tabs">
             @foreach (ScenarioId scenario in GalleryTrees.Scenarios)
             {
-                <button class="@(scenario == _Scenario ? "selected" : "")" aria-pressed="@(scenario == _Scenario)" @onclick="() => SelectScenario(scenario)">
+                <button class="mp-chip" aria-pressed="@(scenario == _Scenario)" @onclick="() => SelectScenario(scenario)">
                     <span>@GalleryTrees.Name(scenario)</span>
                     <span class="scenario-count">@GalleryService.EndingsDone(_Data, scenario).Count / 8</span>
                 </button>
@@ -122,7 +119,7 @@
 
         <div class="tree-toolbar">
             <span>@GlobalData.GetLocalizedUITag(GlobalTags.Gallery_EndingsCount).FormatWithReplacement(0, GalleryService.EndingsDone(_Data, _Scenario).Count.ToString())</span>
-            <button class="gallery-button" @onclick="ToggleShowAll">
+            <button class="mp-chip" @onclick="ToggleShowAll">
                 @GlobalData.GetLocalizedUITag(_ShowAll ? GlobalTags.Gallery_HideSpoilers : GlobalTags.Gallery_ShowAll)
             </button>
         </div>
@@ -148,7 +145,7 @@
                     <div class="tree-action">
                         @if (!row.Known)
                         {
-                            <button class="gallery-button small" @onclick="() => Reveal(row.Key)">@GlobalData.GetLocalizedUITag(GlobalTags.Gallery_Reveal)</button>
+                            <button class="mp-chip small" @onclick="() => Reveal(row.Key)">@GlobalData.GetLocalizedUITag(GlobalTags.Gallery_Reveal)</button>
                         }
                         else if (row.Node.IsEnding && row.Played)
                         {
@@ -165,9 +162,10 @@
             }
         </div>
 
-        <p class="gallery-note">@GlobalData.GetLocalizedUITag(GlobalTags.Gallery_Legend)</p>
+        <p class="mp-note">@GlobalData.GetLocalizedUITag(GlobalTags.Gallery_Legend)</p>
     }
 </div>
+</MenuPage>
 
 @code
 {

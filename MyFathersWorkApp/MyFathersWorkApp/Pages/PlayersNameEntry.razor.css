@@ -1,202 +1,40 @@
-﻿/* Back Button */
-.back-button {
-    position: fixed;
-    top: 1rem;
-    left: 1rem;
-    background-color: #5c4633;
-    color: #e0d3b8;
-    padding: 0.5rem 1rem;
-    border: 2px solid #2e1f14;
-    border-radius: 6px;
-    cursor: pointer;
-    font-weight: bold;
-    box-shadow: 0 0 8px rgba(0,0,0,0.6);
-    transition: background-color 0.3s, transform 0.1s;
-    z-index: 10;
+/* "Carefully pass the storybook to Player X" on a steel plate */
+.pass-book {
+    max-width: 40rem;
+    padding: 0.7rem 1.4rem;
+    border: 12px solid transparent;
+    border-image: url(images/ui/input-box.webp) 40 fill / 12px stretch;
+    font-family: var(--mfw-font-heading);
+    font-size: clamp(1.4rem, 3.4vw, 2.1rem);
+    line-height: 1.2;
+    color: #ffd27a;
+    text-shadow: 0 2px 3px #000;
 }
 
-.back-button:hover {
-    background-color: #7a5a3c;
-    transform: scale(1.05);
-}
-
-.back-button:active {
-    transform: scale(0.95);
-}
-
-/* Main Container */
-.name-entry-container {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    min-height: 100vh;
-    padding: 2rem;
-    text-align: center;
-    color: #e0d3b8;
-}
-
-/* Instruction Box */
-.instruction-box {
-    background-color: rgba(50, 50, 50, 0.9);
-    border: 2px solid #d2a42a;
-    padding: 1rem 2rem;
-    border-radius: 8px;
-    margin-bottom: 2rem;
-    color: #ffd861;
-    font-weight: bold;
-    box-shadow: 0 0 10px rgba(0,0,0,0.7);
-}
-
-/* Prompt */
-.prompt {
-    font-size: 1.4rem;
-    margin-bottom: 1rem;
-}
-
-/* Name Input */
-.name-input {
-    width: 300px;
-    max-width: 80%;
-    padding: 0.8rem 1rem;
-    font-size: 1.1rem;
-    border: 3px solid #2e1f14;
-    border-radius: 8px;
-    background-color: #222;
-    color: #e0d3b8;
-    box-shadow: inset 0 0 8px rgba(0,0,0,0.8);
-    margin-bottom: 2rem;
-}
-
-.name-input::placeholder {
-    color: #888;
-}
-
-/* Continue Button */
-.continue-button {
-    padding: 1rem 2rem;
-    font-size: 1.2rem;
-    background-color: #5c4633;
-    color: #e0d3b8;
-    border: 3px solid #2e1f14;
-    border-radius: 8px;
-    cursor: pointer;
-    box-shadow: 0 0 10px rgba(0,0,0,0.7);
-    transition: transform 0.1s, background-color 0.3s;
-}
-
-.continue-button:hover {
-    background-color: #7a5a3c;
-    transform: scale(1.05);
-}
-
-.continue-button:active {
-    transform: scale(0.95);
-}
-
-/* Popup Overlay */
-.popup-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0,0,0,0.7);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    z-index: 999;
-}
-
-/* Popup Box */
-.popup-box {
-    background-color: #d4bfa5;
-    border: 3px solid #2e1f14;
-    padding: 2rem;
-    border-radius: 8px;
-    text-align: center;
-    box-shadow: 0 0 15px rgba(0,0,0,0.8);
-    max-width: 400px;
-}
-
-.popup-box p {
-    color: #3a1e12;
-    margin-bottom: 1.5rem;
-    font-size: 1.2rem;
-}
-
-.popup-box button {
-    padding: 0.6rem 1.2rem;
-    font-size: 1rem;
-    background-color: #5c4633;
-    color: #e0d3b8;
-    border: 2px solid #2e1f14;
-    border-radius: 6px;
-    cursor: pointer;
-    transition: background-color 0.3s, transform 0.1s;
-}
-
-.popup-box button:hover {
-    background-color: #7a5a3c;
-    transform: scale(1.05);
-}
-
-.popup-box button:active {
-    transform: scale(0.95);
-}
-
-
-/* Endings Gallery: remembered players */
 .same-table {
-    background-color: #1d1813;
-    border: 1px solid #5c4633;
-    border-radius: 10px;
-    padding: 1rem 1.25rem;
-    margin-bottom: 1.5rem;
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 0.6rem;
-    max-width: 420px;
+    gap: 0.5rem;
+    width: min(100%, 30rem);
 }
 
 .same-table-names {
-    color: #b3a68c;
+    font-size: 1.15rem;
+    color: #ffd98a;
 }
 
 .remembered {
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 0.6rem;
-    margin: -1rem 0 2rem;
-    max-width: 480px;
-}
-
-.remembered-label {
-    color: #b3a68c;
+    gap: 0.5rem;
+    max-width: 40rem;
 }
 
 .remembered-names {
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
-    gap: 0.6rem;
-}
-
-.name-chip {
-    min-height: 44px;
-    padding: 0 1.1rem;
-    border-radius: 22px;
-    border: 1px solid #7a5a3c;
-    background-color: #2a211a;
-    color: #e0d3b8;
-    font-family: inherit;
-    font-size: 1rem;
-    cursor: pointer;
-}
-
-.name-chip:hover,
-.name-chip.picked {
-    background-color: #5c4633;
+    gap: 0.35rem;
 }

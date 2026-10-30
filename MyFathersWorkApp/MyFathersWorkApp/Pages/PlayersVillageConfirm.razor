@@ -1,20 +1,17 @@
-﻿@page "/PlayersVillageConfirm"
+@page "/PlayersVillageConfirm"
+@using MyFathersWorkApp.Shared
 @inject NavigationManager Nav
 @inject AudioService      Audio
 
-<div class="back-button" @onclick="GoBack">
-    ⬅ @GlobalData.GetLocalizedUITag(GlobalTags.MainMenu_Back)
-</div>
-
-<div class="village-confirmation-container">
-    <div class="text-box">
+<MenuPage OnBack="GoBack" Class="centered">
+    <div class="mp-parchment mfw-zoom-in">
         @GlobalData.GetLocalizedUITag(GlobalTags.VillageConfirm_Content).FormatWithReplacement(0, GlobalData.TownName).ProtectNames(GlobalData).AsMarkup()
     </div>
 
-    <button class="continue-button" @onclick="Continue">
+    <button class="mfw-button mp-button" @onclick="Continue">
         @GlobalData.GetLocalizedUITag(GlobalTags.MainMenu_Continue)
     </button>
-</div>
+</MenuPage>
 
 @code 
 {

@@ -1,69 +1,56 @@
-﻿@page "/PlayersNameEntry/{PlayerIndex:int}"
+@page "/PlayersNameEntry/{PlayerIndex:int}"
+@using MyFathersWorkApp.Shared
 @inject NavigationManager Nav
 @inject AudioService      Audio
 @inject GalleryService    Gallery
 
-<div class="back-button" @onclick="GoBack">
-    ⬅ @GlobalData.GetLocalizedUITag(GlobalTags.MainMenu_Back)
-</div>
-
-<div class="name-entry-container">
-    <div class="instruction-box">
-        ⚠️ @GlobalData.GetLocalizedUITag(GlobalTags.PlayersNameEntry_Title).FormatWithIndex(0, PlayerIndex).AsMarkup()
+<MenuPage OnBack="GoBack" Class="centered">
+    <div class="pass-book">
+        @GlobalData.GetLocalizedUITag(GlobalTags.PlayersNameEntry_Title).FormatWithIndex(0, PlayerIndex).AsMarkup()
     </div>
 
-    <div class="prompt">
+    <p class="mp-lead">
         @GlobalData.GetLocalizedUITag(GlobalTags.PlayersNameEntry_SubTitle).FormatWithIndex(0, PlayerIndex).AsMarkup()
-    </div>
+    </p>
 
     @if (_LastTable.Count > 0)
     {
         // Endings Gallery: the players of the last game, in seat order
-        <div class="same-table">
+        <div class="same-table mfw-dark-panel">
             <div>@GlobalData.GetLocalizedUITag(GlobalTags.PlayersNameEntry_SameTable)</div>
             <div class="same-table-names">@string.Join(", ", _LastTable)</div>
-            <button class="name-chip" @onclick="UseLastTable">@GlobalData.GetLocalizedUITag(GlobalTags.PlayersNameEntry_UseTable)</button>
+            <button class="mp-chip" @onclick="UseLastTable">@GlobalData.GetLocalizedUITag(GlobalTags.PlayersNameEntry_UseTable)</button>
         </div>
     }
 
-    <input class="name-input" @bind="_PlayerName" @bind:event="oninput"
+    <input class="mp-input" @bind="_PlayerName" @bind:event="oninput"
            @onkeydown="@(e => { if (e.Key is "Enter" or "NumpadEnter") Continue(); })"
            placeholder="@GlobalData.GetLocalizedUITag(GlobalTags.PlayersNameEntry_Placeholder)"/>
 
     @if (_Remembered.Count > 0)
     {
         <div class="remembered">
-            <div class="remembered-label">@GlobalData.GetLocalizedUITag(GlobalTags.PlayersNameEntry_Remembered)</div>
+            <div class="mp-note">@GlobalData.GetLocalizedUITag(GlobalTags.PlayersNameEntry_Remembered)</div>
             <div class="remembered-names">
                 @foreach (string name in _Remembered)
                 {
-                    <button class="name-chip @(name == _PlayerName ? "picked" : "")" @onclick="() => PickName(name)">@name</button>
+                    <button class="mp-chip @(name == _PlayerName ? "selected" : "")" @onclick="() => PickName(name)">@name</button>
                 }
             </div>
         </div>
     }
 
-    <button class="continue-button" @onclick="Continue">
+    <button class="mfw-button mp-button" @onclick="Continue">
         @GlobalData.GetLocalizedUITag(GlobalTags.MainMenu_Continue)
     </button>
-</div>
+</MenuPage>
 
-@if (_ShowPopup)
+@if (_ShowPopup || _ShowPopUp2)
 {
-    <div class="popup-overlay">
-        <div class="popup-box">
-            <p>@GlobalData.GetLocalizedUITag(GlobalTags.PlayersNameEntry_PopUp)</p>
-            <button @onclick="ClosePopup">OK</button>
-        </div>
-    </div>
-}
-
-@if (_ShowPopUp2)
-{
-    <div class="popup-overlay">
-        <div class="popup-box">
-            <p>@GlobalData.GetLocalizedUITag(GlobalTags.PlayersNameEntry_PopUp2)</p>
-            <button @onclick="ClosePopup">OK</button>
+    <div class="mp-popup-overlay" @onclick="ClosePopup">
+        <div class="mp-popup mfw-parchment mfw-ink mfw-zoom-in">
+            <p>@GlobalData.GetLocalizedUITag(_ShowPopup ? GlobalTags.PlayersNameEntry_PopUp : GlobalTags.PlayersNameEntry_PopUp2)</p>
+            <button class="mfw-button mp-button" @onclick="ClosePopup">OK</button>
         </div>
     </div>
 }

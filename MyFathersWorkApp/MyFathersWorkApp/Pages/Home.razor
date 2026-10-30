@@ -43,15 +43,13 @@
         <button class="mfw-button" disabled="@(!IsContinueAvailable)" @onclick="OnContinue">@GlobalData.GetLocalizedUITag(GlobalTags.MainMenu_Continue)</button>
         <button class="mfw-button" @onclick="OnNewGameClick">@GlobalData.GetLocalizedUITag(GlobalTags.MainMenu_NewGame)</button>
         <button class="mfw-button" @onclick="OpenSavedGames">@GlobalData.GetLocalizedUITag(GlobalTags.MainMenu_SavedGames)</button>
-        <button class="mfw-button" @onclick="ShowLoadPopup">@GlobalData.GetLocalizedUITag(GlobalTags.MainMenu_LoadGame)</button>
-        <button class="mfw-button" @onclick="ShowSettings">@GlobalData.GetLocalizedUITag(GlobalTags.MainMenu_Settings)</button>
         <button class="mfw-button" @onclick="OpenGallery">@GlobalData.GetLocalizedUITag(GlobalTags.MainMenu_Endings)</button>
+        <button class="mfw-button" style="grid-column: 1 / -1; justify-self: center; width: calc(50% - 0.35cqw)" @onclick="ShowSettings">@GlobalData.GetLocalizedUITag(GlobalTags.MainMenu_Settings)</button>
     </div>
 
     <p class="disclaimer">@GlobalData.GetLocalizedUITag(GlobalTags.MainMenu_FanMade)</p>
 </div>
 
-<LoadGamePopup Visible="@_ShowLoadGame" OnBack="HideLoadPopup" GlobalData="@GlobalData"/>
 <SettingsPopup Visible="@_ShowSettings" OnClose="HideSettings" OnLanguageChange="OnLanguageChanges" GlobalData="@GlobalData"/>
 
 @code
@@ -60,7 +58,6 @@
 
     private bool IsContinueAvailable { get; set; }
     
-    private bool _ShowLoadGame;
     private bool _ShowSettings;
 
     protected override async Task OnInitializedAsync()
@@ -131,13 +128,6 @@
         catch (JSDisconnectedException) { }
     }
 
-    private void ShowLoadPopup()
-    {
-        Audio.PlayClick();
-        _ShowLoadGame = true;
-    }
-
-    private void HideLoadPopup() => _ShowLoadGame = false;
 
     private void ShowSettings()
     {

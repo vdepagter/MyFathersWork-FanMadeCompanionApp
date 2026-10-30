@@ -16,7 +16,7 @@
     "use strict";
 
     const EFFECTS = ["sfx-click", "sfx-transition-cover", "sfx-transition-reveal", "sfx-setup", "sfx-end-of-round",
-                     "sfx-special-event", "sfx-welcome", "sfx-footsteps"];
+                     "sfx-special-event", "sfx-welcome", "sfx-footsteps", "sfx-bid-open", "sfx-reveal"];
     const VOLUMES       = { "sfx-transition-cover": 0.6, "sfx-transition-reveal": 0.6 }; // page flips: 60% (play test)
     const MUSIC_FADE_MS = 400;
     const KEY_EFFECTS   = "audio.effects";

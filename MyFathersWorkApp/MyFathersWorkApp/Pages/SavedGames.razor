@@ -1,4 +1,5 @@
 @page "/SavedGames"
+@using MyFathersWorkApp.Shared
 @using System.Globalization
 @inject NavigationManager Nav
 @inject IJSRuntime        Js
@@ -6,48 +7,43 @@
 @inject AudioService      Audio
 @inject SavedGamesService Saves
 
-<div class="back-button" @onclick="GoBack">
-    ⬅ @GlobalData.GetLocalizedUITag(GlobalTags.MainMenu_Back)
-</div>
-
-<div class="saves-container">
-    <h1>@GlobalData.GetLocalizedUITag(GlobalTags.MainMenu_SavedGames)</h1>
-    <p class="saves-note">@GlobalData.GetLocalizedUITag(GlobalTags.SavedGames_Note)</p>
+<MenuPage Title="@GlobalData.GetLocalizedUITag(GlobalTags.MainMenu_SavedGames)" OnBack="GoBack">
+    <p class="mp-note">@GlobalData.GetLocalizedUITag(GlobalTags.SavedGames_Note)</p>
 
     @if (_Loaded)
     {
         @if (_Current != null)
         {
-            <h2>@GlobalData.GetLocalizedUITag(GlobalTags.SavedGames_Current)</h2>
-            <div class="save-card">
+            <h2 class="mp-section-title">@GlobalData.GetLocalizedUITag(GlobalTags.SavedGames_Current)</h2>
+            <div class="save-card mfw-dark-panel">
                 @Describe(_Current)
                 <div class="save-buttons">
-                    <button class="save-button" @onclick="ContinueCurrent">@GlobalData.GetLocalizedUITag(GlobalTags.MainMenu_Continue)</button>
+                    <button class="mfw-button mp-button save-main" @onclick="ContinueCurrent">@GlobalData.GetLocalizedUITag(GlobalTags.MainMenu_Continue)</button>
                 </div>
             </div>
         }
 
-        <h2>@GlobalData.GetLocalizedUITag(GlobalTags.SavedGames_Earlier)</h2>
+        <h2 class="mp-section-title">@GlobalData.GetLocalizedUITag(GlobalTags.SavedGames_Earlier)</h2>
 
         @if (_Games.Count == 0)
         {
-            <p class="saves-note">@GlobalData.GetLocalizedUITag(GlobalTags.SavedGames_None)</p>
+            <p class="mp-note">@GlobalData.GetLocalizedUITag(GlobalTags.SavedGames_None)</p>
         }
 
         @foreach (SavedGameInfo game in _Games.OrderByDescending(game => game.LastPlayed))
         {
-            <div class="save-card">
+            <div class="save-card mfw-dark-panel">
                 @Describe(game)
                 <div class="save-buttons">
-                    <button class="save-button" @onclick="() => Open(game.Id)">@GlobalData.GetLocalizedUITag(GlobalTags.SavedGames_Open)</button>
-                    <button class="save-button small" @onclick="() => DownloadSaveCode(game)">@GlobalData.GetLocalizedUITag(GlobalTags.SavedGames_SaveCode)</button>
+                    <button class="mfw-button mp-button save-main" @onclick="() => Open(game.Id)">@GlobalData.GetLocalizedUITag(GlobalTags.SavedGames_Open)</button>
+                    <button class="mp-chip" @onclick="() => DownloadSaveCode(game)">@GlobalData.GetLocalizedUITag(GlobalTags.SavedGames_SaveCode)</button>
                     @if (_ConfirmDelete == game.Id)
                     {
-                        <button class="save-button small danger" @onclick="() => Delete(game.Id)">@GlobalData.GetLocalizedUITag(GlobalTags.SavedGames_SureDelete)</button>
+                        <button class="mp-chip danger" @onclick="() => Delete(game.Id)">@GlobalData.GetLocalizedUITag(GlobalTags.SavedGames_SureDelete)</button>
                     }
                     else
                     {
-                        <button class="save-button small" @onclick="() => AskDelete(game.Id)">@GlobalData.GetLocalizedUITag(GlobalTags.SavedGames_Delete)</button>
+                        <button class="mp-chip" @onclick="() => AskDelete(game.Id)">@GlobalData.GetLocalizedUITag(GlobalTags.SavedGames_Delete)</button>
                     }
                 </div>
             </div>
@@ -55,10 +51,31 @@
 
         @if (_Message != string.Empty)
         {
-            <p class="saves-note">@_Message</p>
+            <p class="mp-note">@_Message</p>
         }
+
+        @* Load a save code (a file or pasted text); this was Load Game on the Main Menu *@
+        <h2 class="mp-section-title">@GlobalData.GetLocalizedUITag(GlobalTags.SavedGames_Import)</h2>
+        <div class="save-card mfw-dark-panel import">
+            <p class="mp-note">@GlobalData.GetLocalizedUITag(GlobalTags.SavedGames_ImportNote)</p>
+            <textarea class="mp-input" @bind="_ImportCode" @bind:event="oninput"
+                      placeholder="@GlobalData.GetLocalizedUITag(GlobalTags.MainMenu_PasteSaveDataHere)"></textarea>
+            <div class="save-buttons">
+                <label class="mp-chip">
+                    @GlobalData.GetLocalizedUITag(GlobalTags.SavedGames_ImportFile)
+                    <InputFile class="import-file" accept=".txt,text/plain" OnChange="LoadImportFile"/>
+                </label>
+                <button class="mfw-button mp-button save-main" disabled="@string.IsNullOrWhiteSpace(_ImportCode)" @onclick="ImportCode">
+                    @GlobalData.GetLocalizedUITag(GlobalTags.MainMenu_LoadGame)
+                </button>
+            </div>
+            @if (_ImportFailed)
+            {
+                <p class="mp-note import-failed">@GlobalData.GetLocalizedUITag(GlobalTags.SavedGames_ImportFailed)</p>
+            }
+        </div>
     }
-</div>
+</MenuPage>
 
 @code
 {
@@ -69,6 +86,8 @@
     private List<SavedGameInfo> _Games         = [];
     private string              _ConfirmDelete = string.Empty;
     private string              _Message       = string.Empty;
+    private string              _ImportCode    = string.Empty;
+    private bool                _ImportFailed;
 
     protected override async Task OnInitializedAsync()
     {
@@ -131,6 +150,30 @@
         if (code == string.Empty) return;
         string name = $"MyFathersWork_{game.Scenario}_{game.LastPlayed.ToLocalTime():yyyy-MM-dd_HHmm}.txt";
         await Js.InvokeVoidAsync("BlazorDownloadFile", name, "text/plain;charset=utf-8", code);
+    }
+
+    private async Task LoadImportFile(InputFileChangeEventArgs e)
+    {
+        using StreamReader reader = new(e.File.OpenReadStream());
+        _ImportCode   = (await reader.ReadToEndAsync()).Trim();
+        _ImportFailed = false;
+    }
+
+    private async Task ImportCode()
+    {
+        Audio.PlayClick();
+        string code = _ImportCode.Trim();
+        if (code == string.Empty) return;
+
+        if (!Convert.TryFromBase64String(code, new byte[code.Length], out int _))
+        {
+            _ImportFailed = true;
+            return;
+        }
+
+        await Saves.ArchiveCurrentAsync(); // the loaded game replaces the one being played, which stays in the list
+        await GlobalData.LoadGameAsync(code, Nav, Http, Js);
+        Nav.NavigateTo("Gameplay");
     }
 
     private void AskDelete(string id)

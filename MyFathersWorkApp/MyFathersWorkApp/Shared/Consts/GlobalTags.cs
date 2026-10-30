@@ -210,6 +210,10 @@ public static class GlobalTags
     public const string SavedGames_Delete     = "SavedGames_Delete";
     public const string SavedGames_SureDelete = "SavedGames_SureDelete";
     public const string SavedGames_OpenFailed = "SavedGames_OpenFailed";
+    public const string SavedGames_Import       = "SavedGames_Import";
+    public const string SavedGames_ImportNote   = "SavedGames_ImportNote";
+    public const string SavedGames_ImportFile   = "SavedGames_ImportFile";
+    public const string SavedGames_ImportFailed = "SavedGames_ImportFailed";
 
     // Help
     public const string MainMenu_Help = "MainMenu_Help"; // pages: Help_Tab_<Page> (tab label) and Help_<Page>, listed in Pages/Help.razor

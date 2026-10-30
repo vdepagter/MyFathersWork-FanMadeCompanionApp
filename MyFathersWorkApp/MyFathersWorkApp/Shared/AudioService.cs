@@ -25,6 +25,8 @@ public sealed class AudioService(IJSRuntime js)
             SoundCue.Setup            => ("sfx-setup",             "popup"),
             SoundCue.EndOfRound       => ("sfx-end-of-round",      "popup"),
             SoundCue.SpecialEvent     => ("sfx-special-event",     "popup"),
+            SoundCue.BidOpen          => ("sfx-bid-open",          "popup"),
+            SoundCue.Reveal           => ("sfx-reveal",            "popup"),
             _                         => ((string?)null, string.Empty)
         };
 

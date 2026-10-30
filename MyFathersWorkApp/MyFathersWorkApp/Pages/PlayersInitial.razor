@@ -1,22 +1,19 @@
-﻿@page "/PlayersInitial"
+@page "/PlayersInitial"
+@using MyFathersWorkApp.Shared
 @inject NavigationManager Nav
 @inject AudioService      Audio
 
-<div class="back-button" @onclick="GoBack">
-    ⬅ @GlobalData.GetLocalizedUITag(GlobalTags.MainMenu_Back)
-</div>
-
-<div class="initial-players-container">
-    <div class="text-box">
+<MenuPage OnBack="GoBack" Class="centered">
+    <div class="mp-parchment mfw-zoom-in">
         <p>
             @GlobalData.GetLocalizedUITag(GlobalTags.PlayersInitial_Content).FormatWithIndex(0, GlobalData.LocalizedPlayerNumberIndex()).AsMarkup()
         </p>
     </div>
 
-    <button class="continue-button" @onclick="Continue">
+    <button class="mfw-button mp-button" @onclick="Continue">
         @GlobalData.GetLocalizedUITag(GlobalTags.MainMenu_Continue)
     </button>
-</div>
+</MenuPage>
 
 @code
 {

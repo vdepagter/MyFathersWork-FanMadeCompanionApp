@@ -1,82 +1,30 @@
-﻿/* Back Button */
-.back-button {
-    position: fixed;
-    top: 1rem;
-    left: 1rem;
-    background-color: #5c4633;
-    color: #e0d3b8;
-    padding: 0.5rem 1rem;
-    border: 2px solid #2e1f14;
-    border-radius: 6px;
-    cursor: pointer;
-    font-weight: bold;
-    box-shadow: 0 0 8px rgba(0,0,0,0.6);
-    transition: background-color 0.3s, transform 0.1s;
-    z-index: 10;
+/* Unity PlayerIntro: the welcome on the torn paper strip (MFWpaper, images/ui/paper-strip.webp) */
+.welcome-paper {
+    display: grid;
+    place-items: center;
+    width: min(100%, 42rem);
+    aspect-ratio: 1200 / 559; /* grows taller when the text needs it */
+    padding: 2rem 4rem;
+    background: url(images/ui/paper-strip.webp) center / 100% 100% no-repeat;
+    color: #17100a;
+    font-family: var(--mfw-font-text);
+    font-size: 1.3rem;
+    line-height: 1.45;
+    letter-spacing: 0.02em;
+    -webkit-text-stroke: 0.35px currentColor;
+    filter: drop-shadow(0 14px 22px rgba(0, 0, 0, 0.75));
 }
 
-.back-button:hover {
-    background-color: #7a5a3c;
-    transform: scale(1.05);
+.welcome-paper p { margin: 0; }
+
+.welcome-paper ::deep .player-name {
+    font-family: var(--mfw-font-heading);
+    font-size: 2.6rem;
+    font-weight: 400;
+    -webkit-text-stroke: 0;
+    color: #5a1a0e;
 }
 
-.back-button:active {
-    transform: scale(0.95);
-}
-
-/* Main Container */
-.player-welcome-container {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    min-height: 100vh;
-    padding: 2rem;
-    text-align: center;
-    color: #3a1e12;
-}
-
-/* Text Box */
-.text-box {
-    background-color: #d4bfa5;
-    padding: 2rem;
-    border-radius: 8px;
-    max-width: 600px;
-    box-shadow: 0 0 15px rgba(0,0,0,0.6);
-    border: 3px solid #2e1f14;
-    font-family: 'Georgia', serif;
-}
-
-.text-box p {
-    font-size: 1.4rem;
-    line-height: 1.6;
-}
-
-.player-name {
-    font-size: 2rem;
-    font-weight: bold;
-    color: #5c4633;
-}
-
-/* Continue Button */
-.continue-button {
-    margin-top: 2rem;
-    padding: 1rem 2rem;
-    font-size: 1.2rem;
-    background-color: #5c4633;
-    color: #e0d3b8;
-    border: 3px solid #2e1f14;
-    border-radius: 8px;
-    cursor: pointer;
-    box-shadow: 0 0 10px rgba(0,0,0,0.7);
-    transition: transform 0.1s, background-color 0.3s;
-}
-
-.continue-button:hover {
-    background-color: #7a5a3c;
-    transform: scale(1.05);
-}
-
-.continue-button:active {
-    transform: scale(0.95);
+@media (max-width: 480px) {
+    .welcome-paper { padding: 1.6rem 1.8rem; font-size: 1.1rem; }
 }

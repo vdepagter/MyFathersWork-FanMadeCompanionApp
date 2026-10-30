@@ -11,5 +11,7 @@ public enum SoundCue
     EndOfRound       = 5,
     SpecialEvent     = 6,
     Welcome          = 7,
-    Footsteps        = 8
+    Footsteps        = 8,
+    BidOpen          = 9,  // Unity ViewBiddingSystem clip: Set up-window appear
+    Reveal           = 10  // Unity ViewBiddingSystem revealClip: Reveal, under the 3-2-1 countdown
 }

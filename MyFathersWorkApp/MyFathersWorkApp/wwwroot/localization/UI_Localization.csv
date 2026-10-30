@@ -190,6 +190,10 @@ SavedGames_SaveCode;Save code
 SavedGames_Delete;Delete
 SavedGames_SureDelete;Delete for good?
 SavedGames_OpenFailed;This game could not be opened.
+SavedGames_Import;Load a save code
+SavedGames_ImportNote;Open a save code file or paste its text. The game you are playing now stays in the list above.
+SavedGames_ImportFile;Choose a file
+SavedGames_ImportFailed;This is not a save code.
 //====== Help ======;
 MainMenu_Help;Help
 Help_Tab_HowToUse;How to use

@@ -52,8 +52,15 @@ sparkle, lightning, Graphics quality in localStorage `mfwGraphics`, `html[data-g
     (mp3 = LFS); REVEAL plays the special event sound.
   - Final ending: Next opens the ending page ("Ending unlocked!" / "Ending reached", "You have unlocked X out of 8
     endings", eight pips, Endings Gallery, Return to Main Menu). Replaces the inline gallery card.
-  - Optional, not done: "5 of 8" on the scenario picker, locked silhouettes, achievements. Setup/menu pages before a
-    game still have the old look.
+  - Optional, not done: "5 of 8" on the scenario picker, locked silhouettes, achievements.
+- Menu pages (31 Oct): every page before a game (`Players*`), Saved Games, Help and the Endings Gallery sit in
+  `Shared/MenuPage.razor` (dark metal Main_BG, glow and embers, the steel frame, the round back button, Evil Dead
+  title); shared content classes in `wwwroot/css/menu-pages.css` (`.mp-parchment`, `.mp-input` = Unity Textbox,
+  `.mp-chip` small buttons and tabs, `.mp-button`, `.mp-popup`). Unity art: player count icons (`players-*.webp`),
+  scenario cards (`scenario-*.webp`) in the steel / gold Scenario borders, the PlayerIntro paper strip for the
+  welcome. Load Game left the Main Menu (5 buttons, Settings centred on the last row): loading a save code is the
+  "Load a save code" section of Saved Games (`LoadGamePopup` removed). Vote / bid panel sounds from Unity
+  ViewBiddingSystem: `sfx-bid-open` (Set up-window appear) when it opens, `sfx-reveal` (Reveal) under the countdown.
 
 ## A Time of War - table play test (October 2026)
 

@@ -1,131 +1,42 @@
-﻿/* Back Button */
-.back-button {
-    position: fixed;
-    top: 1rem;
-    left: 1rem;
-    background-color: #5c4633;
-    color: #e0d3b8;
-    padding: 0.5rem 1rem;
-    border: 2px solid #2e1f14;
-    border-radius: 6px;
-    cursor: pointer;
-    font-weight: bold;
-    box-shadow: 0 0 8px rgba(0,0,0,0.6);
-    transition: background-color 0.3s, transform 0.1s;
-    z-index: 10;
-}
-
-.back-button:hover {
-    background-color: #7a5a3c;
-    transform: scale(1.05);
-}
-
-.back-button:active {
-    transform: scale(0.95);
-}
-
-/* Main Container */
-.language-selection-container {
+.options {
     display: flex;
     flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    min-height: 100vh;
-    padding: 2rem;
-    text-align: center;
-    color: #e0d3b8;
+    gap: 1.1rem;
+    max-width: 36rem;
 }
 
-.language-selection-container h1 {
-    font-size: 3rem;
-    margin-bottom: 0.5rem;
-    color: #9ebed9;
-    text-shadow: 2px 2px 4px black;
-}
-
-.language-selection-container p {
-    margin-bottom: 2rem;
-    font-size: 1.2rem;
-}
-
-/* Language Buttons */
-.language-options {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 1rem;
-    justify-content: center;
-}
-
-.language-button {
-    padding: 1rem 2rem;
-    font-size: 1.2rem;
-    background-color: #5c4633;
-    color: #e0d3b8;
-    border: 3px solid #2e1f14;
-    border-radius: 8px;
-    cursor: pointer;
-    box-shadow: 0 0 10px rgba(0,0,0,0.7);
-    transition: transform 0.1s, background-color 0.3s;
-}
-
-.language-button:hover {
-    background-color: #7a5a3c;
-    transform: scale(1.05);
-}
-
-.language-button:active {
-    transform: scale(0.95);
-}
-
-/* Mirror Mode Option */
 .mirror-option {
     display: flex;
     align-items: flex-start;
-    gap: 0.75rem;
-    max-width: 520px;
-    margin-bottom: 2rem;
-    padding: 1rem;
-    text-align: left;
-    background-color: rgba(46, 31, 20, 0.6);
-    border: 2px solid #2e1f14;
-    border-radius: 8px;
+    gap: 0.8rem;
+    line-height: 1.45;
     cursor: pointer;
 }
 
 .mirror-option input {
-    margin-top: 0.3rem;
-    transform: scale(1.4);
+    flex-shrink: 0;
+    width: 1.35rem;
+    height: 1.35rem;
+    margin-top: 0.15rem;
+    accent-color: #c9a35a;
 }
 
-/* Narration (voice-over) setting: same box as the mirror mode option, select in the colors of the language buttons */
 .narration-option {
     display: flex;
+    flex-wrap: wrap;
     align-items: center;
     justify-content: space-between;
-    flex-wrap: wrap;
-    gap: 0.75rem;
-    width: 100%;
-    max-width: 520px;
-    margin-bottom: 2rem;
-    padding: 1rem;
-    text-align: left;
-    background-color: rgba(46, 31, 20, 0.6);
-    border: 2px solid #2e1f14;
-    border-radius: 8px;
+    gap: 0.6rem;
 }
 
 .narration-option select {
-    padding: 0.4rem 0.6rem;
-    font-size: 1rem;
-    background-color: #5c4633;
-    color: #e0d3b8;
-    border: 2px solid #2e1f14;
+    min-width: 11rem;
+    min-height: 44px;
+    padding: 0 0.6rem;
+    border: 1px solid #5d5547;
     border-radius: 6px;
-    cursor: pointer;
-    box-shadow: 0 0 6px rgba(0,0,0,0.5);
-}
-
-.narration-option select:hover,
-.narration-option select:focus {
-    background-color: #7a5a3c;
+    background: #0e1014;
+    color: #f1e4c4;
+    font-family: var(--mfw-font-text);
+    font-size: 1rem;
 }

@@ -49,9 +49,12 @@
 
     private int?                     _Count;
     private CancellationTokenSource? _Countdown;
+    private bool                     _WasVisible;
 
     protected override void OnParametersSet()
     {
+        if (Visible && !_WasVisible) Audio.Play(SoundCue.BidOpen); // Unity: the panel's clip when it opens
+        _WasVisible = Visible;
         if (Visible) return;
         _Countdown?.Cancel();
         _Count = null;
@@ -60,6 +63,7 @@
     private async Task Start()
     {
         Audio.PlayClick();
+        Audio.Play(SoundCue.Reveal); // Unity: the reveal clip runs under the whole countdown
         _Countdown?.Cancel();
         _Countdown = new CancellationTokenSource();
         CancellationToken token = _Countdown.Token;
@@ -79,7 +83,6 @@
         }
 
         _Count = 0;
-        Audio.Play(SoundCue.SpecialEvent);
         StateHasChanged();
     }
 

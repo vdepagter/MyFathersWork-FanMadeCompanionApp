@@ -1,41 +1,41 @@
-﻿@page "/PlayersScenarioLanguage"
+@page "/PlayersScenarioLanguage"
+@using MyFathersWorkApp.Shared
 @inject NavigationManager Nav
 @inject AudioService      Audio
 @inject HttpClient        Http
 
-<div class="back-button" @onclick="GoBack">⬅ @GlobalData.GetLocalizedUITag(GlobalTags.MainMenu_Back)</div>
+<MenuPage Title="@GlobalData.GetLocalizedUITag(GlobalTags.ScenarioLanguage_Title)" OnBack="GoBack" Class="centered">
+    <p class="mp-lead">@GlobalData.GetLocalizedUITag(GlobalTags.ScenarioLanguage_Subtitle)</p>
 
-<div class="language-selection-container">
-    <h1>@GlobalData.GetLocalizedUITag(GlobalTags.ScenarioLanguage_Title)</h1>
-    <p>@GlobalData.GetLocalizedUITag(GlobalTags.ScenarioLanguage_Subtitle)</p>
+    <div class="mfw-dark-panel mp-panel options">
+        <label class="mirror-option">
+            <input type="checkbox" @bind="_MirrorMode"/>
+            <span>
+                <b>@GlobalData.GetLocalizedUITag(GlobalTags.ScenarioLanguage_Mirror)</b><br/>
+                @GlobalData.GetLocalizedUITag(GlobalTags.ScenarioLanguage_MirrorDesc)
+            </span>
+        </label>
 
-    <label class="mirror-option">
-        <input type="checkbox" @bind="_MirrorMode"/>
-        <span>
-            <b>@GlobalData.GetLocalizedUITag(GlobalTags.ScenarioLanguage_Mirror)</b><br/>
-            @GlobalData.GetLocalizedUITag(GlobalTags.ScenarioLanguage_MirrorDesc)
-        </span>
-    </label>
+        <label class="narration-option">
+            <b>@GlobalData.GetLocalizedUITag(GlobalTags.Audio_Narration)</b>
+            <select value="@Audio.Narration" @onchange="OnNarrationChanged">
+                <option value="@NarrationVoice.Female">@GlobalData.GetLocalizedUITag(GlobalTags.Audio_NarrationFemale)</option>
+                <option value="@NarrationVoice.Male">@GlobalData.GetLocalizedUITag(GlobalTags.Audio_NarrationMale)</option>
+                <option value="@NarrationVoice.Oliver">@GlobalData.GetLocalizedUITag(GlobalTags.Audio_NarrationOliver)</option>
+                <option value="@NarrationVoice.Off">@GlobalData.GetLocalizedUITag(GlobalTags.Audio_NarrationOff)</option>
+            </select>
+        </label>
+    </div>
 
-    <label class="narration-option">
-        <b>@GlobalData.GetLocalizedUITag(GlobalTags.Audio_Narration)</b>
-        <select value="@Audio.Narration" @onchange="OnNarrationChanged">
-            <option value="@NarrationVoice.Female">@GlobalData.GetLocalizedUITag(GlobalTags.Audio_NarrationFemale)</option>
-            <option value="@NarrationVoice.Male">@GlobalData.GetLocalizedUITag(GlobalTags.Audio_NarrationMale)</option>
-            <option value="@NarrationVoice.Oliver">@GlobalData.GetLocalizedUITag(GlobalTags.Audio_NarrationOliver)</option>
-            <option value="@NarrationVoice.Off">@GlobalData.GetLocalizedUITag(GlobalTags.Audio_NarrationOff)</option>
-        </select>
-    </label>
-
-    <div class="language-options">
+    <div class="mp-actions">
         @foreach (KeyValuePair<string, string> pair in _LocalizationOptions)
         {
-            <button class="language-button" @onclick="() => SelectLanguage(pair.Key)">
+            <button class="mfw-button mp-button" @onclick="() => SelectLanguage(pair.Key)">
                 @pair.Value
             </button>
         }
     </div>
-</div>
+</MenuPage>
 
 @code
 {

@@ -1,97 +1,63 @@
-﻿/* Back Button */
-.back-button {
-    position: fixed;
-    top: 1rem;
-    left: 1rem;
-    background-color: #5c4633;
-    color: #e0d3b8;
-    padding: 0.5rem 1rem;
-    border: 2px solid #2e1f14;
-    border-radius: 6px;
-    cursor: pointer;
-    font-weight: bold;
-    box-shadow: 0 0 8px rgba(0,0,0,0.6);
-    transition: background-color 0.3s, transform 0.1s;
-    z-index: 10;
-}
-
-.back-button:hover {
-    background-color: #7a5a3c;
-    transform: scale(1.05);
-}
-
-.back-button:active {
-    transform: scale(0.95);
-}
-
-/* Main Container */
-.scenario-selection-container {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    padding: 2rem;
-    min-height: 100vh;
-    text-align: center;
-    color: #e0d3b8;
-}
-
-.scenario-selection-container h1 {
-    font-size: 3rem;
-    margin-bottom: 0.5rem;
-    color: #9ebed9;
-    text-shadow: 2px 2px 4px black;
-}
-
-.scenario-selection-container p {
-    margin-bottom: 2rem;
-    font-size: 1.2rem;
-}
-
-/* Scenario Cards */
+/* Unity Scenario view: the scenario art in a steel border (MFW_Scenario_Unelected_Border), gold on hover (Selected) */
 .scenario-options {
     display: flex;
-    gap: 2rem;
     flex-wrap: wrap;
     justify-content: center;
+    gap: clamp(0.8rem, 2vw, 1.8rem);
+    width: 100%;
+    max-width: 72rem;
 }
 
 .scenario-card {
-    background-color: rgba(40, 40, 40, 0.9);
-    border: 3px solid #5c4633;
-    border-radius: 8px;
-    padding: 1rem;
-    width: 300px;
-    box-shadow: 0 0 12px rgba(0,0,0,0.7);
+    display: flex;
+    flex-direction: column;
+    width: clamp(15rem, 28vw, 21rem);
+    padding: 0;
+    border: 26px solid transparent;
+    border-image: url(images/ui/scenario-border-steel.webp) 36 / 26px stretch;
+    background: #111318 padding-box;
+    color: #f1e8d4;
+    font-family: var(--mfw-font-text);
+    text-align: left;
     cursor: pointer;
-    transition: transform 0.2s, background-color 0.3s;
+    filter: drop-shadow(0 12px 18px rgba(0, 0, 0, 0.7));
+    transition: transform 0.18s, filter 0.25s;
 }
 
-.scenario-card:hover {
-    background-color: #7a5a3c;
-    transform: scale(1.05);
+.scenario-card:hover,
+.scenario-card:focus-visible {
+    border-image-source: url(images/ui/scenario-border-gold.webp);
+    transform: translateY(-4px);
+    filter: drop-shadow(0 0 14px rgba(255, 190, 80, 0.4)) drop-shadow(0 12px 18px rgba(0, 0, 0, 0.7));
+    outline: none;
 }
 
-.scenario-card img {
-    width: 100%;
-    height: auto;
-    border-radius: 4px;
-    margin-bottom: 0.5rem;
+.scenario-card:active { transform: scale(0.98); }
+
+.scenario-art {
+    display: block;
+    aspect-ratio: 4 / 3;
+    background: center 20% / cover no-repeat;
 }
 
-.scenario-card h2 {
-    color: gold;
-    margin-bottom: 0.5rem;
+.scenario-text {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    padding: 0.8rem 0.4rem 0.4rem;
 }
 
-.scenario-card p {
+.scenario-title {
+    font-family: var(--mfw-font-heading);
+    font-size: 1.75rem;
+    line-height: 1.1;
+    text-align: center;
+    color: #fff;
+    text-shadow: 0 2px 3px #000;
+}
+
+.scenario-desc {
     font-size: 0.95rem;
-    color: #e0d3b8;
-    line-height: 1.4;
-}
-
-/* Keep the title clear of the fixed audio toggles (Shared/AudioToggles.razor) on narrow screens */
-@media (max-width: 640.98px) {
-    .scenario-selection-container {
-        padding-top: 4.5rem;
-    }
+    line-height: 1.45;
+    color: #d9ccb0;
 }

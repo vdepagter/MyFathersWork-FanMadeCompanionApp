@@ -1,28 +1,23 @@
 @page "/Help"
+@using MyFathersWorkApp.Shared
 @inject NavigationManager Nav
 @inject AudioService      Audio
 
-<div class="back-button" @onclick="GoBack">
-    ⬅ @GlobalData.GetLocalizedUITag(GlobalTags.MainMenu_Back)
-</div>
-
-<div class="help-container">
-    <h1>@GlobalData.GetLocalizedUITag(GlobalTags.MainMenu_Help)</h1>
-
-    <div class="help-tabs" role="tablist">
+<MenuPage Title="@GlobalData.GetLocalizedUITag(GlobalTags.MainMenu_Help)" OnBack="GoBack">
+    <div class="mp-tabs" role="tablist">
         @foreach (string page in _Pages)
         {
-            <button role="tab" aria-selected="@(page == _Page)" class="@(page == _Page ? "selected" : "")" @onclick="() => SelectPage(page)">
+            <button role="tab" aria-selected="@(page == _Page)" class="mp-chip" @onclick="() => SelectPage(page)">
                 @GlobalData.GetLocalizedUITag("Help_Tab_" + page)
             </button>
         }
     </div>
 
-    <div class="help-page" role="tabpanel">
+    <div class="mp-parchment help-page" role="tabpanel">
         <h2>@GlobalData.GetLocalizedUITag("Help_Tab_" + _Page)</h2>
         @((MarkupString)GlobalData.GetLocalizedUITag("Help_" + _Page))
     </div>
-</div>
+</MenuPage>
 
 @code
 {
