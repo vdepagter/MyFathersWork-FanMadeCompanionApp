@@ -121,12 +121,21 @@
 /* Unity LogoAnim: the logo floats up and down with a slight sway. Stretched a little wider, as Unity draws it. */
 .menu-logo {
     left: 55.52%;
-    top: 8.8%;
+    top: 5.5%;
     width: 28.13%;
     height: 45.75%;
     filter: drop-shadow(0 8px 14px rgba(0, 0, 0, 0.8));
     animation: logo-bob 3.6s ease-in-out infinite alternate;
     pointer-events: none;
+}
+
+/* Windows taller than 16:9 leave room above the canvas: the logo moves up into it, away from the buttons */
+@media (orientation: landscape) and (max-aspect-ratio: 16 / 10) {
+    .menu-logo { top: 1%; }
+}
+
+@media (orientation: landscape) and (max-aspect-ratio: 4 / 3) {
+    .menu-logo { top: -5%; }
 }
 
 @keyframes logo-bob {
