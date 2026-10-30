@@ -241,6 +241,7 @@ public static partial class ATimeOfWar
     private static void AMessenger(GlobalData globalData)
     {
         globalData.SaveToUndo();
+        globalData.SecretPagesShown = false; // the text itself says all players may again view the Storybook
         globalData.ActiveWindow = new GameplayWindow(globalData);
         globalData.ActiveWindow.AddDefaultTitle();
         globalData.ActiveWindow.AddDefaultContent(content => content.FormatWithReplacement(0, Crest(globalData)));
@@ -284,6 +285,7 @@ public static partial class ATimeOfWar
     private static void Amessyes2(GlobalData globalData)
     {
         globalData.SaveToUndo();
+        globalData.SecretPagesShown = false; // the text itself says all players may again view the Storybook
         Vars(globalData).SuspiciousBarn = true;
 
         globalData.ActiveWindow = new GameplayWindow(globalData);

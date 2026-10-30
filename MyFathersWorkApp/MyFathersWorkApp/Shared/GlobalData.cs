@@ -42,6 +42,10 @@ public partial class GlobalData
     public ATimeOfWarVars             ATimeOfWarVars       { get; }      = new();
     public Dictionary<string, object> TmpValues            { get; }      = new();
 
+    // A secret page (one player reads alone) was shown since the players last acted on the hub: the hub then says that
+    // all players may again view the Storybook, as A Time of War's own text does after some secret pages
+    public bool SecretPagesShown { get; set; }
+
     // Screen this state is shown on (the method that called SaveToUndo), empty on a hub. Load reopens it.
     public string ResumeMethod { get; set; } = string.Empty;
 
@@ -65,7 +69,11 @@ public partial class GlobalData
 
     [JsonIgnore] private Stack<UndoData> UndoStack { get; } = new();
 
+    // Undo points taken back by Undo, newest on top. Redo puts them back; any new undo point clears them.
+    [JsonIgnore] private Stack<UndoData> RedoStack { get; } = new();
+
     [JsonIgnore] public bool IsUndoDisabled => ActiveMirrorQuestion == null && UndoStack.Count <= 1;
+    [JsonIgnore] public bool IsRedoDisabled => ActiveMirrorQuestion != null || RedoStack.Count == 0;
 
     [JsonIgnore] private bool _UndoInProgress;
     [JsonIgnore] private long _NextUndoId;
@@ -128,6 +136,7 @@ public partial class GlobalData
 
         ResumeMethod = methodName;
         UndoStack.Push(NewUndoData(ResolveScreen(methodName)!, methodName, JsonConvert.SerializeObject(this), -1));
+        RedoStack.Clear();
     }
 
     // A screen method by name, see SaveToUndo
@@ -248,9 +257,23 @@ public partial class GlobalData
         }
 
         if (UndoStack.Count <= 1) return;
-        _UndoInProgress = true;
-        UndoStack.Pop();
-        UndoData prev = UndoStack.Peek();
+        RedoStack.Push(UndoStack.Pop());
+        ReopenUndoPoint(UndoStack.Peek());
+    }
+
+    // Steps forward again to the undo point the last Undo took back
+    public void Redo()
+    {
+        if (ActiveMirrorQuestion != null || RedoStack.Count == 0) return;
+        UndoData next = RedoStack.Pop();
+        UndoStack.Push(next);
+        ReopenUndoPoint(next);
+    }
+
+    // Restores an undo point's state and shows its screen again (or its hub)
+    private void ReopenUndoPoint(UndoData point)
+    {
+        _UndoInProgress  = true;
         ActiveHub        = null;
         ActiveWindow     = null;
         ActivePopup      = null;
@@ -264,7 +287,7 @@ public partial class GlobalData
         // The language picked in the pause menu stays, the snapshot may be older than that choice
         string language         = Language;
         string scenarioLanguage = ScenarioLanguage;
-        JsonConvert.PopulateObject(prev.JsonData, this, settings);
+        JsonConvert.PopulateObject(point.JsonData, this, settings);
         Language         = language;
         ScenarioLanguage = scenarioLanguage;
         _UndoInProgress  = false;
@@ -276,7 +299,7 @@ public partial class GlobalData
             try
             {
                 GetHubMethod()?.Invoke(this);
-                prev.Callback?.Invoke(this);
+                point.Callback?.Invoke(this);
             }
             finally
             {
@@ -293,12 +316,14 @@ public partial class GlobalData
         if (_UndoInProgress || (UndoStack.Count != 0 && UndoStack.Peek().Callback == null && UndoStack.Peek().Round == UndoRound)) return;
         ResumeMethod = string.Empty;
         UndoStack.Push(NewUndoData(null, string.Empty, JsonConvert.SerializeObject(this), UndoRound));
+        RedoStack.Clear();
     }
 
     // data: a save code from the load popup; empty: the browser's save ("continue") and, when it belongs to it, the undo history
     public async Task LoadGameAsync(string data, NavigationManager nav, HttpClient http, IJSRuntime js)
     {
         UndoStack.Clear();
+        RedoStack.Clear();
 
         bool    fromBrowser = string.IsNullOrEmpty(data);
         string? base64      = fromBrowser ? await js.InvokeAsync<string?>("localStorage.getItem", "continue") : data;

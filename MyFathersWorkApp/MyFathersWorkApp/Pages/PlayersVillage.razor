@@ -13,7 +13,8 @@
         @GlobalData.GetLocalizedUITag(GlobalTags.Village_Subtitle).AsMarkup()
     </div>
 
-    <input class="name-input" @bind="GlobalData.TownName"
+    <input class="name-input" @bind="GlobalData.TownName" @bind:event="oninput"
+           @onkeydown="@(e => { if (e.Key is "Enter" or "NumpadEnter") Continue(); })"
            placeholder="@GlobalData.GetLocalizedUITag(GlobalTags.Village_Placeholder)"/>
 
     <button class="continue-button" @onclick="Continue">

@@ -51,6 +51,7 @@
 /* Title */
 .gameplay-container h1 {
     font-size: 2.8rem;
+    text-align: center; /* a title that wraps (A Time of War's foreword) stays centered */
     margin-bottom: 0.5rem;
     color: #9ebed9;
     text-shadow: 2px 2px 4px black;
@@ -60,6 +61,18 @@
     margin-bottom: 1.5rem;
     font-size: 1.5rem;
     color: #e0d3b8;
+}
+
+/* "All players may again view the Storybook." on the hub after a secret page */
+.storybook-shared {
+    margin: 0 0 1rem;
+    padding: 0.5rem 1rem;
+    border: 1px solid #9ebed9;
+    border-radius: 6px;
+    color: #e0d3b8;
+    font-weight: bold;
+    text-align: center;
+    background-color: rgba(0, 0, 0, 0.35);
 }
 
 /* Parchment Box */

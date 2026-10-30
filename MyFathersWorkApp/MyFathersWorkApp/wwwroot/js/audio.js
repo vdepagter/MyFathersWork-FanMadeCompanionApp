@@ -61,12 +61,15 @@
         }
     }
 
+    // Until a player moves a slider: music 80%, effects 40%, speech 100%
+    const DEFAULT_VOLUMES = { music: 80, effects: 40, voice: 100 };
+
     function readVolume(kind) {
         try {
             const value = parseInt(localStorage.getItem(KEY_VOLUME + kind), 10);
-            return isNaN(value) ? 100 : Math.min(100, Math.max(0, value));
+            return isNaN(value) ? DEFAULT_VOLUMES[kind] : Math.min(100, Math.max(0, value));
         } catch (e) {
-            return 100;
+            return DEFAULT_VOLUMES[kind];
         }
     }
 

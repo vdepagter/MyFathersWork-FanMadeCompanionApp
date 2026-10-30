@@ -12,7 +12,8 @@
             <p class="mirror-question">@GlobalData.GetLocalizedUITag(GlobalTags.Mirror_Number)</p>
             <p class="mirror-context">@(Question.Before + " ")<b>___</b>@(" " + Question.After)</p>
 
-            <input @bind="_Number" @bind:event="oninput" type="number" class="input-field" min="@Question.NumericMin" max="@(Question.NumericMin + Question.Count - 1)"/>
+            <input @bind="_Number" @bind:event="oninput" type="number" class="input-field" min="@Question.NumericMin" max="@(Question.NumericMin + Question.Count - 1)"
+                   @onkeydown="@(e => { if (e.Key is "Enter" or "NumpadEnter") ConfirmNumber(); })"/>
 
             @if (_ShowNumberError)
             {

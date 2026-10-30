@@ -1,4 +1,4 @@
-using Microsoft.JSInterop;
+﻿using Microsoft.JSInterop;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
@@ -135,6 +135,7 @@ public partial class GlobalData
     public async Task ClearSavedGameAsync(IJSRuntime js)
     {
         UndoStack.Clear();
+        RedoStack.Clear();
         await js.InvokeVoidAsync("localStorage.removeItem", _CONTINUE_KEY);
         await ClearStoredUndoAsync(js);
     }

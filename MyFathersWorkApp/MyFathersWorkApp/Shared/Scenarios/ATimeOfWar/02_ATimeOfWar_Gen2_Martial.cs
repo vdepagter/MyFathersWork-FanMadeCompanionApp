@@ -351,6 +351,7 @@ public static partial class ATimeOfWar
     private static void ResistEvent(GlobalData globalData)
     {
         globalData.SaveToUndo();
+        globalData.SecretPagesShown = false; // the text itself says all players may again view the Storybook
         globalData.ActiveWindow = new GameplayWindow(globalData);
         globalData.ActiveWindow.AddDefaultTitle();
         globalData.ActiveWindow.AddDefaultContent(content => content.FormatWithReplacement(0, Winner(globalData)));
@@ -520,6 +521,7 @@ public static partial class ATimeOfWar
         string target = TeaTargetName(globalData, TeaTarget(globalData));
 
         globalData.SaveToUndo();
+        globalData.SecretPagesShown = false; // the text itself says all players may again view the Storybook
         globalData.ActiveWindow = new GameplayWindow(globalData);
         globalData.ActiveWindow.AddDefaultTitle();
         globalData.ActiveWindow.AddDefaultContent(content => content.FormatWithReplacement(0, target));

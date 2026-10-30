@@ -186,6 +186,7 @@ public static partial class ATimeOfWar
     private static void FigureontheTrackInb(GlobalData globalData)
     {
         globalData.SaveToUndo();
+        globalData.SecretPagesShown = false; // the text itself says all players may again view the Storybook
         globalData.ActiveWindow = new GameplayWindow(globalData);
         globalData.ActiveWindow.AddDefaultTitle();
         globalData.ActiveWindow.AddDefaultContent(content => content.FormatWithReplacement(0, Figure(globalData)));

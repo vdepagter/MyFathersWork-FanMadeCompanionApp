@@ -178,6 +178,10 @@ public static class GlobalTags
 
     // Help
     public const string MainMenu_Help = "MainMenu_Help"; // pages: Help_Tab_<Page> (tab label) and Help_<Page>, listed in Pages/Help.razor
+    // Header buttons
+    public const string Gameplay_Undo = "Gameplay_Undo";
+    public const string Gameplay_Redo = "Gameplay_Redo";
+    public const string Gameplay_StorybookShared = "Gameplay_StorybookShared";
     // Log Book (The Cost of Disease)
     public const string LogBook_Title    = "LogBook_Title";
     public const string LogBook_Open     = "LogBook_Open";

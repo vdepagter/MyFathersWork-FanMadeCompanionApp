@@ -9,7 +9,12 @@
 @implements IDisposable
 
 <div class="header-buttons" xmlns="http://www.w3.org/1999/html">
-    <button class="back-button" disabled="@GlobalData.IsUndoDisabled" @onclick="GoBack">⬅</button>
+    <button class="back-button" disabled="@GlobalData.IsUndoDisabled" @onclick="GoBack"
+            aria-label="@GlobalData.GetLocalizedUITag(GlobalTags.Gameplay_Undo)"
+            title="@GlobalData.GetLocalizedUITag(GlobalTags.Gameplay_Undo)">⬅</button>
+    <button class="back-button" disabled="@GlobalData.IsRedoDisabled" @onclick="GoForward"
+            aria-label="@GlobalData.GetLocalizedUITag(GlobalTags.Gameplay_Redo)"
+            title="@GlobalData.GetLocalizedUITag(GlobalTags.Gameplay_Redo)">➡</button>
     <button class="pause-button" @onclick="Pause">⏸</button>
     @if (LogBookService.HasLogBook(GlobalData))
     {
@@ -138,6 +143,11 @@
         @if (GlobalData.ActiveHub.Subtitle != string.Empty)
         {
             <h2>@GlobalData.ActiveHub.Subtitle.InsertImages().ProtectNames(GlobalData).AsMarkup()</h2>
+        }
+
+        @if (GlobalData.SecretPagesShown)
+        {
+            <p class="storybook-shared">@GlobalData.GetLocalizedUITag(GlobalTags.Gameplay_StorybookShared)</p>
         }
 
         foreach (GameplayHubSection hubSection in GlobalData.ActiveHub.Sections)
@@ -651,6 +661,15 @@
         StateHasChanged();
     }
 
+    private void GoForward()
+    {
+        Audio.PlayClick();
+        _SuppressScreenChange = true;
+        StopVoice();
+        GlobalData.Redo();
+        StateHasChanged();
+    }
+
     private async void Pause()
     {
         Audio.PlayClick();
@@ -681,8 +700,10 @@
     private void InvokeWindowCallback(Action<GlobalData> nextCallback)
     {
         Audio.PlayClick();
+        bool fromHub = GlobalData.ActiveWindow == null;
         GlobalData.RunScenarioAction(() =>
         {
+            if (fromHub) GlobalData.SecretPagesShown = false; // the players act on the hub: the notice has done its job
             GlobalData.ActiveWindow = null;
             nextCallback.Invoke(GlobalData);
         });

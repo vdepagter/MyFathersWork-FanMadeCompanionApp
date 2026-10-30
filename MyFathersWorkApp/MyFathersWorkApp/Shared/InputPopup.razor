@@ -9,7 +9,8 @@
                    @bind:event="oninput"
                    type="text"
                    class="input-field" 
-                   placeholder="@GameplayPopUp.Placeholder" />
+                   placeholder="@GameplayPopUp.Placeholder"
+                   @onkeydown="OnKeyDown" />
         </div>
 
         <button class="popup-button" @onclick="OnAcceptClicked">
@@ -25,17 +26,25 @@
     [Parameter] public Action             Refresh       { get; set; } = null!;
     
     private string _Value = string.Empty;
+    private bool   _Accepted; // Enter held down repeats keydown: accept once (until this popup shows again, e.g. back from a mirror question)
+
+    // Enter submits the value, like the button
+    private void OnKeyDown(KeyboardEventArgs e)
+    {
+        if (e.Key is "Enter" or "NumpadEnter") OnAcceptClicked();
+    }
     
     private void OnAcceptClicked()
     {
         Audio.PlayClick();
-        if (!GameplayPopUp.Validate(_Value)) return;
+        if (_Accepted || !GameplayPopUp.Validate(_Value)) return;
         string value = _Value;
         GlobalData.RunScenarioAction(() =>
         {
             GlobalData.ActiveInputPopup = null;
             GameplayPopUp.OnClose(value);
         });
+        _Accepted = GlobalData.ActiveInputPopup != GameplayPopUp;
         Refresh();
     }
 }

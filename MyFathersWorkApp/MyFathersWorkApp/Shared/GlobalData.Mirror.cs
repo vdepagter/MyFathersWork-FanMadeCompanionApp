@@ -19,6 +19,7 @@ public partial class GlobalData
         public GameplayPopup?             Popup      { get; init; }
         public GameplayInputPopup?        InputPopup { get; init; }
         public int                        UndoCount  { get; init; }
+        public UndoData[]                 Redo       { get; init; } = [];
     }
 
     private const int _MIRROR_CONTEXT_WORDS = 8;
@@ -380,7 +381,8 @@ public partial class GlobalData
             Window     = ActiveWindow,
             Popup      = ActivePopup,
             InputPopup = ActiveInputPopup,
-            UndoCount  = UndoStack.Count
+            UndoCount  = UndoStack.Count,
+            Redo       = RedoStack.ToArray()
         };
     }
 
@@ -404,5 +406,7 @@ public partial class GlobalData
         ActiveHub?.SetSubtitle(Years); // the end of round popup changes it before calling the next event
 
         while (UndoStack.Count > state.UndoCount) UndoStack.Pop();
+        RedoStack.Clear();
+        foreach (UndoData point in state.Redo.Reverse()) RedoStack.Push(point);
     }
 }
