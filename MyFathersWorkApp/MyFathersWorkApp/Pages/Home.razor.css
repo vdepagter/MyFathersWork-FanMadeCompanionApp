@@ -141,7 +141,7 @@
 
 /* Unity LogoAnim: the logo floats up and down with a slight sway */
 .menu-logo {
-    height: 36svh;
+    height: 32svh;
     max-width: 90%;
     object-fit: contain;
     filter: drop-shadow(0 8px 14px rgba(0, 0, 0, 0.8));
@@ -157,13 +157,17 @@
 .menu-buttons {
     display: grid;
     align-content: center;
-    gap: 1.2svh;
-    width: max(150px, 21svh);
+    gap: 1svh;
+    width: max(180px, 27svh);
 }
 
+/* The button art is stretched a little wider than in Unity so "Endings Gallery" fits on one line */
 .menu-buttons .mfw-button {
     width: 100%;
-    font-size: max(11px, 2.6svh);
+    aspect-ratio: 3.4;
+    padding: 0 5% 1.5%;
+    white-space: nowrap;
+    font-size: max(11px, 2.3svh);
 }
 
 .menu-buttons .language-select {
@@ -197,18 +201,18 @@
 
     .menu-logo {
         height: auto;
-        width: min(56vw, 30svh);
+        width: min(56vw, 28svh);
         max-width: none;
     }
 
     .menu-buttons {
         grid-row: 3;
-        width: min(48vw, 260px);
+        width: min(62vw, 300px);
         gap: 1svh;
     }
 
     .menu-buttons .mfw-button {
-        font-size: max(11px, min(5vw, 2.4svh));
+        font-size: max(11px, min(4.6vw, 2.4svh));
     }
 
     .disclaimer { grid-row: 4; }
