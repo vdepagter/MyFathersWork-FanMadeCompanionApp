@@ -1,0 +1,141 @@
+// Log Book of A Time of War. Fan-written (October 2026): the official app has a Log Book for The Cost of Disease only.
+// Summaries condense the scenario's own story text. Screens: the screen methods (the caller of SaveToUndo) that log the
+// entry; a screen listed under several entries logs the one whose title is part of the window title. Xvillage = the
+// village name. Rules-only screens (bids, votes, tallies, battles, explanations) are not logged.
+Screens;Title;Location;Summary
+Foreword;A Memoir Across Three Generations;Publisher's Office;An editor introduced a newly unearthed memoir written by one scientific family over three generations.
+ScenarioStart;Taking Sides;Father's Manor;A cousin arrived at their late father's manor as a sceptic and came away convinced that he had been a genius.
+IntroConflict;War on the Horizon;Town Hall;The spectre of war haunted the village as Separatists and Monarchists clashed near the Town Hall.
+RumorD TownHallSpecial;Village Meeting;Town Hall;The cousins attended a lively council meeting at the Town Hall to learn the mindset of the locals.
+RumorD6Confirm;Confirmed;Town Hall;A relieved official agreed to prepare the materials and make an announcement.
+RumorIngredient;Procurement of Ingredients;Plantation;A local farmer struck up a conversation about the economy and invited a cousin to his plantation.
+RumorKnowledge;Advancement of Knowledge;Cafe;A young man in a brown sack suit who shared an interest in science dined with a cousin at a local cafe.
+RumorPitch;Dashing Conversationalist;Town Hall;A cousin spent hours charming the locals who frequented political meetings.
+RumorCreep;Curious Individual;Town Hall;A conversation with a vagrant caused a stir among the local gossips.
+TakeEvent TownHallOpposite;Military Protection;Town Hall;On an April morning the military officers asked the family to support building a barracks in town.
+ResolutionofEvent;The Town's Reaction;Town Hall;The family's vote on the barracks was received by the town with mild acceptance.
+TowardsWar;A Town Fully Defended;Village;The victorious forces pushed the battlefront away from the village and took command of the local government.
+TowardsDev;Under Unfortunate Circumstances;Hiding Place;Driven from the estate after the barracks became a target of the war, a cousin wrote from exile.
+IntroMartialMonarchists;Plagued by Conflict;Estate;Life settled into a routine of distant gunfire by day and explosions lighting the sky by night.
+IntroMartialSeparatists;Down with the Monarchy;Outpost;Separatist soldiers interrogated the returning family and kept watch over the town from a new outpost.
+GUNSAward;Seeds of Conflict;Estate;A cousin was rewarded for the family's contributions and political allegiance, with more promised for supporting the war.
+AdvancedWeaponryIntro;A Few Improvements;Barracks;A cousin offered the military schematics for advanced weaponry in exchange for further investment.
+PackingHeat1;Amassment of Weaponry;Estate Grounds;A cousin tested new weapons on the estate, attracting attention for better or worse.
+PackingHeat1a;Attracting Attentions;Village;One faction criticised the cousin's weapons while the other was keen to curry favour.
+BarracksPenalty;Service Required;Barracks;The Monarchy insisted on military service to quell the uprising, or a penalty in its place.
+ResistEvent;Quartering Troops;Estate;A militia lieutenant asked the family to house the leadership of an overcrowded encampment.
+ResistEvent1;Quartering Enforced;Estate;The military repeated its demand for quarters, this time with the assistance of guns.
+ResistEvent2;Voluntary Quartering;Estate;Busy with internal matters, the military could not enforce the quartering edict and moved on.
+MartialSepEvent;Escalation;Laboratory;With ingredients scarce in wartime, a cousin decided to simply attach guns to everything.
+MartialSepEventYes;Success;Barracks;A well-placed bribe and some showmanship impressed the military.
+MartialSepEventNo;Failure;Barracks;The military mocked a cousin's plan to combine weaponry with more weaponry.
+AfternoonTea;Afternoon Tea;Royal Residence;After a dreadful royal tea party, a cousin plotted with the family to burn down a Monarchist building.
+AfternoonTeaYay;A Destructive Success;Village;The cousins' combined talents turned a target into rubble, inspiring the townsfolk.
+AfternoonTeaNay;Conspiracy Failed;Estate;The cousins decided against sabotage, and the afternoon tea incident went unavenged.
+ResistSides;Alliances Are Set;Village;Those who had contributed to the war effort could switch sides before the end.
+ResistEnd;Victory for the Resistance;Village;With its buildings destroyed, the faction that had controlled the town limped away in defeat.
+ResistEnd;Resistance Quashed;Village;The resistance failed, and the controlling faction kept its grip on the town.
+ResistEnd2;Financial Defenses;Village;The family's financial pledges decided which army could supply its troops and win the war.
+ResistEnd3;Shots Fired;Battlefield;The cousins' advanced weaponry proved decisive on the battlefield.
+ATOWSabotageIntro1Revealed ATOWSabotageIntro2Revealed ATOWSabotageIntro2SepRevealed;A Time for Sabotage;Estate;Feeling ignored and spited, a cousin considered sabotaging a faction's building or a member of their own family.
+ATOWSabotage1;The Choice for Resistance;Estate;A cousin chose a target for their righteous sabotage against tyranny.
+ATOWSabotageConfirm ATOWSabotageMonConfirm;Demolition for Change;Post Office;A cousin wrote to a contact and arranged for a faction's building to fall.
+ATOWSabotageNO;Avoid Indulgence;Laboratory;A cousin chose study over sabotage, certain their work would outshine any rival.
+SabotageSignIn1 SabotagePlayerChoice1 SabotagePlayerConfirmed;The Target of My Wrath;Estate;A cousin secretly chose another family member to suffer a devastating sabotage.
+Sabotage1Now;Cruel Betrayal;Estate;An explosion tore open a wall of a cousin's estate, exposing part of their laboratory.
+AMessenger;A Messenger Arrives;Estate;A nervous young messenger was caught holding a figurine that a cousin had left on the windowsill.
+Amessno;No Importance;Estate;A cousin sent the rude messenger away and thought no more of it.
+Amessyes2;The Messenger Continued;Estate;A cousin returned the signed papers to the messenger, who set off down the road.
+AMessenger2Revealed;A Fortuitous Letter;Estate;A letter wrapped in twine appeared on the doorstep asking which flag the cousin flew.
+AMessno2;No Consequence;Estate;A letter from an old university acquaintance spurred a few days of creative seclusion.
+Player1BeenSabotagedRevealed;A Noble Retort;Estate;Learning who had attacked their estate, a cousin resolved to respond directly.
+DuelRules1;Rules of the Duel;Estate;A cousin set the terms of a duel: scientific prowess or pistols at twenty paces.
+AcceptDuel1Revealed;Code Duello;Estate;A cousin received a letter challenging them to a duel by their own family member.
+DuelDecline1;Letter of Apology;Estate;Rather than duel, a cousin issued a formal apology without admitting guilt.
+AcceptDuel1b;Duel Accepted;Estate;A cousin accepted the duel, vowing to settle the matter with precision.
+DuelResolution1a;The Moment of Truth;Dueling Grounds;The cousins met on the dueling grounds and the shots rang out.
+ScienceDuelTiedRes;Stalemate;Dueling Grounds;Neither cousin could outdo the other's science, and they left the grounds in simmering silence.
+DuelResolution1b;An Unfortunate Death;Dueling Grounds;The duel ended in a fatal blow, and blood stained the dueling grounds.
+DuelResolution1b;Wounded Pride;Dueling Grounds;The duel left the loser with a minor injury and badly wounded pride.
+TimeTravelIntro;A Town in Shambles;Village;War had left the once handsome province scorched and ruined.
+TimeTravelIntro1;A Return to Devastation;Village;A cousin braved the last of the war to see the destroyed village with their own eyes.
+TimeTravelIntro2;A Well Timed Discovery;Silver Mine;A cryptic map led the cousins to an abandoned silver mine and a strange machine.
+TimeMachineExperiment;A Time Machine... But, I Thought...?;Silver Mine;The cousins wondered whether they had found a way to travel through time.
+TMReplace;A Time Loop Created;Silver Mine;Time spiralled around the machine, and a cousin wondered whether it was the Masterwork of their lineage.
+TTIntro3;To the Past;Village;The cousins emerged from the mine to find the town returned to its state in 1831.
+TimeTokens;The Chance of Paradox;Village;The cousins realised that leaving past experiments unfinished could have catastrophic consequences.
+TriggerParadox;Ease of Anxiety;Laboratory;A cousin felt the timestream mend and surged forward with new knowledge.
+ATimeMachineRepaired;A Vehicle Through Time;Silver Mine;The time machine was restored to its former magnificence.
+FixIt;Accidental Discovery;Silver Mine;A damaged clasp on the time machine revealed schematics for devices far beyond the age.
+MilitarytokenRevealed;Duplicitous Duplicate;Village;A confused officer insisted that he knew a cousin and wanted to show them something.
+MilitaryNo;Compulsions;Town Hall;The enraged officer was carried away by the police, shouting that he knew who the cousin was.
+MilitaryYes;Paradox Averted;Village;At his home the officer showed a figure identical to the one in the cousin's pocket, and snatched it away.
+SeedResolution;The Secret Laboratory;Secret Laboratory;Watching in secret, a cousin saw the parents' hoard of knowledge, goods or money make the region famous.
+BlameGameEvent BlameGameEvent2P;Paradoxical Dilemma;Estate;Fearing the war would destroy two generations of work, the cousins looked for a more decisive solution.
+BlameRevealed Blame1b Blame1c;Interrogation;Estate;Armed riflemen questioned a cousin about their allegiances and the traitorous activities in the hills.
+BlameResolve;Determined Resolution;Estate;The cousins shared their stories of the military visits and promised each other a way out if the gambit failed.
+BlameOut1;Diverting Their Attentions;Estate;The cousins blamed one of their own, whose estate was ransacked and set ablaze by soldiers.
+BlameOut2;Crossed Signals;Estate;The cousins' bickering left the soldiers without a clear traitor, so they taxed everyone.
+BlameOut3;Silence is Golden;Estate;No cousin blamed another, and the soldiers rewarded their solidarity.
+SecretParadoxBonus;Chaos Theory;Laboratory;Studying the rifts in time gave a cousin a new understanding of fourth-dimensional forces.
+TimeEnd1;Paradox;Village;Time went on as normal, though it was unclear whether reality had been altered.
+TimeEnd2;Fully Repaired;Silver Mine;An aged cousin stepped into the fully repaired time machine, hoping to secure the future war had taken.
+TimeEnd2;Rusty, But Worth a Try;Silver Mine;With some hasty tinkering, the rusted time machine sputtered to life.
+TimeEnd2b;An Unsettling Time;Silver Mine;The time machine made alarming noises as a cousin pulled the lever anyway.
+MonarchReignIntro;Heavy is the Crown;Village;Under Monarchist rule, influence was gained through money and bloodshed.
+RoyalBarnCheck SeparatistBarnCheck;Suspicions Confirmed;Village;The new government discovered that a family member had consorted with the enemy for over a decade.
+BribeDenied;Royal Disinterest;Laboratory;With the royals less interested in weaponry, a cousin set out on a new path.
+RoyalDecreeExplain;Royal Power;Royal Office;A cousin learned that coin and a persuasive meal could sway the royal advisor.
+RoyalPriceisRight;Royally Adjacent;Royal Office;Direct access to royalty brought a cousin's work curious attention.
+FirstCrownCons;The Queen's Ire;Estate;The Queen took notice of a cousin's ambitions, and the guard began watching the estate.
+CrownCons;Royal Suspicions;Estate;The crown's attention laid a cousin's secret work bare.
+ReignIntro;Visit with the Royal Advisor;Royal Office;A cousin visited the portly royal advisor in the new Monarchist building.
+Reign1b Reign2b Reign3b Reign4b Reign6b Reign7b Reign7c2 Reign8b;Thanks from the Advisor;Royal Office;The advisor followed a cousin's suggestion for his decree and thanked them for the assistance.
+Stickfun;The Formation;Study;The cousins discovered that their wooden figures fit together.
+CoWEvent;Where Duty Lies;Estate;The cousins had to decide whether to rule with benevolence or an iron fist.
+CommemorativeStatueEvent;Royal Eyes Upon Us;Town Square;The royal advisor proposed a statue in a cousin's honour.
+CommemorativeSignIn;Memorial Observance;Town Square;A cousin visited the commemorative statue of the family.
+CommemorativeMAIN;Unyielding Inspiration;Town Square;The statue's honouree was moved to tears by their monument.
+CommemorativeOTHER;Bitter Eyesore;Town Square;A rival sneered at the statue but left reinvigorated by hate.
+PeaceIntro;Peace Through War;Village;The Separatists celebrated their victory with a parade through the streets.
+PeaceWar;The War to End All Wars;Battlefield;The cousins' inventions spearheaded a war for the continent, and each wanted the credit.
+PeacePrep;In Preparation;Laboratory;A cousin developed aggressive new peace-keeping measures for a world war.
+PeacetoRebuild;The Price of Peace;Town Hall;The Separatist government asked the family to help pay for rebuilding after the civil war.
+PeaceDiscard;Degradation Over Time;Estate;Time had taken its toll on the family's reputation, though past contributions still helped.
+FamineEvent;Famine;Village;A famine in 1901 caused riots, and a new meat product was proposed as a solution.
+FamineYesResult;A Modest Proposal;Village;The riots ceased as mysterious new meat rations appeared and no one asked where they came from.
+FamineNo;Hardened by Suffering;Village;The people rebelled after another winter of rationing and held a grudge against the family.
+PeaceStick;An Old, Failed Sabotage;Study;A cousin found a hidden compartment in an old wooden figure.
+BattleTime;Glory and Recognition;Battlefield;A cousin claimed the era as their own as the fate of the world rested in their hands.
+PeaceEvent;Loyalty by Force or Diplomacy;Battlefield;Uprisings at home diverted resources as the nation neared victory.
+PeaceEventGas;Rule by Fear;Village;The cousins released a deadly gas that pacified the people at a terrible cost.
+PeaceEventNo;The Voice of the People;Village;The cousins refused to use the gas, and the uprisings slowed the advance across the continent.
+WarningIntro;Future Consequences;Vienna;Raised away from their family, a cousin discovered the experiments and journals of their ancestors.
+CostStick;Good Fortune;Study;An old wooden figure seemed to bring a cousin good fortune.
+CostStick2;Ill Fortune;Study;An old wooden figure seemed to bring a cousin ill fortune, even after it was thrown into the fire.
+Late2ResA Late2ResB;Gift of Silence;Village;The villagers welcomed a cousin's work and even opened their coffers to them.
+WarningWarEnding;The War?;Village;A cousin noted that the civil war of the previous generation had ended with few details recorded.
+WhoopsUtopian WhoopsUtopianb TimeTravelEventb;The Future of Convenience;Laboratory;Schematics for advanced convenience devices arrived from an unknown source.
+WarningEvent;The Time Travelers Appear;Sitting Room;A metal box appeared in a flash during tea, and the course of the universe shifted.
+TimeWarp1st TimeWarp TimeWarp2;Time Shifts;Estate;The sky glowed crimson and the air crackled as time shifted once more.
+WarningMaybe;One Last Opportunity;Laboratory;A strange premonition warned a cousin that things were about to change.
+WarningEvent2;A Semblance of Stasis;Estate;The crimson sky faded, and the cousins resolved to finish their great-grandfather's Masterwork.
+OldManTokenRevealed;A Fortuitous Letter?;Estate;Under a swirling green sky a flickering letter asked which flag the cousin flew.
+OldManNo;A Letter Out of Time;Estate;A cousin became obsessed with a letter that existed in two times at once.
+OldManYes;Underground Contacts;Estate;A letter revealed the grandparents' role in the resistance.
+Stasis;Timeline Stabilized;Estate;The time loop closed, and the timeline stabilised.
+Paradoxical;Unexplainable Phenomenon;Village;Loose ends in time caused fascinating oddities to appear.
+ParadoxIntro;You Cant Stop Progress;Vienna;Raised away from their family, a cousin discovered the experiments and journals of their ancestors.
+TimeTravelEvent;Advanced Work is Important!;Veranda;Aged time travellers emerged from a metal contraption in a burst of lightning.
+FigureontheTrackInRevealed;Nostalgic Guests;Study;A dinner guest recognised a small figure on the mantle as a relic of the war.
+FigureontheTrackInb;A Legacy of Intrigue;Village;The figure became the talk of the town and a source of intrigue for a cousin's work.
+NobodyFigures;Accolades for Exploration;University;An exhibition of the family's preserved works won the admiration of academics.
+ParadoxFirst;New Science;Laboratory;A cousin set out to improve upon their great-grandfather's outdated blueprints.
+CostStick1;Rediscovered Artist;Estate;An art critic believed the misshapen wooden figure was a lost work of a famous sculptor.
+FutureStick;The Key;Study;Inside a hollow wooden figure lay an object that could not exist.
+MonumentVote MonuRevealed;Fate of Time;University;The cousins had to choose between publishing the time machine schematics and keeping them secret.
+MonuRes;A Bend Towards Chaos;Village;The time machine schematics were published to the public.
+MonuRes;A Secure Future;Village;The time machine schematics remained a family secret.
+ParadoxRandoEvent ParadoxTimeRandom;The Consequences of Free Time Travel;Village;With time travel available to almost anyone, its random effects spread through the region.
+ParadoxEvent;Rebuilding;Village;With no monument built, the people rebuilt a landscape torn apart by time paradoxes.
+ParadoxEvent;Monument to Progress;Village;The town thanked the family for setting it on the path to a Utopian future and honoured the best among them with a monument.

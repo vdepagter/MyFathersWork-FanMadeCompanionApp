@@ -23,6 +23,10 @@ public abstract class ScenarioVars(int randomCount)
     public bool                    FamilyWinner { get; set; }
     public string                  Winner       { get; set; } = string.Empty;
 
+    // Log Book: titles of the logged events in the order they were first shown. Written by Shared/LogBook.cs after a screen
+    // is rendered, never by scenario code; kept here so undo forgets the screens it goes back over and load keeps the rest.
+    public string[] LogBook { get; set; } = [];
+
     protected GlobalData _GlobalData = null!;
 
     // Names the players typed in during play; the page marks them translate="no" (GlobalData.ProtectedNames)
@@ -108,6 +112,7 @@ public abstract class ScenarioVars(int randomCount)
         TieUpgrades    = [];
         FamilyWinner   = false;
         Winner         = string.Empty;
+        LogBook        = [];
 
         foreach (string player in AllPlayerSlots(globalData)) Scores[player] = 0;
 

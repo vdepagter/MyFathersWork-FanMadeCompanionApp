@@ -70,10 +70,6 @@ public class TheCostOfDiseaseVars() : ScenarioVars(300 + 1)
 
     // Generation III - common
     public CostOfDiseaseEnding Ending          { get; set; } = CostOfDiseaseEnding.None;
-
-    // Log Book: titles of the logged events in the order they were first shown. Written by Shared/LogBook.cs after a screen
-    // is rendered, never by scenario code; kept here so undo forgets the screens it goes back over and load keeps the rest.
-    public string[] LogBook { get; set; } = [];
     public bool                Lycan           { get; set; }
     public bool                Gen3SetupShown  { get; set; } // originally gen3pg
     public bool                SuspicionMoved  { get; set; } // originally Prosperity1 / University1
@@ -178,7 +174,6 @@ public class TheCostOfDiseaseVars() : ScenarioVars(300 + 1)
         Society              = Society.None;
 
         Ending          = CostOfDiseaseEnding.None;
-        LogBook         = [];
         Lycan           = false;
         Gen3SetupShown  = false;
         SuspicionMoved  = false;

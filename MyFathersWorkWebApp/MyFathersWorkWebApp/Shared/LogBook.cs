@@ -2,29 +2,48 @@ namespace MyFathersWorkWebApp;
 
 public record LogBookEntry(string Title, string Location, string Summary);
 
-// Log Book of The Cost of Disease, ported from the official app (ViewLogBook.cs): an event is logged the first time one of
-// its screens is shown, and the book lists the events in that order. Data: wwwroot/localization/TheCostOfDisease_LogBook.csv.
-// Pages/Gameplay.razor notes the screen after it is rendered, never scenario code (mirror sandbox, undo replays). The logged
-// titles live in TheCostOfDiseaseVars.LogBook: undo forgets the screens it goes back over, load and New Game behave like
-// the rest of the game state (Unity cleared the log book on New Game too).
+// Log Book, ported from the official app (ViewLogBook.cs, Cost of Disease only there): an event is logged the first time one
+// of its screens is shown, and the book lists the events in that order. Data: wwwroot/localization/<Scenario>_LogBook.csv
+// (Cost of Disease from the official app, the other scenarios fan-written). Pages/Gameplay.razor notes the screen after it
+// is rendered, never scenario code (mirror sandbox, undo replays). The logged titles live in ScenarioVars.LogBook: undo
+// forgets the screens it goes back over, load and New Game behave like the rest of the game state (Unity cleared the log
+// book on New Game too).
 public class LogBookService(HttpClient http)
 {
-    private const string _CSV_PATH = "localization/TheCostOfDisease_LogBook.csv";
-
-    private readonly Dictionary<string, List<LogBookEntry>> _ByScreen = new();
-    private readonly Dictionary<string, LogBookEntry>       _ByTitle  = new();
-
-    private Task? _Loading;
-
-    public static bool HasLogBook(GlobalData globalData) => globalData.ScenarioId == ScenarioId.CostOfDisease;
-
-    public Task LoadAsync() => _Loading ??= LoadCoreAsync();
-
-    private async Task LoadCoreAsync()
+    private class ScenarioBook
     {
+        public Dictionary<string, List<LogBookEntry>> ByScreen { get; } = new();
+        public Dictionary<string, LogBookEntry>       ByTitle  { get; } = new();
+    }
+
+    private readonly Dictionary<ScenarioId, Task<ScenarioBook>> _Books = new();
+    private readonly Dictionary<ScenarioId, ScenarioBook>       _Loaded = new();
+
+    private static string? CsvPath(ScenarioId scenario) => scenario switch
+    {
+        ScenarioId.CostOfDisease => "localization/TheCostOfDisease_LogBook.csv",
+        ScenarioId.FearOfUnknown => "localization/FearOfTheUnknown_LogBook.csv",
+        ScenarioId.TimeOfWar     => "localization/ATimeOfWar_LogBook.csv",
+        _                        => null
+    };
+
+    public static bool HasLogBook(GlobalData globalData) => CsvPath(globalData.ScenarioId) != null;
+
+    public async Task LoadAsync(ScenarioId scenario)
+    {
+        string? path = CsvPath(scenario);
+        if (path == null) return;
+        if (!_Books.TryGetValue(scenario, out Task<ScenarioBook>? loading)) _Books[scenario] = loading = LoadCoreAsync(path);
+        _Loaded[scenario] = await loading;
+    }
+
+    private async Task<ScenarioBook> LoadCoreAsync(string path)
+    {
+        ScenarioBook book = new();
+
         try
         {
-            string csv = await http.GetStringAsync(_CSV_PATH);
+            string csv = await http.GetStringAsync(path);
 
             foreach (string rawLine in csv.Split('\n'))
             {
@@ -36,10 +55,10 @@ public class LogBookService(HttpClient http)
                 if (parts.Length < 4 || parts[0] == "Screens") continue;
 
                 LogBookEntry entry = new(parts[1], parts[2], parts[3]);
-                _ByTitle[entry.Title] = entry;
+                book.ByTitle[entry.Title] = entry;
                 foreach (string screen in parts[0].Split(' ', StringSplitOptions.RemoveEmptyEntries))
                 {
-                    if (!_ByScreen.TryGetValue(screen, out List<LogBookEntry>? entries)) _ByScreen[screen] = entries = [];
+                    if (!book.ByScreen.TryGetValue(screen, out List<LogBookEntry>? entries)) book.ByScreen[screen] = entries = [];
                     entries.Add(entry);
                 }
             }
@@ -48,14 +67,18 @@ public class LogBookService(HttpClient http)
         {
             Console.WriteLine($"Log Book: {e.Message}");
         }
+
+        return book;
     }
+
+    private ScenarioBook? Book(GlobalData globalData) => _Loaded.GetValueOrDefault(globalData.ScenarioId);
 
     // The entry of the screen on display (a window or popup, not a hub): its screen method (ResumeMethod, the caller of
     // SaveToUndo). A screen with several entries (the first / second night of the hunt) logs the one named in the window title.
-    public LogBookEntry? CurrentEntry(GlobalData globalData)
+    private LogBookEntry? CurrentEntry(GlobalData globalData, ScenarioBook book)
     {
-        if (!HasLogBook(globalData) || (globalData.ActiveWindow == null && globalData.ActivePopup == null && globalData.ActiveInputPopup == null)) return null;
-        if (!_ByScreen.TryGetValue(globalData.ResumeMethod, out List<LogBookEntry>? entries)) return null;
+        if (globalData.ActiveWindow == null && globalData.ActivePopup == null && globalData.ActiveInputPopup == null) return null;
+        if (!book.ByScreen.TryGetValue(globalData.ResumeMethod, out List<LogBookEntry>? entries)) return null;
         if (entries.Count == 1) return entries[0];
 
         string title = globalData.ActiveWindow?.Title ?? string.Empty;
@@ -65,26 +88,26 @@ public class LogBookService(HttpClient http)
     // Logs the screen on display; each event once, as in Unity
     public void Note(GlobalData globalData)
     {
-        if (globalData.ActiveMirrorQuestion != null) return;
+        if (globalData.ActiveMirrorQuestion != null || Book(globalData) is not { } book) return;
 
-        LogBookEntry? entry = CurrentEntry(globalData);
+        LogBookEntry? entry = CurrentEntry(globalData, book);
         if (entry == null) return;
 
-        TheCostOfDiseaseVars vars = globalData.TheCostOfDiseaseVars;
+        ScenarioVars vars = globalData.ScenarioVars;
         if (!vars.LogBook.Contains(entry.Title)) vars.LogBook = [..vars.LogBook, entry.Title];
     }
 
     // The logged events, oldest first. Like Unity, the event on display is left out while it is the newest one.
     public List<LogBookEntry> Entries(GlobalData globalData)
     {
-        if (!HasLogBook(globalData)) return [];
+        if (Book(globalData) is not { } book) return [];
 
-        List<LogBookEntry> entries = globalData.TheCostOfDiseaseVars.LogBook
-                                               .Where(title => _ByTitle.ContainsKey(title))
-                                               .Select(title => _ByTitle[title] with { Summary = _ByTitle[title].Summary.Replace("Xvillage", globalData.TownName) })
+        List<LogBookEntry> entries = globalData.ScenarioVars.LogBook
+                                               .Where(title => book.ByTitle.ContainsKey(title))
+                                               .Select(title => book.ByTitle[title] with { Summary = book.ByTitle[title].Summary.Replace("Xvillage", globalData.TownName) })
                                                .ToList();
 
-        if (entries.Count > 0 && CurrentEntry(globalData)?.Title == entries[^1].Title) entries.RemoveAt(entries.Count - 1);
+        if (entries.Count > 0 && CurrentEntry(globalData, book)?.Title == entries[^1].Title) entries.RemoveAt(entries.Count - 1);
         return entries;
     }
 }

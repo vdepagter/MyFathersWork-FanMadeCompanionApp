@@ -1,0 +1,172 @@
+// Log Book of Fear of the Unknown. Fan-written (October 2026): the official app has a Log Book for The Cost of Disease only.
+// Summaries condense the scenario's own story text. Screens: the screen methods (the caller of SaveToUndo) that log the
+// entry; a screen listed under several entries logs the one whose title is part of the window title. Xvillage = the
+// village name. Rules-only screens (bids, votes, explanations, warrior statistics) are not logged.
+Screens;Title;Location;Summary
+Prologue;A Note for my Sister;Guest Quarters;In 1932 a researcher staying at the family's decaying estate wrote of his absent hosts and the strange noises he heard at night.
+ScenarioStart;Fear of the Unknown;Xvillage;In July 1831 a cousin arrived in the dismal village to settle their late father's affairs and witnessed a grievous event.
+SharedMania;Shared Mania;Estate;The cold and dark landscape that dismayed their spouses only seemed to rejuvenate the young scientists.
+MilestoneSignIn;The Inventor in the News;Newspaper Office;The local paper took note of an ambitious inventor whose loud experiments revived old suspicions about the family.
+OverAchievement;Over-Achievement;Estate;Having already chosen a path towards destiny, a cousin basked in a brief affirmation of their own self-worth.
+Overambitious;Overambitious;Village Streets;Unable to control their ambitious impulses, a cousin heard the townspeople whisper distrustfully as they walked by.
+PlotPlayerCheckin;The Mob Moves In;Estate Gates;Pitchforks and torches gathered outside the gates, and only the hounds kept the mob from storming the estate.
+GainFamilyPlot;A Separate Plot;Estate Grounds;Tired of angry mobs and frontier justice, a cousin had a grave plot installed upon the estate grounds.
+PublicExecution;A Public Execution?;Town Square;In September 1850 the frightened crowd burned a suspected witch, and the cousins watched spellbound as the flames rose.
+BlacksmithDead;The Blacksmith is Dead.;Smithy;No suspicious eyes turned towards the family once the blaze died down, which proved fortunate for the cousins.
+ButcherDead;The Butcher is Dead.;Butcher's Shop;The Blacksmith laughed, shook each cousin's hand with a knowing wink and promised discounts with no questions asked.
+FearOfOurFamily;Fear of Our Family;Estate;Years later the village's paranoia had not faded, and the cousins knew their children would inherit the same suspicions.
+Gen1FateVictim;Flames of Hysteria;Estate;A caretaker's letter warned the returning heirs that the village's hostility towards the family had flared up again.
+Gen1FateVictim;Paranoia Fades;Estate;A caretaker's letter told the returning heirs that the village's hostility towards the family had slowly softened.
+Gen1FateMob;More Secrets to Quell;Estate;Their caretaker confessed that the family's affairs held more secrets than one guardian could keep quiet.
+Gen1FateMob;A Return to Civility;Estate;Their caretaker reported that the village was returning to civility and the family's affairs were in order.
+Obsessions;Progression;Laboratory;The second generation found their parents' obsessions boiling beneath their everyday activities.
+Obsessions;Regression;Laboratory;The second generation struggled to resist the obsessions they had inherited from their parents.
+Obsession;An Inherited Obsession;Study;Each cousin's private journal revealed the obsession that would drive their work for the generation.
+ForeignersIntro;Hexes and Hysteria;Post Office;Trusting only private couriers, a cousin wrote of the hexes and hysteria that had taken hold of the town.
+StrengtheningTheTown;Strengthening the Town;Town Hall;Amid the gloom a movement grew to restore stability and celebrate what made Xvillage unique.
+RevengePlot RevengePlotChoice RevengeFortune RevengeMisfortune;A Small Choice;Estate;A messenger offered the least successful cousin a secret choice between fortune and misfortune.
+WitchIntro;The Deadly Witching Game;Village;After several business partners died, the townsfolk claimed the family carried a curse that brought tragedy to its allies.
+GameOfHexes;A Game of Hexes;Village;To find the cursed cousin, the family took turns hexing a building in town and watched what befell it.
+RumorMill;Rumor Mill;Newspaper Office;The paper reported hauntings in town, and everyone agreed that a curse lay upon Xvillage.
+RumorRevealed;The Rumor Is...;Tavern;With charm and a little money, a cousin learned who had been seen hexing a building late one evening.
+Fortune35;Fortunate Discovery;Estate;A courier delivered a package of unpublished scientific theories to a fortunate cousin's doorstep.
+Misfortune35;Misfortune;Estate;A servant was burned alive while tending the laundry, perhaps because of new laboratory security measures.
+WallEvent;Memorial to the Past for the Future;Town Hall;The town's memorial lacked support, and the cousins were asked to decide whether to help build it.
+VaguePromise;A Vague Promise;Town Hall;The townspeople were grateful for the aristocracy's support while the caravans kept their distance.
+Accusations;Accusations;Town Square;A cousin wrote of the family tragedy in which the town demanded that one of them be accused of witchcraft.
+DeathAndResolution;Death and Resolution;Town Square;The accusers pointed their fingers, and the cousin with the most accusations was chosen.
+CursedRemoval;Cursed Removal;Estate;The accused cousin bravely faced death and was given a short reprieve to settle their final affairs.
+CurseContinues;The Curse Continues;Estate;The accused cousin barely escaped with their life and awaited judgement, certain that the town's jealousy knew no bounds.
+KeyToTheCityAward;Most Honored Philanthropist;Town Hall;In 1891 the mayor presented a solid gold Key to the City to the greatest contributor to the memorial.
+ConstructionMatters;Construction Matters;Town Hall;The mayor announced a new monument whose design had been decided by public pressure and anonymous donations.
+ProtectedAgainstWitchcraft;Protected Against Witchcraft;Newspaper Office;Years after the last fatal witchcraft accusation, the paper reported that no dark spirits had troubled the town since.
+Caravansery;A Visit From the Caravans;Market;A brightly coloured caravan wagon opened as a market stall and brought colour to the grey town.
+CreatureIntro;Towards Civility;Estate;In March 1863 the horror of their grandfather's experiments returned to haunt the family.
+CreatureDemands;The Creature's Demands;Estate;The stitched-together Creature spoke of its hatred for its creator and made demands of his heirs.
+CreatureMasterwork;The Creature;Laboratory;The family realised that the plans passed down through the generations had produced a living monster.
+HideousMotivation;Hideous Motivation;Laboratory;Unwilling to let their grandfather's failure roam the countryside, a cousin resolved to perfect the family's technique.
+Church;Charitable Church;Church;The church accepted donations from cousins wishing to lower their creepy reputation.
+Guilt;Wracked with Guilt;Laboratory;Having created life only to feed a hideous fiend's urges, a cousin could not bear to look upon the finished experiment.
+AsylumSignIn;Visit to the Sanatorium;Asylum;Behind its bleak exterior, the small asylum turned out to be clean and reasonably well run.
+AsylumMeet;Retrieval of Property;Asylum;A cousin found a lost servant at the asylum, restrained but walking the grounds, diagnosed with extreme paranoia.
+AsylumAgain;Perhaps Stubborn, Perhaps Illiterate;Asylum;A cousin returned to the asylum, forgot they had already been there, and left with a sedative.
+BusinessMeeting;Meeting on the Hill;The Count's Estate;A cousin visited a gothic estate on the hill whose owner shared the family's tastes.
+SlyInvestment BusinessOffer BusinessOfferRevealed;A Sly Investment;The Count's Estate;Over a sumptuous banquet the Count urged a cousin to donate to him instead of the asylum, with payment due in later years.
+BusinessBargain;An Improved Deal;The Count's Estate;Praising a shrewd negotiator, the Count improved the terms of his offer.
+BusinessDeclined;Declined Offer;The Count's Estate;The Count reddened at the refusal and had his man show the cousin out.
+BusinessThanks;Thanks Are In Order;The Count's Estate;The Count shook hands on the contribution, and his touch sent an icy chill through the cousin.
+RemoveACurse RemoveACurseRevealed;To Remove A Curse;The Count's Estate;Before the cousin left, the old Count softly asked for something that would take time to procure.
+EsteemedInstitution;The Esteemed Institution;Asylum;The new asylum opened with a ribbon-cutting ceremony attended by the mayor and the family.
+BusinessOpportunity;Business Opportunity;Asylum;A tall old man in black approached a cousin after the ceremony with a business proposal.
+AsylumInvestors;Private Investors;Asylum;The asylum struggled financially and turned to private investors for support.
+AsylumSupport;Asylum Support;Asylum;The asylum offered a new program to family members willing to make a generous donation.
+AsylumResolution;Asylum Resolution;Asylum;The institution thanked the family, although the consequences of their decision would only become clear later.
+GrandfathersCreation;Grandfather's Creation Returns;Estate;The Creature returned to claim what it had asked for, threatening severe consequences.
+CreatureAppeased;The Creature is Appeased;Estate;A cousin made peace with the monster at the cost of their soul and freed their heirs from the family curse.
+TotalContributions;Total Contributions;Asylum;The donations to the asylum and to the Count were tallied, revealing where the family's support truly lay.
+CountReturns CursedCure;A Cursed Cure;Estate;The enfeebled Count came to a cousin's door to ask for help with his ailment.
+CureConfirmed;Cure Confirmed;Estate;The Count accepted the prepared schematics and promised that his past mistakes would not be repeated.
+CureDenied;Cure Denied;Estate;Refused, the Count hissed like a feral cat and vanished in a burst of fog.
+CollectionDay CollectionDayRevealed;Collection Day;Estate;In 1892 men in dark overcoats interrupted a cousin's supper to collect what was owed to the Count.
+CountPaid;The Count's Payment Received;Estate;Pleased with the payment, the Count's men left gracefully and pledged never to return.
+CountDisappointed;The Count is Disappointed;Estate;The Count's men warned that their employer would not be pleased, and left in haste.
+CreaturesAid;The Creature's Aid;Post Office;A worried correspondent asked why a cousin believed they had failed in the eyes of God by aiding the Creature.
+MoneyTalks;Money Talks;Post Office;Rumours spread that the asylum would become a private penitentiary, funded by the family's investments.
+CreatureRevenge;The Creature Exacts Its Revenge;Estate;The Creature breached the estate at night and took its revenge on the family that had ignored its warnings.
+MinorCompassion;Minor Compassion;Estate;The next morning the Creature left behind a bundle of old research notes, a small mercy amid the ruin.
+ObsessionsAltered;Isolation;Village;Xenophobia took hold of the town, and those with conventional scientific aptitudes were met with distrust.
+ObsessionsAltered;Exploration;Village;The town's push towards acceptance gave the cousins room to explore their obsessions.
+ObsessionsAltered;Agitation;Village;Old tensions resurfaced and agitated the cousins' inherited obsessions.
+ObsessionsAltered;A Calmer Mindset;Village;A calmer town allowed the cousins a measure of peace from their obsessions.
+ObsessionPenalty;Obsession Penalty;Estate;Cousins who neglected their obsessions paid the price.
+Crossroads;At a Crossroads;Crossroads;At a fork in the road outside town, a cousin arrived for a meeting and found no one waiting.
+LifeForsaken;A Life Forsaken;Crossroads;At the crossroads a cousin faced a long-delayed personal reckoning about the path their life had taken.
+Conviction;Conviction;Crossroads;Refusing to give in to doubt, a cousin rededicated themselves to the work they had always desired.
+RejectingMyFate;Rejecting My Fate;Crossroads;Tired of being shackled to the family's destiny, a cousin chose to break free of it.
+DebtRepaid;A Debt Repaid;Estate;A note in elegant calligraphy appeared at a cousin's bedside: the debt had been repaid.
+HouseForPrivateUse;For Private Use;Second Home;A brass key on a ruby silk pillow revealed that a cousin owned a second home in the region.
+UnwelcomeReturn UnwelcomeReturnRevealed;A Most Unwelcome Return;Estate;Pale figures in black suits got past the estate's defences, and a cousin hid under the stairs to write a final note.
+PaymentReceived;Payment Received;Estate;The cloaked fiends took their payment and vanished in a flurry of bats against the full moon.
+PrematureEnd;Premature End;Estate;Refusing to pay, a cousin awaited certain death just as victory was within reach.
+Expedition;The Hunt;Countryside;The cousins followed the Creature's trail through the snow-covered landscape.
+ExpeditionResult;The Expedition Uncovers...;Countryside;The expedition revealed what had become of the Creature.
+CreatureKilled;The Creature is Killed;Countryside;The cousins and their servants subdued and bound the Creature, ending its life.
+CreatureEscapes;The Creature Escapes;Countryside;The Creature bellowed into the valley under a pale moon and vanished once more into the mists.
+IsolationIntro;Isolation and Ignorance;Town Walls;In 1892 the townsfolk built a wall around their town, trading paranoia for delusion.
+MinorRecompense;Minor Recompense;Village;Grieving the death of a parent and distrusted by the townsfolk, a cousin withdrew into their study and dark research.
+ExcellenceDistrusted;Excellence Distrusted;Village;The people distrusted the cousins because of the deeds of their forebears, even in their birthplace.
+CitizenshipInspection;Citizenship Inspection;Town Hall;On inspection day a cousin went to the shabby government offices to prove their citizenship.
+VerificationCompleted;Verification Completed;Town Hall;In a cobwebbed Town Hall a cousin finally confirmed their own existence to the authorities.
+VerificationRequired;Verification of Identity Required;Town Hall;The town demanded that every citizen verify their identity.
+NeglectedByTheCaravan;Neglected by the Caravan;Market;Another season passed without the Romani caravans, so the town held its own market instead.
+SmugglersOffer;Barely Legal Importation;Warehouse;A brazen warehouse proprietor offered a cousin smuggled goods over dinner.
+ControlledRelease;A Controlled Release;Laboratory;The cousins agreed that the walled-in town made excellent controls for an experiment.
+SmugglingConsequences;Consequences of Smuggling;Docks;With little to invest in behind the walls, a cousin began a partnership with the local shipping company.
+CaughtInTheAct;Caught in the Act;Town Hall;Accused of smuggling exotic goods on the roof of a carriage, a cousin was sentenced without trial.
+TheTrial;The Trial;Courthouse;A cousin was summoned to the courthouse, where the police would only present their evidence at trial.
+TrialOutcome;Success;Courthouse;Despite circumstantial evidence, the court could not make its smuggling case against the cousin.
+TrialOutcome;Shameful Display;Courthouse;The smuggling trial ended in a shameful display for the cousin.
+PoliticsAsUsual;Politics as Usual;Town Hall;A cousin admitted to smuggling goods from the docks and swore to do it again.
+ControlledExperiment;A Controlled Experiment;Laboratory;The cousins checked whether enough collaboration had gone into their creation.
+TownHallDestroyed;Town Hall Destroyed;Town Hall;In March 1912 a sudden implosion destroyed the Town Hall, killing four and injuring many.
+DevastatingResults;Devastating and Expected Results;Laboratory;An agitated gorilla injected with hormones and radium broke out of its cage.
+PathOfDestruction;Path of Destruction;Bank;The rampaging creation attacked the Bank after a soldier fired upon it.
+TheLibrary;The Library Falls;Library;The library collapsed into dust, books and blood as the creature paused, shaking violently.
+RampageConcludes;The Rampage Concludes;Village;The giant gorilla beat its chest one last time, and the rampage ended as quickly as it had begun.
+MissedOpportunity;Missed Opportunity;Laboratory;A cousin raged that the others lacked the pioneering spirit to see the experiment through.
+TensionIntro;Old Habits;Village;In April 1892 a cousin enjoyed no longer fearing being burned at the stake, though old habits remained.
+TwoSides;Two Sides;Village;Each place of business in town seemed to radiate the energy of a different faction.
+MinorReward;Minor Reward for Investment;Town Hall;Grateful for donations to the memorial, the local government reluctantly returned the favour.
+Reconciliation;Reconciliation;Village;The townsfolk felt a kinship with the family's suffering and pledged their service to a grieving cousin.
+InSupportOfOthers;In Support of Others;Village;A celebrated cousin found that their fame inspired both their family and the town.
+CalmBeforeTheTempest CalmBeforeTheTempestEnd;Calm Before the Tempest;Village;A strange tension hung in the air, warning of change on the horizon.
+Comeuppance;Comeuppance;Town Hall;The factions were meant to tear each other apart at the town meeting, but the powder keg never exploded.
+GoodNeighbors TheCrossroads;Good Neighbors;Village;In June 1901 the townsfolk came to an agreement, and their tolerance brought the cousins some benefits.
+ComeToAnAgreement;Come to an Agreement;Village;On the brink of bloodshed, the townsfolk realised that they had one thing in common: they hated the family.
+WaysToEaseTension;Ways to Ease the Tension;Estate;A cousin was haunted by nightmares of shambling crowds closing in.
+StealVote;Conspiracy to Purloin;Estate;The cousins voted on whether to steal the goods they needed under cover of darkness.
+GoodsProcured;Goods Procured;Warehouse;A cousin triumphed under cover of darkness and retrieved the goods they believed they deserved.
+EthicsPrevail;Ethics Prevail;Estate;The cousins faltered under pressure and abandoned the plan to steal.
+CabinetOfCuriosities;Cabinet of Curiosities;Estate;The cousin with the most occult experiments was awarded the Cabinet of Curiosities.
+Neglected;Neglected;Market;Another season passed without the Romani caravans, so the town held its own market instead.
+PrivatizedIntro;Conducting Business;Estate;In August 1892 a cousin wrote that the family now owned a substantial part of the town's commercial district.
+AsylumDeteriorated;Asylum Deteriorated;Jail;The asylum had become a hastily built jail holding hundreds of wretches, deviants and criminals.
+InvestmentDividends;Investment Dividends;Bank;The parents' investments had matured, giving a cousin a substantial stake in the village.
+CountInvestment;Investment;Estate;The Count returned, apparently unaged, to offer the family investment opportunities.
+HostileTakeover;Hostile Takeover;Jail;The inmates took over the asylum in a chaotic rebellion and drove out its staff.
+TheEscape;The Escape;Jail;A cousin was forced to meet the leader of the rebellion on the steps of the prison.
+BuildMeAWarrior;Build Me A Warrior;Jail;The rebel leader admired the family's experiments and demanded that they build warriors.
+WorldIsNotTheSame;The World is Not the Same;Jail;The cousins were tolerated only while useful, but gained the freedom to pursue any science they wished.
+MercifulHeritage;Merciful Heritage;Junk Palace;The rebel leader honoured the family's past support of the asylum with one exception.
+MercifulHeritage;A Sacrifice is Required;Junk Palace;The rebel leader demanded a sacrifice from the family.
+AbruptEnd;An Abrupt End;Estate;Unable to procure fresh blood in the tainted village, the Count withdrew from his dealings.
+HorrorOfExistence;The Horror of Existence;Junk Palace;Having burned every bridge with the scientific community, a cousin went to collect their hideous reward.
+JunkyardScrap;Junkyard Scrap;Junk Palace;In the ruined mess hall the rebel leader praised a cousin for laying their soul bare.
+PalaceOfScraps;A Palace of Scraps;Junk Palace;A cousin ventured to the old jail at the centre of town to meet its new ruler.
+PlanRevealed HideousFeast;A Plan Revealed;Junk Palace;Over a hideous outdoor feast, the rebel leader revealed a plan.
+MeetingAtTheJunkPalace;The Meeting at the Junk Palace;Junk Palace;From a collapsed floor of the jail, the cousins looked out over the perverted land.
+JunkResolution;Resolution;Junk Palace;A cousin hurried away from the desolate palace, past a large figure lurking in the shadows.
+CreatureIntervenes CreatureBenefactor TaxesExcused;The Creature Intervenes;Village;A poorly written letter signed by The Creature showed that the family's old experiment was watching over them.
+PenaltyForDefiance;Penalty for Defiance;Junk Palace;The rebel leader punished every cousin who had not reached the end of the Track.
+EnterTheBattledome;Enter the Battledome;Battledome;The iron dome, draped in red cloth and hissing with steam, opened for the grand event.
+MainEvent;The Main Event;Battledome;An announcer on a penny-farthing presented the mechanical combatants to the crowd.
+BattleOver;The Battle is Over;Battledome;One warrior emerged from the pit of blood, oil and iron as champion, and the losers were swiftly punished.
+LiberalIntro;Acceptance;Village;In February 1892 a cousin found the town distressingly decent, cheerful and accepting.
+UnderstandingAndSupport;Understanding and Support;Asylum;The expanded asylum brought the town relative peace of mind.
+AdmittanceLog;Asylum Admittance Log;Asylum;A faded page listed the visitors and the patients admitted for psychiatric evaluation.
+PatientEntry;Patient Entry Report;Asylum;A case file recorded a cousin's troubling behaviour on admission.
+Discharged;Discharged;Asylum;Treatment concluded, and the patient was sent home with a care regimen.
+Assessment;Psychological Assessment;Asylum;After an informal interview, the patient was submitted to a formal psychological evaluation.
+AssessmentResults CountAssessmentResults;Assessment Results;Asylum;A full mental and physical examination produced the patient's assessment results.
+AidToTheInstitute;Aid to the Institute;Asylum;Finding the asylum's methods timid, a cousin arranged to persuade its director to start an aggressive new program.
+ProgramNews MenagerieAward;The New Program;Asylum;In 1902 the asylum unveiled a radical new treatment program in a wing full of complex machinery.
+EssentialSalts;Hope Springs Eternal;Estate;A vial of essential salts arrived, and a dead rabbit's heart began beating again: life from death.
+TheChoice;The Choice;Mausoleum;Each cousin could try to use the salts to bring back their lost spouse.
+AriseMyLove AriseMyLoveTwisted;Arise, My Love;Mausoleum;A cousin broke into the mausoleum and applied the solution to their spouse's remains.
+RiskTooGreat;The Risk is Too Great;Cemetery;A cousin laid a lily on their spouse's grave, accepting that life is meant to end.
+EconomicStimulus;Economic Stimulus;Bank;Recession and nationalist unrest left the family, as landowners, to decide how the regional government would proceed.
+SurprisingRebuke;Surprising Rebuke;Parliament;Parliament sharply rebuked the family's attempt to sway the democratic process.
+EstateTaxes;Estate Taxes;Parliament;A new income tax was introduced to reduce inequality across Transylvania.
+EthnicSeparatism;Ethnic Separatism;Parliament;The Nationalist movement in parliament prevailed.
+DeathAndTaxes;Death and Taxes;Town Hall;The county levied an estate tax on wealthy citizens, interrupting a game of croquet.
+SeizureOfGoods;Seizure of Goods or Trade;Estate;Armed men arrived at the estates of the cousins who had avoided tax collection.

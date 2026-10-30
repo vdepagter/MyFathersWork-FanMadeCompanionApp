@@ -251,7 +251,7 @@
             await GlobalData.LoadGameAsync(string.Empty, Nav, Http, Js);
         }
 
-        if (LogBookService.HasLogBook(GlobalData)) await LogBook.LoadAsync();
+        await LogBook.LoadAsync(GlobalData.ScenarioId);
 
         _Initialized = true;
     }
