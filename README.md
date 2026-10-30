@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="MyFathersWorkApp/MyFathersWorkApp/wwwroot/images/logo.png" alt="My Father's Work" width="420" />
+  <img src="MyFathersWorkApp/MyFathersWorkApp/wwwroot/images/logo.png" alt="My Father's Work" width="300" />
 </p>
 
 # My Father's Work: Fan-Made Companion App
