@@ -4,7 +4,7 @@
 @inject IJSRuntime        Js
 @inject HttpClient        Http
 @inject AudioService      Audio
-@inject SavedGamesService SavedGames
+@inject SavedGamesService Saves
 
 <div class="back-button" @onclick="GoBack">
     ⬅ @GlobalData.GetLocalizedUITag(GlobalTags.MainMenu_Back)
@@ -72,8 +72,8 @@
 
     protected override async Task OnInitializedAsync()
     {
-        _Current = await SavedGames.CurrentAsync();
-        _Games   = await SavedGames.ListAsync();
+        _Current = await Saves.CurrentAsync();
+        _Games   = await Saves.ListAsync();
         _Loaded  = true;
     }
 
@@ -112,11 +112,11 @@
         Audio.PlayClick();
         _ConfirmDelete = string.Empty;
 
-        if (!await SavedGames.OpenAsync(id))
+        if (!await Saves.OpenAsync(id))
         {
             _Message = GlobalData.GetLocalizedUITag(GlobalTags.SavedGames_OpenFailed);
-            _Current = await SavedGames.CurrentAsync();
-            _Games   = await SavedGames.ListAsync();
+            _Current = await Saves.CurrentAsync();
+            _Games   = await Saves.ListAsync();
             return;
         }
 
@@ -127,7 +127,7 @@
     private async Task DownloadSaveCode(SavedGameInfo game)
     {
         Audio.PlayClick();
-        string code = await SavedGames.SaveCodeAsync(game.Id);
+        string code = await Saves.SaveCodeAsync(game.Id);
         if (code == string.Empty) return;
         string name = $"MyFathersWork_{game.Scenario}_{game.LastPlayed.ToLocalTime():yyyy-MM-dd_HHmm}.txt";
         await Js.InvokeVoidAsync("BlazorDownloadFile", name, "text/plain;charset=utf-8", code);
@@ -143,7 +143,7 @@
     {
         Audio.PlayClick();
         _ConfirmDelete = string.Empty;
-        await SavedGames.DeleteAsync(id);
-        _Games = await SavedGames.ListAsync();
+        await Saves.DeleteAsync(id);
+        _Games = await Saves.ListAsync();
     }
 }
