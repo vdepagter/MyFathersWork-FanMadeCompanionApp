@@ -176,6 +176,21 @@ public static class GlobalTags
     public const string Gallery_FamilyWin           = "Gallery_FamilyWin";
     public const string Gallery_RecordedNote        = "Gallery_RecordedNote";
 
+    // Saved Games (Pages/SavedGames.razor)
+    public const string MainMenu_SavedGames   = "MainMenu_SavedGames";
+    public const string SavedGames_Note       = "SavedGames_Note";
+    public const string SavedGames_Current    = "SavedGames_Current";
+    public const string SavedGames_Earlier    = "SavedGames_Earlier";
+    public const string SavedGames_None       = "SavedGames_None";
+    public const string SavedGames_Round      = "SavedGames_Round";
+    public const string SavedGames_Ended      = "SavedGames_Ended";
+    public const string SavedGames_NoHistory  = "SavedGames_NoHistory";
+    public const string SavedGames_Open       = "SavedGames_Open";
+    public const string SavedGames_SaveCode   = "SavedGames_SaveCode";
+    public const string SavedGames_Delete     = "SavedGames_Delete";
+    public const string SavedGames_SureDelete = "SavedGames_SureDelete";
+    public const string SavedGames_OpenFailed = "SavedGames_OpenFailed";
+
     // Help
     public const string MainMenu_Help = "MainMenu_Help"; // pages: Help_Tab_<Page> (tab label) and Help_<Page>, listed in Pages/Help.razor
     // Header buttons

@@ -1,0 +1,149 @@
+@page "/SavedGames"
+@using System.Globalization
+@inject NavigationManager Nav
+@inject IJSRuntime        Js
+@inject HttpClient        Http
+@inject AudioService      Audio
+@inject SavedGamesService SavedGames
+
+<div class="back-button" @onclick="GoBack">
+    ⬅ @GlobalData.GetLocalizedUITag(GlobalTags.MainMenu_Back)
+</div>
+
+<div class="saves-container">
+    <h1>@GlobalData.GetLocalizedUITag(GlobalTags.MainMenu_SavedGames)</h1>
+    <p class="saves-note">@GlobalData.GetLocalizedUITag(GlobalTags.SavedGames_Note)</p>
+
+    @if (_Loaded)
+    {
+        @if (_Current != null)
+        {
+            <h2>@GlobalData.GetLocalizedUITag(GlobalTags.SavedGames_Current)</h2>
+            <div class="save-card">
+                @Describe(_Current)
+                <div class="save-buttons">
+                    <button class="save-button" @onclick="ContinueCurrent">@GlobalData.GetLocalizedUITag(GlobalTags.MainMenu_Continue)</button>
+                </div>
+            </div>
+        }
+
+        <h2>@GlobalData.GetLocalizedUITag(GlobalTags.SavedGames_Earlier)</h2>
+
+        @if (_Games.Count == 0)
+        {
+            <p class="saves-note">@GlobalData.GetLocalizedUITag(GlobalTags.SavedGames_None)</p>
+        }
+
+        @foreach (SavedGameInfo game in _Games.OrderByDescending(game => game.LastPlayed))
+        {
+            <div class="save-card">
+                @Describe(game)
+                <div class="save-buttons">
+                    <button class="save-button" @onclick="() => Open(game.Id)">@GlobalData.GetLocalizedUITag(GlobalTags.SavedGames_Open)</button>
+                    <button class="save-button small" @onclick="() => DownloadSaveCode(game)">@GlobalData.GetLocalizedUITag(GlobalTags.SavedGames_SaveCode)</button>
+                    @if (_ConfirmDelete == game.Id)
+                    {
+                        <button class="save-button small danger" @onclick="() => Delete(game.Id)">@GlobalData.GetLocalizedUITag(GlobalTags.SavedGames_SureDelete)</button>
+                    }
+                    else
+                    {
+                        <button class="save-button small" @onclick="() => AskDelete(game.Id)">@GlobalData.GetLocalizedUITag(GlobalTags.SavedGames_Delete)</button>
+                    }
+                </div>
+            </div>
+        }
+
+        @if (_Message != string.Empty)
+        {
+            <p class="saves-note">@_Message</p>
+        }
+    }
+</div>
+
+@code
+{
+    [CascadingParameter] private GlobalData GlobalData { get; set; } = null!;
+
+    private bool                _Loaded;
+    private SavedGameInfo?      _Current;
+    private List<SavedGameInfo> _Games         = [];
+    private string              _ConfirmDelete = string.Empty;
+    private string              _Message       = string.Empty;
+
+    protected override async Task OnInitializedAsync()
+    {
+        _Current = await SavedGames.CurrentAsync();
+        _Games   = await SavedGames.ListAsync();
+        _Loaded  = true;
+    }
+
+    private RenderFragment Describe(SavedGameInfo game) => @<div class="save-text">
+        <div class="save-title">@GalleryTrees.Name(game.Scenario)@(game.Town != string.Empty ? $" · {game.Town}" : "")</div>
+        <div class="save-sub">@string.Join(", ", game.Players)</div>
+        <div class="save-sub">
+            @(game.Ending != string.Empty
+                ? GlobalData.GetLocalizedUITag(GlobalTags.SavedGames_Ended).FormatWithReplacement(0, game.Ending)
+                : GlobalData.GetLocalizedUITag(GlobalTags.SavedGames_Round).FormatWithIndex(0, (int)game.Years).FormatWithIndex(1, (int)game.Generation))
+            · @FormatDate(game.LastPlayed)
+        </div>
+        @if (!game.History)
+        {
+            <div class="save-sub">@GlobalData.GetLocalizedUITag(GlobalTags.SavedGames_NoHistory)</div>
+        }
+    </div>;
+
+    private static string FormatDate(DateTime utc) => utc.ToLocalTime().ToString("d MMM yyyy, HH:mm", CultureInfo.InvariantCulture);
+
+    private void GoBack()
+    {
+        Audio.PlayClick();
+        Nav.NavigateTo("");
+    }
+
+    private async Task ContinueCurrent()
+    {
+        Audio.PlayClick();
+        await GlobalData.LoadGameAsync(string.Empty, Nav, Http, Js);
+        Nav.NavigateTo("Gameplay");
+    }
+
+    private async Task Open(string id)
+    {
+        Audio.PlayClick();
+        _ConfirmDelete = string.Empty;
+
+        if (!await SavedGames.OpenAsync(id))
+        {
+            _Message = GlobalData.GetLocalizedUITag(GlobalTags.SavedGames_OpenFailed);
+            _Current = await SavedGames.CurrentAsync();
+            _Games   = await SavedGames.ListAsync();
+            return;
+        }
+
+        await GlobalData.LoadGameAsync(string.Empty, Nav, Http, Js);
+        Nav.NavigateTo("Gameplay");
+    }
+
+    private async Task DownloadSaveCode(SavedGameInfo game)
+    {
+        Audio.PlayClick();
+        string code = await SavedGames.SaveCodeAsync(game.Id);
+        if (code == string.Empty) return;
+        string name = $"MyFathersWork_{game.Scenario}_{game.LastPlayed.ToLocalTime():yyyy-MM-dd_HHmm}.txt";
+        await Js.InvokeVoidAsync("BlazorDownloadFile", name, "text/plain;charset=utf-8", code);
+    }
+
+    private void AskDelete(string id)
+    {
+        Audio.PlayClick();
+        _ConfirmDelete = id;
+    }
+
+    private async Task Delete(string id)
+    {
+        Audio.PlayClick();
+        _ConfirmDelete = string.Empty;
+        await SavedGames.DeleteAsync(id);
+        _Games = await SavedGames.ListAsync();
+    }
+}

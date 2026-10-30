@@ -23,6 +23,7 @@
     [Inject] private NavigationManager Nav  { get; set; } = null!;
     [Inject] private HttpClient        Http { get; set; } = null!;
     [Inject] private IJSRuntime        Js   { get; set; } = null!;
+    [Inject] private SavedGamesService SavedGames { get; set; } = null!;
 
     private string _Base64Input = "";
     
@@ -39,6 +40,7 @@
         if (string.IsNullOrWhiteSpace(_Base64Input)) return;
         _Base64Input = _Base64Input.Trim();
         if (!IsBase64String(_Base64Input)) return;
+        await SavedGames.ArchiveCurrentAsync(); // the loaded game replaces the one being played
         await GlobalData!.LoadGameAsync(_Base64Input, Nav, Http, Js);
         Nav.NavigateTo("Gameplay");
     }

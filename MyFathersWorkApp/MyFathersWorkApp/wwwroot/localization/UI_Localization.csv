@@ -161,6 +161,19 @@ Gallery_ScenarioProgress;{{0=...|Fear of the Unknown}} · {{1=...|3}} of 8 endin
 Gallery_WinFor;Win for {{0=...|Anna}}: win number {{1=...|5}}
 Gallery_FamilyWin;Shared win for the family
 Gallery_RecordedNote;Saved in the Endings Gallery on this device. Going back with Undo and correcting a score replaces this result, so a game is never counted twice.
+MainMenu_SavedGames;Saved Games
+SavedGames_Note;Every game is kept on this device. Starting a new game or loading a save code puts the game you were playing here. Open a game to continue it or to look back through it with Back (⬅).
+SavedGames_Current;Playing now
+SavedGames_Earlier;Earlier games
+SavedGames_None;No earlier games yet.
+SavedGames_Round;{{0=|Early Years|Middle Years|Late Years}} of Generation {{1=|I|II|III}}
+SavedGames_Ended;Ended: {{0=...|Their Own Destiny}}
+SavedGames_NoHistory;Kept without its Back history (the browser storage was full)
+SavedGames_Open;Open
+SavedGames_SaveCode;Save code
+SavedGames_Delete;Delete
+SavedGames_SureDelete;Delete for good?
+SavedGames_OpenFailed;This game could not be opened.
 //====== Help ======;
 MainMenu_Help;Help
 Help_Tab_HowToUse;How to use
@@ -178,7 +191,7 @@ Help_Secret;<p>Some pages say <i>"Carefully hand this storybook device to … an
 Help_Tab_Bids;Bids and votes
 Help_Bids;<p>For a bid or a vote, the app explains what is at stake. Everyone chooses in secret at the table, for example with money or a card hidden in a closed hand, and then reveals at the same time.</p><p>Then click the link after resolving the bid or vote and pick the result in the app. The screen explains how ties are broken.</p>
 Help_Tab_ThisApp;This app
-Help_ThisApp;<p>This fan-made version adds a few things to the official app.</p><p><b>Back (⬅)</b> undoes the last screen, all the way back to the start of the game. <b>Forward (➡)</b> redoes what you undid, until you make a new choice. Your progress is saved in this browser after every screen, so <b>Continue</b> picks up where you left off, even after closing the page.</p><p><b>Pause (⏸)</b> lets you save a game as text or a file to load elsewhere, change the narration (the original male or female recordings, Oliver's narration, or off) and return to the main menu.</p><p><b>Log Book (📖)</b> lists the events you have played through so far, with where they happened and a one-line summary. The official app had one for The Cost of Disease only - the entries for the other two scenarios are fan-written.</p><p><b>Play along with the official app</b>, chosen when you start a game, rolls nothing at random. Whenever the story depends on chance, you pick what the official app shows, so both apps tell the same story.</p><p>The <b>Endings Gallery</b> counts each player's wins and the endings you have reached. You can tick endings reached elsewhere, and export or import the gallery to move it to another device.</p>
+Help_ThisApp;<p>This fan-made version adds a few things to the official app.</p><p><b>Back (⬅)</b> undoes the last screen, all the way back to the start of the game. <b>Forward (➡)</b> redoes what you undid, until you make a new choice. Your progress is saved in this browser after every screen, so <b>Continue</b> picks up where you left off, even after closing the page. Starting a new game does not throw the old one away: <b>Saved Games</b> keeps every game on this device, so you can open it again later and page back through it.</p><p><b>Pause (⏸)</b> lets you save a game as text or a file to load elsewhere, change the narration (the original male or female recordings, Oliver's narration, or off) and return to the main menu.</p><p><b>Log Book (📖)</b> lists the events you have played through so far, with where they happened and a one-line summary. The official app had one for The Cost of Disease only - the entries for the other two scenarios are fan-written.</p><p><b>Play along with the official app</b>, chosen when you start a game, rolls nothing at random. Whenever the story depends on chance, you pick what the official app shows, so both apps tell the same story.</p><p>The <b>Endings Gallery</b> counts each player's wins and the endings you have reached. You can tick endings reached elsewhere, and export or import the gallery to move it to another device.</p>
 Gameplay_Undo;Back (undo the last screen)
 Gameplay_Redo;Forward (redo what you undid)
 Gameplay_StorybookShared;All players may again view the Storybook.

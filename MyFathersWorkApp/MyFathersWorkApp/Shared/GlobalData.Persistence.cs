@@ -7,9 +7,11 @@ namespace MyFathersWorkApp;
 // The game and its whole undo history are kept in the browser after every screen, so a reload, a closed tab or a
 // language change reopens the same screen and Back still works.
 //   "continue"   - base64 JSON of the newest undo point (the save code of the pause menu, loaded by Continue)
+//   "continueTime" - when "continue" was last written (UTC, ISO 8601), shown in Saved Games
 //   "undoMeta"   - "first|end": undo points first .. end-1 are stored
 //   "undo/{i}"   - one undo point: screen method, round, JSON with RandomArray left out unless it changed since i-1
 // When the browser storage is full the oldest undo points are dropped; the newest one is always kept.
+// New Game and loading another game pack these keys into one saved game first (Shared/SavedGames.cs).
 public partial class GlobalData
 {
     private class StoredUndo
@@ -21,6 +23,7 @@ public partial class GlobalData
     }
 
     private const string _CONTINUE_KEY  = "continue";
+    private const string _CONTINUE_TIME_KEY = "continueTime";
     private const string _UNDO_META_KEY = "undoMeta";
     private const string _RANDOM_PREFIX = "\"RandomArray\":";
     private const string _RANDOM_NULL   = "\"RandomArray\":null";
@@ -114,6 +117,7 @@ public partial class GlobalData
 
         await js.InvokeVoidAsync("localStorage.setItem", _UNDO_META_KEY, $"{_StorageOffset + first}|{_StorageOffset + points.Length}");
         await js.InvokeVoidAsync("localStorage.setItem", _CONTINUE_KEY, Convert.ToBase64String(System.Text.Encoding.UTF8.GetBytes(WithCurrentLanguage(points[^1].JsonData))));
+        await js.InvokeVoidAsync("localStorage.setItem", _CONTINUE_TIME_KEY, DateTime.UtcNow.ToString("o"));
 
         _StoredFirst = first;
         _StoredIds.Clear();
@@ -131,12 +135,13 @@ public partial class GlobalData
         return jo.ToString(Formatting.None);
     }
 
-    // New game: forget the saved game and its undo history
+    // New game (after SavedGamesService.ArchiveCurrentAsync kept a copy): forget the game being played and its undo history
     public async Task ClearSavedGameAsync(IJSRuntime js)
     {
         UndoStack.Clear();
         RedoStack.Clear();
         await js.InvokeVoidAsync("localStorage.removeItem", _CONTINUE_KEY);
+        await js.InvokeVoidAsync("localStorage.removeItem", _CONTINUE_TIME_KEY);
         await ClearStoredUndoAsync(js);
     }
 

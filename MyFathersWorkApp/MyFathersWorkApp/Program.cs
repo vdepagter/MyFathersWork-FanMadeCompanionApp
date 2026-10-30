@@ -10,5 +10,6 @@ builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(builder.
 builder.Services.AddScoped<AudioService>();
 builder.Services.AddScoped<GalleryService>();
 builder.Services.AddScoped<LogBookService>();
+builder.Services.AddScoped<SavedGamesService>();
 
 await builder.Build().RunAsync();

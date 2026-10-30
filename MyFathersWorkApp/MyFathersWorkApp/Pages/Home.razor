@@ -4,6 +4,7 @@
 @inject IJSRuntime        Js
 @inject HttpClient        Http
 @inject AudioService      Audio
+@inject SavedGamesService SavedGames
 
 <PageTitle>My Father's Work Companion App</PageTitle>
 
@@ -17,6 +18,7 @@
         }
 
         <button @onclick="OnNewGameClick">@GlobalData.GetLocalizedUITag(GlobalTags.MainMenu_NewGame)</button>
+        <button @onclick="OpenSavedGames">@GlobalData.GetLocalizedUITag(GlobalTags.MainMenu_SavedGames)</button>
         <button @onclick="ShowLoadPopup">@GlobalData.GetLocalizedUITag(GlobalTags.MainMenu_LoadGame)</button>
         <button @onclick="OpenGallery">@GlobalData.GetLocalizedUITag(GlobalTags.MainMenu_Gallery)</button>
         <button @onclick="OpenHelp">@GlobalData.GetLocalizedUITag(GlobalTags.MainMenu_Help)</button>
@@ -71,6 +73,12 @@
 
     private void HideLoadPopup() => _ShowLoadGame = false;
 
+    private void OpenSavedGames()
+    {
+        Audio.PlayClick();
+        Nav.NavigateTo("SavedGames");
+    }
+
     private void OpenGallery()
     {
         Audio.PlayClick();
@@ -87,6 +95,7 @@
     {
         Audio.PlayClick();
         Audio.Play(SoundCue.Footsteps);
+        await SavedGames.ArchiveCurrentAsync();
         await GlobalData.ClearSavedGameAsync(Js);
         GlobalData.ScenarioId  = ScenarioId.None;
         GlobalData.PlayersNum  = 0;
