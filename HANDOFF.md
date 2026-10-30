@@ -50,7 +50,8 @@ Next steps:
 
 ## Fear of the Unknown - table play test (October 2026)
 
-Port and browser play test are done and merged to `main` of the fork (`vdepagter/...`); see the archive. A PR to the
+Port and browser play test are done and merged to `main` of the fork (`vdepagter/myfathersworkapp`, renamed from
+`vdepagter/MyFathersWork-FanMadeCompanionApp` on 2026-10-30; live at https://vdepagter.github.io/myfathersworkapp/); see the archive. A PR to the
 original repository (`Deusald/MyFathersWork-FanMadeCompanionApp`) can be opened from `main` or a branch at any time.
 
 Next steps:

@@ -31,6 +31,8 @@ What is being worked on right now is tracked in [`HANDOFF.md`](HANDOFF.md).
 
 ### 🎲 Using the app
 
+**Play it online:** https://vdepagter.github.io/myfathersworkapp/
+
 **Playing a game**
 1. **Home**: *New Game*, *Continue* (the last auto-save) or *Load Game* (paste or upload a save).
 2. **Players**: choose 2–4 players and enter each scientist's name.
