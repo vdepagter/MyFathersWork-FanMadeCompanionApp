@@ -285,17 +285,6 @@
 }
 
 /* "All players may again view the Storybook." on the hub after a secret page */
-.storybook-shared {
-    margin: 0 0 1rem;
-    padding: 0.5rem 1rem;
-    border: 1px solid #9ebed9;
-    border-radius: 6px;
-    color: #e0d3b8;
-    font-weight: bold;
-    text-align: center;
-    background-color: rgba(0, 0, 0, 0.35);
-}
-
 /* Voice-over indicator on narrated windows (between the title and the parchment box) */
 .narration-pill {
     display: inline-flex;
@@ -440,8 +429,7 @@ html[data-graphics="low"] .round-step.current {
 
 /* Next button below THE END? and the ending page it opens (Shared/Gallery.cs) */
 .ending-next {
-    display: block;
-    margin: 1.5rem auto 0;
+    margin: 1.5rem auto 0; /* keeps .mfw-button's display: grid, which centres the label */
 }
 
 .ending-page {
@@ -540,7 +528,7 @@ html[data-graphics="low"] .round-step.current {
 .reveal-start {
     display: flex;
     justify-content: center;
-    margin: 0.8rem 0;
+    margin: 1.2rem 0 1rem;
 }
 
 /* Unity ViewSpecialEvent: line, SPECIAL EVENT, mirrored line; fades in, holds, fades out */

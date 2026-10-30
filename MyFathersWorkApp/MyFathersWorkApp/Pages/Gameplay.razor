@@ -117,9 +117,11 @@
             }
             @foreach (GameplayElement element in GlobalData.ActiveWindow.Elements)
             {
+                bool afterRevealButton = false;
                 if (revealButton && element.Callback != null)
                 {
-                    revealButton = false;
+                    revealButton      = false;
+                    afterRevealButton = true; // the button's own margins replace the link's blank line
                     bool bid = revealKind == true;
                     <div class="reveal-start">
                         <button class="mfw-button green" @onclick="() => OpenReveal(bid, null)">
@@ -128,7 +130,7 @@
                     </div>
                 }
 
-                if (element.FromNewLine)
+                if (element.FromNewLine && !afterRevealButton)
                 {
                     <br/>
                     <br/>
@@ -165,11 +167,6 @@
         @if (GlobalData.ActiveHub.Subtitle != string.Empty)
         {
             <h2>@GlobalData.ActiveHub.Subtitle.InsertImages().ProtectNames(GlobalData).AsMarkup()</h2>
-        }
-
-        @if (GlobalData.SecretPagesShown)
-        {
-            <p class="storybook-shared">@GlobalData.GetLocalizedUITag(GlobalTags.Gameplay_StorybookShared)</p>
         }
 
         foreach (GameplayHubSection hubSection in GlobalData.ActiveHub.Sections)
@@ -891,10 +888,8 @@
     private void InvokeWindowCallback(Action<GlobalData> nextCallback)
     {
         Audio.PlayClick();
-        bool fromHub = GlobalData.ActiveWindow == null;
         GlobalData.RunScenarioAction(() =>
         {
-            if (fromHub) GlobalData.SecretPagesShown = false; // the players act on the hub: the notice has done its job
             GlobalData.ActiveWindow = null;
             nextCallback.Invoke(GlobalData);
         });

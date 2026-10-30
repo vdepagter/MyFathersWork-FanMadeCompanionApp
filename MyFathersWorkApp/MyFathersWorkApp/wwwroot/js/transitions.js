@@ -75,12 +75,26 @@
         play(el, ink[0], ink[1], Object.values(INK).map(i => i[0]));
     }
 
+    // A page that fits the window would show a scroll bar for a moment while its content slides in from below, and the
+    // scroll bar shifts the whole page sideways (classic scroll bars, e.g. Edge on Windows)
+    let enteringTimer = 0;
+
+    function hideScrollBarWhileEntering(ms) {
+        const root = document.documentElement;
+        if (!root.classList.contains("mfw-entering") && root.scrollHeight > root.clientHeight) return;
+        root.classList.add("mfw-entering");
+        clearTimeout(enteringTimer);
+        enteringTimer = setTimeout(() => root.classList.remove("mfw-entering"), ms + 100);
+    }
+
     function enter(kind) {
         const list = ENTRANCES[kind];
         if (!list) return;
 
         list.forEach(([selector, cls, ms]) => {
-            document.querySelectorAll(selector).forEach(el => play(el, cls, ms, [cls]));
+            const elements = document.querySelectorAll(selector);
+            if (elements.length > 0 && !reducedMotion()) hideScrollBarWhileEntering(ms);
+            elements.forEach(el => play(el, cls, ms, [cls]));
         });
     }
 

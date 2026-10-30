@@ -42,9 +42,6 @@ public partial class GlobalData
     public ATimeOfWarVars             ATimeOfWarVars       { get; }      = new();
     public Dictionary<string, object> TmpValues            { get; }      = new();
 
-    // A secret page (one player reads alone) was shown since the players last acted on the hub: the hub then says that
-    // all players may again view the Storybook, as A Time of War's own text does after some secret pages
-    public bool SecretPagesShown { get; set; }
 
     // Screen this state is shown on (the method that called SaveToUndo), empty on a hub. Load reopens it.
     public string ResumeMethod { get; set; } = string.Empty;

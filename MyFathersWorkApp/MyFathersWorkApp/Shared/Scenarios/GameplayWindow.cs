@@ -183,21 +183,14 @@ public class GameplayWindow(GlobalData globalData)
     
     public void AddOnceYouAreReady(Action<GlobalData> nextCallback)
     {
-        Elements.Add(new GameplayElement(globalData.GetLocalizedUITag(GlobalTags.Gameplay_OnceYouAreReady), RevealSecret(nextCallback), true));
+        Elements.Add(new GameplayElement(globalData.GetLocalizedUITag(GlobalTags.Gameplay_OnceYouAreReady), nextCallback, true));
     }
 
     public void AddDoNotOtherPlayersToSee(string who, Action<GlobalData> nextCallback)
     {
         Elements.Add(new GameplayElement(globalData.GetLocalizedUITag(GlobalTags.Gameplay_DoNotOtherPlayersSee).FormatWithReplacement(0, who)));
-        Elements.Add(new GameplayElement(globalData.GetLocalizedUITag(GlobalTags.Gameplay_OnceYouAreReady), RevealSecret(nextCallback), true));
+        Elements.Add(new GameplayElement(globalData.GetLocalizedUITag(GlobalTags.Gameplay_OnceYouAreReady), nextCallback, true));
     }
-
-    // The secret page opens: the hub shown next tells the players they may all view the Storybook again
-    private static Action<GlobalData> RevealSecret(Action<GlobalData> nextCallback) => data =>
-    {
-        data.SecretPagesShown = true;
-        nextCallback(data);
-    };
 
     public void AddAllPlayersNamesAsOptions(Action<string> nextCallback, PlayerFormatterTag playerFormatterTag = PlayerFormatterTag.None, Func<string, bool>? showPlayer = null)
     {

@@ -312,8 +312,8 @@ duels). `GetHubMethod` maps `ATimeOfWarHubId.Martial`. Implementation notes and 
   becomes `SabotagedBuilding`, `ChroniclePageMiddle` set); B8 as shipped (no Middle Barracks penalty after a successful
   tea); B9 as shipped (the {figure} holder may not exist); B10 death on 1 of 5, for both duel types; B2 dead `$takereact`
   branches dropped. The quartering's Unified Monarchists branch (`BarracksSimple2`, unreachable) is kept in `QuarteringNext`.
-- Window layout: `DuelDenounce1` and `DuelResolution1` have no window title; their read-aloud line comes first and the
-  source title ("Firm Rebuke", "The Bloody Business") is a bold line in the content, in the source order. Hand-overs to a
+- Window layout: the source titles of `DuelDenounce1` and `DuelResolution1` ("Firm Rebuke", "The Bloody Business", bold
+  lines in the source text after the read-aloud line) are window titles (owner, 30 Oct 2026). Hand-overs to a
   named player (`Player1BeenSabotaged`, `AcceptDuel1`) use the shared `AddDoNotOtherPlayersToSee` text; hand-overs to
   "the player with the ... token / fewest VP" keep the source text. `MartialSepEventa` title "BRIBE" + bold "The Region
   Needs Convincing" line (the source glued both into one bold line), link "Click here to start the bribe..." (plain
