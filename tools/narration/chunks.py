@@ -26,7 +26,7 @@ import sys
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.normpath(os.path.join(HERE, "..", ".."))
-APP = os.path.join(ROOT, "MyFathersWorkWebApp", "MyFathersWorkWebApp")
+APP = os.path.join(ROOT, "MyFathersWorkApp", "MyFathersWorkApp")
 LOCALIZATION = os.path.join(APP, "wwwroot", "localization")
 CODE = os.path.join(APP, "Shared", "Scenarios")
 WEB = os.path.join(APP, "wwwroot", "audio", "vo", "oliver")

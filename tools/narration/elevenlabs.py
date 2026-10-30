@@ -40,7 +40,7 @@ VOICES = os.path.join(HERE, "voices.json")
 LOCAL = os.path.join(HERE, "voices.local.json")  # saved voice ids, git-ignored
 SCRIPTS = os.path.join(HERE, "scripts")
 OUT = os.path.join(HERE, "out")
-WEB = os.path.join(HERE, "..", "..", "MyFathersWorkWebApp", "MyFathersWorkWebApp", "wwwroot", "audio", "vo", "ai")
+WEB = os.path.join(HERE, "..", "..", "MyFathersWorkApp", "MyFathersWorkApp", "wwwroot", "audio", "vo", "ai")
 
 
 def key():
@@ -93,7 +93,7 @@ def script_text(name):
     return "\n".join(lines).strip()
 
 
-LOCALIZATION = os.path.join(HERE, "..", "..", "MyFathersWorkWebApp", "MyFathersWorkWebApp", "wwwroot", "localization")
+LOCALIZATION = os.path.join(HERE, "..", "..", "MyFathersWorkApp", "MyFathersWorkApp", "wwwroot", "localization")
 SOURCE = re.compile(r"^# (\w+\.csv) (\w+)")  # first line of every script: "# <CSV file> <Tag> ..."
 
 

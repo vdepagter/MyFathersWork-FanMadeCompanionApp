@@ -1,81 +1,127 @@
-## 🧪 My Father's Work: Fan-Made Companion App
+<p align="center">
+  <img src="MyFathersWorkApp/MyFathersWorkApp/wwwroot/images/logo.png" alt="My Father's Work" width="420" />
+</p>
 
-This is a fan-made web and console-based companion app for *My Father’s Work* — created by the community to enhance the gameplay experience beyond the limitations of the official app by Renegade.
+# My Father's Work: Fan-Made Companion App
 
-### ✨ Why this exists
-The official app for *My Father's Work* lacks essential features, contains errors, and doesn’t support community-driven improvements. This project was built to:
+A free, fan-made companion app for the board game *My Father's Work* by Renegade Game Studios. It runs in any modern
+browser on a phone, tablet or computer, with nothing to install.
 
-- Provide a **fully accurate version** of all scenarios, including original text
-- Offer an **abridged version** of the narrative for quicker play sessions
-- Add functionality, fix bugs, and allow for more consistent gameplay
-- Make it easier to bring *My Father’s Work* back to the table
+### ▶️ Play now: https://vdepagter.github.io/myfathersworkapp/
 
-### 📍 Where the project stands
+## Why this exists
+
+The official companion app is no longer available in the app stores. An
+[official web app](https://renegadegamestudios.com/playmyfatherswork) still exists, but it is no longer maintained.
+
+Renegade made the source of the original app publicly available for projects like this one. This app converts that
+source into a new web app, fixes the issues found in the original stories, and adds features and extra narration.
+
+This repository is a fork of [Deusald's fan-made companion app](https://github.com/Deusald/MyFathersWork-FanMadeCompanionApp),
+which ported the first two Generations of *The Cost of Disease*. Starting from there, this fork:
+
+- checked those existing ports passage by passage against the original source and filled the gaps it found,
+- ported the rest: *The Cost of Disease* Generation III, *Fear of the Unknown* and *A Time of War*, each with scoring,
+  tie-breakers and all 8 endings.
+
+## Scenarios
 
 | Scenario | Status |
 |---|---|
-| **The Cost of Disease** | ✅ Play testing: playable from setup to the final ending, all 3 Generations, every story branch, final scoring, tie-breakers and all 8 endings |
-| **Fear of the Unknown** | 🚧 Work in progress: every branch is ported (including the battle and the asylum assessment) and played through in the browser; waiting for a real game at the table |
-| **A Time of War** | ❌ Not started |
+| **The Cost of Disease** | ✅ Complete, played at the table |
+| **Fear of the Unknown** | ✅ Complete, played through in the browser; waiting for a game at the table |
+| **A Time of War** | ✅ Complete, played through in the browser; waiting for a game at the table |
 
-What is being worked on right now is tracked in [`HANDOFF.md`](HANDOFF.md).
+## Features
 
-**Still to do**
-- Play-test **Fear of the Unknown** at the table.
-- Port **A Time of War** (its story text is in `MyFathersWorkConsole/.../Processor/ATimeOfWar.txt`; it relies on time-travel mechanics).
-- Abridged (TL;DR) story option.
-- More languages: menus and story text exist only in English.
-- Possible source flaw kept as-is in The Cost of Disease: the Generation III evil branch puts back building tiles that were exposed by a single vote.
-- Fear of the Unknown fixes several bugs of the original story (for example the battle); the full list is in `CLAUDE.md`.
-- Nice-to-haves from the official app: endings and achievements gallery, sharing, voice-over.
+**Everything the official app did**
+- The full original story text of all three scenarios, for 2 to 4 players
+- Setup instructions with pictures, round screens with the active rules, and the end-of-round and end-of-generation steps
+- Final score entry, tie-breakers, rankings and all endings
+- Music, sound effects, page transitions and the original male and female voice recordings
+- The Log Book of events you have played through, now for every scenario (the official app had one for *The Cost of
+  Disease* only)
 
-### 🎲 Using the app
+**Added in this app**
+- **Oliver**, a narrator who reads all story text aloud (*Fear of the Unknown* so far; the other scenarios are next).
+  Private pass-the-device passages only play when the reader presses play.
+- **Back (⬅)** undoes any step, all the way to the start of the game.
+- **Auto-save**: close the page and continue later on the exact same screen.
+- **Save and load** a game as text or a file, to continue on another device.
+- **Play along with the official app**: if someone else runs the official app, this app asks for its random outcomes
+  so both stay in step.
+- **Endings Gallery**: the endings you have reached per scenario, remembered players and a win tally, with its own
+  export and import.
+- **Help** pages that explain setup, the round screens, secret pages, bids and votes.
+- Separate volume sliders for music, effects and speech.
+- Many fixes to the original stories: unreachable or always-true conditions, rules that contradicted each other,
+  missing and duplicated text. Each deviation is written down in [`CLAUDE.md`](CLAUDE.md).
 
-**Play it online:** https://vdepagter.github.io/myfathersworkapp/
+## Still to do
 
-**Playing a game**
-1. **Home**: *New Game*, *Continue* (the last auto-save) or *Load Game* (paste or upload a save).
-2. **Players**: choose 2–4 players and enter each scientist's name.
-3. **Village**: name the town your family inherits.
-4. **Scenario**: pick a scenario, then the language of the story.
-5. **Gameplay**: read the story and follow the setup popups. Each round has a screen with the rules that are active, where you click links when something happens during play. The top bar shows the current round (I‑1 … III‑3). Use ⬅ to undo a step and ⏸ to pause, save or return to the menu.
-6. At the end of Generation III, enter everyone's score. The app resolves any tie, shows the rankings and reveals your ending.
+- Play *Fear of the Unknown* and *A Time of War* at the table.
+- Oliver's narration for *The Cost of Disease* and *A Time of War*.
+- Test on iPhone and iPad (Safari).
+- Achievements and sharing from the official app are not ported.
 
-The game saves itself in the browser whenever you return to a round screen.
+## Running it on your own computer
 
-**Running locally**
-1. Install the [.NET SDK](https://dotnet.microsoft.com/download) and [Git LFS](https://git-lfs.com/). The images are stored with LFS, so run `git lfs pull` after cloning.
-2. `dotnet run --project MyFathersWorkWebApp/MyFathersWorkWebApp/MyFathersWorkWebApp.csproj`
-3. Open http://localhost:5166
+You only need this if you want to change the app. To play, just open the link above.
 
-### 🔧 How the scenarios are ported
-1. **Source:** the official app was built in Unity, and its stories were written in Twine and compiled to C#. The decompiled story code for all three scenarios is the starting point.
-2. **Make it readable:** the console project (`MyFathersWorkConsole`) converts that code into plain, readable passages. Helper scripts in `tools/` show any passage with its original link texts.
-3. **Map the flow:** follow the links from each Generation's start to see which passages belong where, and which choices lead to which branch.
-4. **Rebuild:** each passage becomes a screen or a setup popup in the web app. Each round becomes a screen with that round's rules, and all text goes into editable `.csv` files.
-5. **Verify:** a script checks that every text the code asks for exists. Every branch is then played through in the browser, using crafted save files to jump straight to later Generations.
+1. **Install the .NET SDK.** Go to https://dotnet.microsoft.com/download, download the **.NET 9 SDK** (not just the
+   runtime) for your system and run the installer. To check it worked, open a terminal (on Windows: press Start, type
+   `cmd` and press Enter) and type `dotnet --version`. It should print a number starting with 9 or higher.
+2. **Install Git and Git LFS.** Get Git from https://git-scm.com/downloads (the Windows installer includes Git LFS).
+   On macOS or Linux, also install Git LFS from https://git-lfs.com/. Then run `git lfs install` once in a terminal.
+   The images and audio are stored with Git LFS, so without it the app shows broken pictures and plays no sound.
+3. **Download the app.** In the terminal, go to the folder where you want it (for example `cd Documents`) and run:
+   ```
+   git clone https://github.com/vdepagter/myfathersworkapp.git
+   cd myfathersworkapp
+   ```
+   (The green **Code > Download ZIP** button on GitHub does not include the images and audio, so use `git clone`.)
+4. **Start it.** In that same `myfathersworkapp` folder, run:
+   ```
+   dotnet run --project MyFathersWorkApp/MyFathersWorkApp/MyFathersWorkApp.csproj
+   ```
+   On Windows you can instead double-click `launch.bat`. The first start takes a minute.
+5. **Open it** at http://localhost:5166 in your browser. Press Ctrl+C in the terminal to stop it.
 
-Developer details (conventions, pitfalls, how to add the next scenario) are in [`CLAUDE.md`](CLAUDE.md).
+To get the latest version later, run `git pull` in the `myfathersworkapp` folder.
 
-**Challenges encountered**
-- **No real source code for the stories:** the story logic only exists as decompiled, machine-generated code. The console conversion also lost many link texts, which had to be recovered.
-- **Bugs in the original stories:** some conditions are always true or can never be reached, and a few rules contradict each other. Each case needed a deliberate choice between copying the original and fixing it.
-- **Randomness, undo and saves:** every random roll is decided in advance, so undoing a step or loading a save replays exactly the same result.
-- **Rules outside the story:** scoring and tie-breakers were separate screens in the original app, and some of their rules were never written down.
-- **Gaps in the earlier port:** checking completeness turned up missing and duplicated texts in Generations I and II, which are now fixed.
+## How the scenarios were ported
 
-### 📚 Features
-- Original scenario text, with abridged (TL;DR) options planned
-- Logic scripting for decision trees and player interactions
-- Easy-to-edit scenario files stored in readable `.csv` format
-- Undo, auto-save and shareable save files
-- GitHub-based collaboration — open to community contributions!
-- Clean UI version to run on any browser
+1. **Source:** the official app was built in Unity, and its stories were written in Twine and compiled to C#. The
+   decompiled story code of all three scenarios (in [`source/`](source)) is the starting point.
+2. **Make it readable:** helper scripts in `tools/` turn that code into readable passages with their original link texts.
+3. **Map the flow:** follow the links from each Generation's start to see which passages belong where, and which
+   choices lead to which branch.
+4. **Rebuild:** each passage becomes a screen or a setup popup. Each round becomes a screen with that round's rules,
+   and all text goes into editable `.csv` files.
+5. **Verify:** scripts check that every text the code asks for exists. Every branch is then played through in the
+   browser, using crafted save files to jump straight to later Generations.
 
-### 🤝 Community-Driven
-- All help with translating content into other languages is welcome!
-- Instructions and shared Google Sheets will guide contributors.
-- The project aims to remain respectful to the original IP, while filling gaps the publisher has left.
+Developer details (conventions, pitfalls, deliberate deviations from the original) are in [`CLAUDE.md`](CLAUDE.md).
+Current work is tracked in [`HANDOFF.md`](HANDOFF.md).
 
-### ⚠️ Disclaimer
-This is a nonprofit fan project created by players, for players. We believe this app helps promote and improve the game, not compete with it.
+## Other community projects
+
+- [Deusald's fan-made companion app](https://github.com/Deusald/MyFathersWork-FanMadeCompanionApp), the project this
+  app is based on
+- [Chronicle](https://shrukan.github.io/chronicle/)
+- [Masterwork](https://github.com/GameGhost/Masterwork)
+- The **My Father's Work Fanmade App** Discord, also run by Deusald: https://discord.gg/QvGD44Ck44
+
+## License and credits
+
+*My Father's Work*, its stories, artwork, music and recordings are © Renegade Game Studios. The original app's source
+is published under the [Creative Commons Attribution-NonCommercial 4.0](LICENSE) license, and this app is shared under
+the same terms: free to use, share and adapt for non-commercial purposes, with credit to Renegade Game Studios. This
+app changes the original: the stories were ported to a new web app, bugs were fixed, and features and narration were
+added.
+
+Oliver's narration is generated with [ElevenLabs](https://elevenlabs.io) text-to-speech (voice "Oliver Silk") on a paid
+plan.
+
+This is a non-profit fan project, made by players for players. It is not affiliated with or endorsed by Renegade Game
+Studios.

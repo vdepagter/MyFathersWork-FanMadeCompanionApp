@@ -153,7 +153,7 @@ mirror-mode Martial -> Reign run from a Gen I save.
 4. **Mirror mode** - click through with `mirror: true`; any `Mirror: ... not visible on the current screen` line is a draw
    made earlier or later than the official app shows it (often a missing piece of text, as in finding 3).
 5. **Branch differences with the official app** - before treating a branch as a bug, compare the deciding variables in
-   the save with the source condition (`tools/passage_dump.py`) and write down the player choices that feed them.
+   the save with the source condition (`tools/cradle_dump.py`) and write down the player choices that feed them.
 6. **Undo across round transitions** - after each end-of-round popup, press undo on the first screen of the new round
    (and on Scoring): it must return to that round's hub, then to the previous round's hub (finding 7). Crafted saves
    start with a single undo entry, so check this in games that reach the round by playing.

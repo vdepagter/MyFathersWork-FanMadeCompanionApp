@@ -28,7 +28,7 @@ jobs:
       # file gives a new key, the previous cache is restored via restore-keys and only the new objects are downloaded.
       # Nothing to clear by hand, file names can stay the same.
       - name: List LFS objects of the web app
-        run: git lfs ls-files --long --include "MyFathersWorkWebApp/**" > lfs-objects.txt # hashFiles only reads the workspace
+        run: git lfs ls-files --long --include "MyFathersWorkApp/**" > lfs-objects.txt # hashFiles only reads the workspace
 
       - name: Restore LFS cache
         uses: actions/cache@v4
@@ -38,7 +38,7 @@ jobs:
           restore-keys: lfs-
 
       - name: Pull LFS files of the web app
-        run: git lfs pull --include "MyFathersWorkWebApp/**"
+        run: git lfs pull --include "MyFathersWorkApp/**"
 
       # Version 0.66.6.<revision>: the revision counts the commits on main (first parent) since 3d78856,
       # the last commit on main before versioning was introduced. The merge that introduced it is .0,
@@ -55,7 +55,7 @@ jobs:
           dotnet-version: 9.0.x
 
       - name: Publish
-        run: dotnet publish MyFathersWorkWebApp/MyFathersWorkWebApp/MyFathersWorkWebApp.csproj -c Release -p:Version=0.66.6.$REVISION -o publish
+        run: dotnet publish MyFathersWorkApp/MyFathersWorkApp/MyFathersWorkApp.csproj -c Release -p:Version=0.66.6.$REVISION -o publish
 
       - name: Prepare for GitHub Pages
         run: |

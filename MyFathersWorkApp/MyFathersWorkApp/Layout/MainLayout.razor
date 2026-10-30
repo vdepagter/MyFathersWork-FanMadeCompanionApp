@@ -1,0 +1,73 @@
+﻿@using MyFathersWorkApp.Shared
+@using Microsoft.AspNetCore.Components.Routing
+@inherits LayoutComponentBase
+@implements IDisposable
+@inject HttpClient        Http
+@inject NavigationManager Nav
+@inject AudioService      Audio
+@inject IJSRuntime        Js
+
+<CascadingValue Value="@_GlobalData">
+    <div class="page-root">
+        @Body
+    </div>
+</CascadingValue>
+
+<AudioToggles GlobalData="@_GlobalData" />
+<CookieConsent />
+<div class="app-version">@_Version</div>
+
+@code
+{
+    private static readonly string _Version = FormatVersion(typeof(MainLayout).Assembly.GetName().Version);
+
+    private static string FormatVersion(Version? v) => v is null ? "" : $"v{v.Major}.{v.Minor}.{v.Build}.{v.Revision}";
+
+    private readonly GlobalData _GlobalData = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        Nav.LocationChanged += OnLocationChanged;
+        UpdateMusic();
+        (await Http.GetStringAsync("localization/UI_Localization.csv")).ProcessLocalizationFile(_GlobalData.UI_Localization);
+    }
+
+    private void OnLocationChanged(object? sender, LocationChangedEventArgs e) => UpdateMusic();
+
+    private string CurrentPath => Nav.ToBaseRelativePath(Nav.Uri).Split('?', '#')[0];
+
+    private static bool IsGameplay(string path) => path.Equals("Gameplay", StringComparison.OrdinalIgnoreCase);
+
+    // Menu and setup pages play the title theme; /Gameplay picks its own music (Pages/Gameplay.razor)
+    private void UpdateMusic()
+    {
+        if (IsGameplay(CurrentPath)) return;
+        Audio.SetMusic(MusicTrack.Title);
+    }
+
+    // Setup / menu pages fade in and rise after each navigation (js/transitions.js, "page"). /Gameplay has its own
+    // screen transitions. The layout re-renders with the new page on every navigation.
+    private string? _LastEnteredPath;
+    private string  _PageLanguage = "en"; // <html lang> in index.html
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        string path = CurrentPath;
+
+        // Language changes navigate, so the layout re-renders and <html lang> follows the menu / story language
+        string language = _GlobalData.PageLanguageCode(IsGameplay(path));
+        if (language != _PageLanguage)
+        {
+            _PageLanguage = language;
+            await Js.InvokeVoidAsync("mfwSetPageLanguage", language);
+        }
+
+        if (path == _LastEnteredPath) return;
+        _LastEnteredPath = path;
+        if (IsGameplay(path)) return;
+
+        await Js.InvokeVoidAsync("mfwTransitions.enter", "page");
+    }
+
+    public void Dispose() => Nav.LocationChanged -= OnLocationChanged;
+}

@@ -1,4 +1,4 @@
-"""Convert a decompiled Cradle story (MyFathersWorkConsole/.../Processor/*.txt) into compact, readable pseudo-Twine.
+"""Convert a decompiled Cradle story (source/*.txt) into compact, readable pseudo-Twine.
 
 Usage:
   python tools/cradle_dump.py FearOfTheUnknown.txt > passages.txt          (all passages)
@@ -20,7 +20,7 @@ import sys
 import os
 from collections import OrderedDict, deque
 
-D = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'MyFathersWorkConsole', 'MyFathersWorkConsole', 'Processor')
+D = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'source')
 
 
 def load(source):

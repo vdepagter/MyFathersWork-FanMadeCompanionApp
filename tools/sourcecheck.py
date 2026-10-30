@@ -8,8 +8,8 @@ Usage: python tools/sourcecheck.py [TheCostofDisease|FearOfTheUnknown|ATimeOfWar
 import html, os, re, sys
 
 HERE = os.path.dirname(os.path.abspath(__file__))
-SOURCE = os.path.join(HERE, '..', 'MyFathersWorkConsole', 'MyFathersWorkConsole', 'Processor', (sys.argv[1] if len(sys.argv) > 1 else 'TheCostofDisease') + '.txt')
-LOC = os.path.join(HERE, '..', 'MyFathersWorkWebApp', 'MyFathersWorkWebApp', 'wwwroot', 'localization')
+SOURCE = os.path.join(HERE, '..', 'source', (sys.argv[1] if len(sys.argv) > 1 else 'TheCostofDisease') + '.txt')
+LOC = os.path.join(HERE, '..', 'MyFathersWorkApp', 'MyFathersWorkApp', 'wwwroot', 'localization')
 PREFIX = sys.argv[2] if len(sys.argv) > 2 else 'TheCostOfDisease'
 CSVS = [PREFIX + '_Localization.csv', PREFIX + '_Gameplay_Localization.csv', 'UI_Localization.csv']
 

@@ -3,7 +3,7 @@
 Scope: music + sound effects + screen transitions (sections 1-7) and voice-over (VO, section 8).
 Sources: `UnityOriginalApp/Assets` (scene `Scenes/Main.unity` is the only scene in the build settings), clips resolved by GUID
 from the `.meta` files. Clip paths below are relative to `UnityOriginalApp/Assets/`. Web paths are relative to
-`MyFathersWorkWebApp/MyFathersWorkWebApp/`. "Uncertain" marks what could not be proven from the files.
+`MyFathersWorkApp/MyFathersWorkApp/`. "Uncertain" marks what could not be proven from the files.
 
 ## 1. How the Unity app plays sound
 

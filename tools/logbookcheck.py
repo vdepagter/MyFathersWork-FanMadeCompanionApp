@@ -3,12 +3,12 @@ titles are unique, and a screen listed under several entries has each entry titl
 import re,glob,sys
 from collections import Counter,defaultdict
 for sc in ['TheCostOfDisease','FearOfTheUnknown','ATimeOfWar']:
-    try: lines=open(f'MyFathersWorkWebApp/MyFathersWorkWebApp/wwwroot/localization/{sc}_LogBook.csv',encoding='utf-8').read().split('\n')
+    try: lines=open(f'MyFathersWorkApp/MyFathersWorkApp/wwwroot/localization/{sc}_LogBook.csv',encoding='utf-8').read().split('\n')
     except FileNotFoundError: continue
-    code=''.join(open(f,encoding='utf-8-sig').read() for f in glob.glob(f'MyFathersWorkWebApp/MyFathersWorkWebApp/Shared/Scenarios/{sc}/*.cs'))
+    code=''.join(open(f,encoding='utf-8-sig').read() for f in glob.glob(f'MyFathersWorkApp/MyFathersWorkApp/Shared/Scenarios/{sc}/*.cs'))
     bodies=dict(re.findall(r'static void (\w+)\(GlobalData globalData\)\s*(\{.*?\n    \})',code,re.S))
     tags={}
-    for line in open(f'MyFathersWorkWebApp/MyFathersWorkWebApp/wwwroot/localization/{sc}_Localization.csv',encoding='utf-8-sig'):
+    for line in open(f'MyFathersWorkApp/MyFathersWorkApp/wwwroot/localization/{sc}_Localization.csv',encoding='utf-8-sig'):
         if ';' in line: t,v=line.rstrip('\n').split(';',1); tags[t]=v
     titles=Counter(); per=defaultdict(list); n=0
     for l in lines:

@@ -7,7 +7,7 @@ The scenario defaults to TheCostOfDisease. Shared/Scenarios/FinalScoring.cs is c
 import re, glob, sys
 
 import os
-ROOT = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'MyFathersWorkWebApp', 'MyFathersWorkWebApp') + '/'
+ROOT = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'MyFathersWorkApp', 'MyFathersWorkApp') + '/'
 SCENARIO = next((a.split('=', 1)[1] for a in sys.argv[1:] if a.startswith('--scenario=')), 'TheCostOfDisease')
 files = sorted(glob.glob(ROOT + 'Shared/Scenarios/' + SCENARIO + '/*.cs')) + [ROOT + 'Shared/Scenarios/FinalScoring.cs']
 args=[a for a in sys.argv[1:] if not a.startswith("--")]

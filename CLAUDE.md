@@ -13,21 +13,22 @@ When a piece of work is finished, move its section to [`HANDOFF_ARCHIVE.md`](HAN
 |---|---|---|
 | The Cost of Disease (`ScenarioId.CostOfDisease`) | **Complete, play testing** - Gen I, II, III, final scoring, all 8 endings | Only English text. |
 | Fear of the Unknown (`FearOfUnknown`) | **Ported, browser play test done** - all branches, battle, asylum assessment, scoring, 8 endings | Waiting for a table play test. See the section below. |
-| A Time of War (`TimeOfWar`) | **Fully ported, browser play test per branch done** - Gen I Taking Sides, Gen II Martial / Time Travel, Gen III Heavy is the Crown / Peace Through War / Future Consequences / You Cant Stop Progress, scoring, all 8 endings | Waiting for a full play-through and a table play test. Spec: `docs/ATOW_PORT_MAP.md`. See the section below. |
+| A Time of War (`TimeOfWar`) | **Fully ported, browser play test per branch done** - Gen I Taking Sides, Gen II Martial / Time Travel, Gen III Heavy is the Crown / Peace Through War / Future Consequences / You Cant Stop Progress, scoring, all 8 endings | Played through from the menu in the browser (all four Gen III branches); waiting for a table play test. Spec: `docs/ATOW_PORT_MAP.md`. See the section below. |
 
 ## Repository layout
 
-- `MyFathersWorkWebApp/MyFathersWorkWebApp/` - the web app.
+- `MyFathersWorkApp/MyFathersWorkApp/` - the web app.
   - `Pages/` - menu/setup flow (`Home`, `PlayersSelect` ... `PlayersScenarioLanguage`) and `Gameplay.razor` (renders the active window / hub / popup).
   - `Shared/GlobalData.cs` - all game state (serialized to JSON for save/load/undo), localization lookup, undo stack, end-of-round popup.
   - `Shared/Scenarios/Gameplay*.cs` - UI model: `GameplayWindow`, `GameplayHub` + `GameplayHubSection`, `GameplayPopup`, `GameplayInputPopup`.
   - `Shared/Scenarios/ScenarioVars.cs` - abstract base of every scenario Vars class: `RandomArray` + draw helpers, flavor randomness (`Flavor`, `FlavorElement`), final scoring state. `Shared/Scenarios/FinalScoring.cs` - shared score entry, tie-breakers and rankings (tags live in each scenario's CSV).
-  - `Shared/Scenarios/TheCostOfDisease/` - one `static partial class TheCostOfDisease`, split per generation/branch (`00_Setup`, `01_Gen1_Fever`, ..., `08_Scoring`) + `TheCostOfDiseaseVars.cs` (scenario state). The `.txt` files next to Gen I/II are old copies, not compiled.
+  - `Shared/Scenarios/TheCostOfDisease/` - one `static partial class TheCostOfDisease`, split per generation/branch (`00_Setup`, `01_Gen1_Fever`, ..., `08_Scoring`) + `TheCostOfDiseaseVars.cs` (scenario state).
   - `Shared/Scenarios/FearOfTheUnknown/` - `static partial class FearOfTheUnknown` (`00_Setup`, `01_Gen1_WitchHunt`, `02_Gen2_Obsessions`, `03_Gen2_Foreigners`, `04_Gen2_Creature`, `05_Gen3_Shared`, `06_Isolation`, `07_Tension`, `08_Privatized`, `09_Liberal`) + `FearOfTheUnknownVars.cs`. Hub ids: `Shared/Enums/FearOfTheUnknownHubId.cs`.
-  - `wwwroot/localization/` - `UI_Localization.csv` (English; the Polish menus from the earlier fan port were removed in October 2026, and the language picker only shows when the CSV has a second language column), per scenario `<Scenario>_Localization.csv` (story text) and `<Scenario>_Gameplay_Localization.csv` (rules/setup text). `*-copy.csv` are old copies.
+  - `wwwroot/localization/` - `UI_Localization.csv` (English; the Polish menus from the earlier fan port were removed in October 2026, and the language picker only shows when the CSV has a second language column), per scenario `<Scenario>_Localization.csv` (story text) and `<Scenario>_Gameplay_Localization.csv` (rules/setup text).
   - `wwwroot/images/setup/` (popup images, referenced by `Shared/Consts/PopUpIcon.cs`) and `wwwroot/images/gameplay/` (inline `<icon=...>`). S2_*/S3_* images for the other scenarios already exist. Images are **Git LFS** - a worktree without `git lfs pull` shows broken icons.
-- `MyFathersWorkConsole/` - porting aid. `Processor/*.txt` are the decompiled Cradle story classes for all three scenarios (the only source for Fear of the Unknown and A Time of War). `TheStoryProcessor.Run()` converts a `.txt` into readable console C# under `Processor/Scenario/ScenarioPart_*.cs` (currently holds the Cost of Disease Gen III passages; they are fully ported now).
-- `tools/` - `cradle_dump.py` (decompiled Cradle `.txt` -> readable pseudo-Twine with link labels; `--graph <Passage>` BFS from a passage, `--html` CSV-ready text - the preferred way to read a scenario), `passage_dump.py` (older passage reader), `tagcheck.py` (verify localization tags; `--scenario=FearOfTheUnknown`), `sourcecheck.py` (source link labels missing from the CSVs, Unity-only end-of-generation/setup screens), `test-save-helpers.js` (play-test from crafted saves). `narration/` - AI narration (ElevenLabs): `chunks.py` (Oliver clips per text chunk: plan, render), `elevenlabs.py` (voices, comparison renders, `check`), overrides/values/private lists in `narration/scripts/<Scenario>/`, `local_tts.py` (open models).
+- `source/` - the decompiled Cradle story classes of the official app for all three scenarios (`TheCostofDisease.txt`, `FearOfTheUnknown.txt`, `ATimeOfWar.txt`; the only source for Fear of the Unknown and A Time of War). Read them with `tools/cradle_dump.py`. (The old console port `MyFathersWorkConsole/` and `ProcessingScenario/` were removed on 30 Oct 2026; they are in git history.)
+- `MyFathersWorkApp/LocalizationMerger/` - console tool that merges a translated column from a spreadsheet export into a localization CSV.
+- `tools/` - `cradle_dump.py` (decompiled Cradle `.txt` -> readable pseudo-Twine with link labels; `--graph <Passage>` BFS from a passage, `--html` CSV-ready text - the preferred way to read a scenario), `tagcheck.py` (verify localization tags; `--scenario=FearOfTheUnknown`), `sourcecheck.py` (source link labels missing from the CSVs, Unity-only end-of-generation/setup screens), `test-save-helpers.js` (play-test from crafted saves). `narration/` - AI narration (ElevenLabs): `chunks.py` (Oliver clips per text chunk: plan, render), `elevenlabs.py` (voices, comparison renders, `check`), overrides/values/private lists in `narration/scripts/<Scenario>/`, `local_tts.py` (open models).
 - `PLAYTEST_FINDINGS.md` - findings from real play-tests, their causes and a checklist against recurrence. Read it before porting or reviewing a scenario.
 - `UnityOriginalApp/` - the original Unity project is also in the repo (same content as the path below).
 - Original Unity project (outside the repo, owner's machine): `C:\Users\ValentijndePagter\Downloads\my-fathers-work-master-4-20260622T163118Z-3-001\my-fathers-work-master-4`. Useful parts: `Assets/Scripts/OldStory/TheCostofDisease*.cs` (Cradle output, Cost of Disease only), `Assets/Scripts/UI/View*.cs` (score entry, tie breaker, ranking, endings UI flow), `Assets/Resources/setupImages`.
@@ -78,7 +79,7 @@ private static void Changes_0(GlobalData globalData)       // setup popup
 
 ## Porting workflow (what worked for Cost of Disease Gen III and Fear of the Unknown)
 
-1. Produce readable passages: `python tools/cradle_dump.py <scenario .txt>` (add `--html` for CSV-ready text). Older route: `TheStoryProcessor.cs` (hardcoded to `TheCostofDisease.txt`) + `tools/passage_dump.py`.
+1. Produce readable passages: `python tools/cradle_dump.py <scenario .txt>` (add `--html` for CSV-ready text).
 2. Build the passage graph from the scenario start / generation intros (`cradle_dump.py --graph <Passage>`) to know what belongs to each generation.
 3. Map Twine concepts: a passage with text + `<hook>` "Click to continue" + `setupStyleEvnt` block -> window + setup popup. `$PrintEndOfTheRoundText(tag, next)` -> hub end-of-round section. `_SetupImage` -> `PopUpIcon`. A bold "SPECIAL RULE" block inside story text or a setup -> its own `PopUpTitle.SpecialRule` popup after it (story CSV text stays story only). `either(...)`/`GetRandom` -> `RandomArray` index. `$nameA..E` / `allyA..E` ifs -> loops over `GetActivePlayers()` (the web app supports 2-4 players, drop 5-player branches). `(display:)` / abort chains -> direct method calls.
 4. Write code, then the CSV rows, then run `python tools/tagcheck.py` (0 missing) and `python tools/sourcecheck.py <Scenario> <CsvPrefix>`, and play-test. Go through the checklist in `PLAYTEST_FINDINGS.md`.
@@ -209,6 +210,7 @@ explanations, warrior statistics, battles) are left out. Check with `python tool
 Voice setting "Oliver": AI narration of all story text, played as clips keyed by a hash of their CSV text
 (`tools/narration/chunks.py`, `Shared/Narration.cs`, `docs/AUDIO_TRANSITIONS_MAP.md` 8.4). Male and Female are the
 original recordings only.
+In user-facing text (Help, settings, labels) the narrator is just "Oliver", never "AI narration" (owner, 30 Oct 2026).
 
 - `python tools/narration/chunks.py plan <Scenario>` (characters still to render), `show <Scenario> <Tag>` (chunks,
   hashes, spoken text), `render <Scenario> [--max=N] [--reserve=N] [--tags=A,B] [--no-private] [--dry]` (checks the
@@ -235,6 +237,6 @@ original recordings only.
 ## Build, run, test
 
 - **Claude sessions:** the cloud container cannot download .NET. Build, run and browser-test in a Remote Control session on the owner's laptop (pre-approved), after pushing the branch.
-- `dotnet build MyFathersWorkWebApp/MyFathersWorkWebApp.sln`
-- `dotnet run --project MyFathersWorkWebApp/MyFathersWorkWebApp/MyFathersWorkWebApp.csproj` (http://localhost:5166; use `--no-launch-profile --urls http://localhost:5199` if 5166 is taken).
+- `dotnet build MyFathersWorkApp/MyFathersWorkApp.sln`
+- `dotnet run --project MyFathersWorkApp/MyFathersWorkApp/MyFathersWorkApp.csproj` (http://localhost:5166; use `--no-launch-profile --urls http://localhost:5199` if 5166 is taken).
 - There are no automated tests. Play-test with `tools/test-save-helpers.js`: craft a save at a late-round hub, reload `/Gameplay`, and drive the flow with `run([...])`. Check the browser console for exceptions and run `python tools/tagcheck.py` (and `--scenario=FearOfTheUnknown`). Fear of the Unknown saves: `mkSaveFotU(hubId, {...})`; `auto([...])` / `autoFirst()` click through screens. Static files are served from a build-time snapshot, so inject the helpers with the JS console (or keep them in `localStorage.helpers` and `eval` after reloads) instead of copying them into `wwwroot`. To test mirror mode, pass `mirror: true` to `mkSave`; random click-throughs that report `Mirror:` console lines find draws made too early. Also play through round transitions, not only crafted saves: load and undo rebuild the hub, which hides hub text that was formatted with stale state (`PLAYTEST_FINDINGS.md` #1).
