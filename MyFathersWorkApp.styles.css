@@ -1,0 +1,2572 @@
+/* /Layout/MainLayout.razor.rz.scp.css */
+.page[b-23mufti53s] {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+}
+
+main[b-23mufti53s] {
+    flex: 1;
+}
+
+.sidebar[b-23mufti53s] {
+    background-image: linear-gradient(180deg, rgb(5, 39, 103) 0%, #3a0647 70%);
+}
+
+.top-row[b-23mufti53s] {
+    background-color: #f7f7f7;
+    border-bottom: 1px solid #d6d5d5;
+    justify-content: flex-end;
+    height: 3.5rem;
+    display: flex;
+    align-items: center;
+}
+
+    .top-row[b-23mufti53s]  a, .top-row[b-23mufti53s]  .btn-link {
+        white-space: nowrap;
+        margin-left: 1.5rem;
+        text-decoration: none;
+    }
+
+    .top-row[b-23mufti53s]  a:hover, .top-row[b-23mufti53s]  .btn-link:hover {
+        text-decoration: underline;
+    }
+
+    .top-row[b-23mufti53s]  a:first-child {
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+@media (max-width: 640.98px) {
+    .top-row[b-23mufti53s] {
+        justify-content: space-between;
+    }
+
+    .top-row[b-23mufti53s]  a, .top-row[b-23mufti53s]  .btn-link {
+        margin-left: 0;
+    }
+}
+
+@media (min-width: 641px) {
+    .page[b-23mufti53s] {
+        flex-direction: row;
+    }
+
+    .sidebar[b-23mufti53s] {
+        width: 250px;
+        height: 100vh;
+        position: sticky;
+        top: 0;
+    }
+
+    .top-row[b-23mufti53s] {
+        position: sticky;
+        top: 0;
+        z-index: 1;
+    }
+
+    .top-row.auth[b-23mufti53s]  a:first-child {
+        flex: 1;
+        text-align: right;
+        width: 0;
+    }
+
+    .top-row[b-23mufti53s], article[b-23mufti53s] {
+        padding-left: 2rem !important;
+        padding-right: 1.5rem !important;
+    }
+}
+
+/* Fixed like the audio toggles, so it stays in the corner while the page scrolls */
+.app-version[b-23mufti53s] {
+    position: fixed;
+    z-index: 1;
+    pointer-events: none;
+    bottom: 10px;
+    right: 15px;
+    font-size: 0.9rem;
+    color: #ccc;
+    opacity: 0.8;
+}
+/* /Pages/EndingsGallery.razor.rz.scp.css */
+/* Inside Shared/MenuPage; tabs, chips, notes and boxes from css/menu-pages.css */
+.gallery-container[b-hlvyfwii8s] {
+    width: 100%;
+    max-width: 40rem;
+    text-align: left;
+    color: #e9dcc0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+/* Win tally */
+.tally-row[b-hlvyfwii8s] {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 44px 44px 44px 52px 32px;
+    align-items: center;
+    gap: 4px;
+    padding: 0 12px;
+}
+
+.tally-head[b-hlvyfwii8s] {
+    font-size: 0.75rem;
+    color: #a99c84;
+}
+
+.tally-head span:not(:first-child)[b-hlvyfwii8s],
+.tally-cell[b-hlvyfwii8s] {
+    text-align: center;
+}
+
+.tally-card[b-hlvyfwii8s] {
+    min-height: 52px;
+    padding: 4px 4px;
+    border: 12px solid transparent;
+    border-image: url(images/ui/input-box.webp) 40 fill / 12px stretch;
+}
+
+.tally-card.family[b-hlvyfwii8s] {
+    border: 12px solid transparent;
+    border-image: none;
+    outline: 1px dashed #6b5c44;
+    outline-offset: -8px;
+}
+
+.tally-name[b-hlvyfwii8s] {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    min-width: 0;
+    font-size: 1.05rem;
+}
+
+.tally-sub[b-hlvyfwii8s] {
+    font-size: 0.75rem;
+    color: #a99c84;
+}
+
+.tally-cell[b-hlvyfwii8s] {
+    color: #cfc2a6;
+}
+
+.tally-wins[b-hlvyfwii8s] {
+    text-align: right;
+    font-size: 1.35rem;
+    color: #ffd27a;
+}
+
+.tally-head .tally-wins[b-hlvyfwii8s] {
+    font-size: 0.75rem;
+    color: #a99c84;
+}
+
+.tally-forget[b-hlvyfwii8s] {
+    width: 32px;
+    height: 32px;
+    border: none;
+    background: transparent;
+    color: #8f8574;
+    font-size: 1.2rem;
+    cursor: pointer;
+}
+
+.tally-forget:hover[b-hlvyfwii8s] {
+    color: #e0d3b8;
+}
+
+.recent-game[b-hlvyfwii8s] {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 8px 4px;
+    border-bottom: 1px solid #3c3a36;
+}
+
+.recent-winner[b-hlvyfwii8s] {
+    color: #ffd27a;
+    white-space: nowrap;
+}
+
+/* Buttons, export and import */
+.gallery-buttons[b-hlvyfwii8s] {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.6rem;
+}
+
+/* Endings tree */
+.gallery-container h2[b-hlvyfwii8s] {
+    text-align: center;
+}
+
+.gallery-tabs[b-hlvyfwii8s] {
+    align-self: center;
+}
+
+.scenario-tabs[b-hlvyfwii8s] {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 6px;
+}
+
+.scenario-tabs .mp-chip[b-hlvyfwii8s] {
+    flex-direction: column;
+    min-height: 60px;
+    padding: 0.1rem 0.3rem;
+    font-size: 0.85rem;
+}
+
+.scenario-count[b-hlvyfwii8s] {
+    color: #ffd27a;
+}
+
+.tree-toolbar[b-hlvyfwii8s] {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    font-size: 0.9rem;
+    color: #b3a68c;
+}
+
+.tree[b-hlvyfwii8s] {
+    display: flex;
+    flex-direction: column;
+}
+
+.tree-row[b-hlvyfwii8s] {
+    display: flex;
+    align-items: stretch;
+    min-height: 56px;
+}
+
+.tree-rail[b-hlvyfwii8s] {
+    width: 22px;
+    flex-shrink: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.tree-line[b-hlvyfwii8s] {
+    width: 2px;
+    height: 14px;
+    background-color: #5d5547;
+}
+
+.tree-line.grow[b-hlvyfwii8s] {
+    flex-grow: 1;
+}
+
+.tree-line.hidden[b-hlvyfwii8s] {
+    background: transparent;
+}
+
+.tree-node[b-hlvyfwii8s] {
+    width: 12px;
+    height: 12px;
+    flex-shrink: 0;
+    border: 2px solid #5a4e40;
+    border-radius: 6px;
+}
+
+.tree-node.ending[b-hlvyfwii8s] {
+    border-radius: 2px;
+}
+
+.tree-node.lit[b-hlvyfwii8s] {
+    background-color: #ffd27a;
+    border-color: #ffd27a;
+}
+
+.tree-text[b-hlvyfwii8s] {
+    flex-grow: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 2px;
+    padding: 6px 8px;
+}
+
+.tree-kicker[b-hlvyfwii8s] {
+    font-size: 0.7rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: #a99c84;
+}
+
+.tree-label[b-hlvyfwii8s] {
+    color: #b3a68c;
+}
+
+.tree-label.lit[b-hlvyfwii8s] {
+    color: #f0e4c8;
+}
+
+.tree-label.locked[b-hlvyfwii8s] {
+    color: #958c7c;
+    font-style: italic;
+}
+
+.tree-status[b-hlvyfwii8s] {
+    font-size: 0.75rem;
+    color: #a99c84;
+}
+
+.tree-status.done[b-hlvyfwii8s] {
+    color: #ffd27a;
+}
+
+.tree-action[b-hlvyfwii8s] {
+    display: flex;
+    align-items: center;
+    flex-shrink: 0;
+}
+
+.tree-star[b-hlvyfwii8s] {
+    width: 44px;
+    text-align: center;
+    color: #ffd27a;
+    font-size: 1.4rem;
+}
+
+.tree-tick[b-hlvyfwii8s] {
+    width: 44px;
+    height: 44px;
+    border: 1px solid #7a5a3c;
+    border-radius: 8px;
+    background: transparent;
+    color: #111;
+    font-size: 1.3rem;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.tree-tick.ticked[b-hlvyfwii8s] {
+    background-color: #d9b36c;
+    border-color: #d9b36c;
+}
+/* /Pages/Gameplay.razor.rz.scp.css */
+/* Game pages as the Unity GanrationEnding (story) and GanrationHUb (round) views. --u is one pixel of the Unity canvas
+   (css/theme.css). Layers, back to front: .game-scene (background, light, embers, vignette), the page itself, the
+   frame, the round bar, the buttons; popups (999) and the pause menu (2000) cover them. */
+
+/* ---- scene ---- */
+.game-scene[b-e8qpjqoesr] {
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    overflow: hidden;
+    background: #0d0d0f;
+}
+
+.game-scene > *[b-e8qpjqoesr] {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+}
+
+.scene-bg[b-e8qpjqoesr] {
+    background: url(images/ui/hub-bg.webp) center / cover no-repeat;
+}
+
+.game-scene.story.cod  .scene-bg[b-e8qpjqoesr] { background-image: url(images/ui/story-bg-cod.webp); }
+.game-scene.story.fotu .scene-bg[b-e8qpjqoesr] { background-image: url(images/ui/story-bg-fotu.webp); }
+.game-scene.story.atow .scene-bg[b-e8qpjqoesr] { background-image: url(images/ui/story-bg-atow.webp); }
+
+/* Unity FakeLight: a soft blue glow over the illustration; on the round pages a warm glow from the fire below and a
+   yellow light from the top */
+.game-scene.story .scene-light[b-e8qpjqoesr] {
+    background: radial-gradient(closest-side, rgba(122, 214, 255, 0.2), transparent);
+    mix-blend-mode: screen;
+}
+
+.game-scene.hub .scene-light[b-e8qpjqoesr] {
+    background:
+        radial-gradient(ellipse 70% 45% at 50% 0%, rgba(255, 246, 143, 0.32), transparent),
+        radial-gradient(closest-side, rgba(255, 127, 0, 0.3), transparent);
+    mix-blend-mode: screen;
+    animation: scene-flicker-b-e8qpjqoesr 5s ease-in-out infinite;
+}
+
+@keyframes scene-flicker-b-e8qpjqoesr {
+    0%, 100% { opacity: 0.85; }
+    40%      { opacity: 1; }
+    60%      { opacity: 0.75; }
+}
+
+.scene-vignette[b-e8qpjqoesr] {
+    background: url(images/ui/vignette.webp) center / 100% 100% no-repeat;
+    opacity: 0.57;
+}
+
+/* ---- frame: Unity MFW_Border_Gold2 (story) / MFW_Border_1 (round), the round slot moved to .round-tray ---- */
+.game-frame[b-e8qpjqoesr] {
+    position: fixed;
+    inset: 0;
+    z-index: 900;
+    pointer-events: none;
+    border: calc(140 * var(--u)) solid transparent;
+    border-image: url(images/ui/frame-story.webp) 140 / calc(140 * var(--u)) stretch;
+}
+
+.game-frame.hub[b-e8qpjqoesr] {
+    border-image-source: url(images/ui/frame-hub.webp);
+}
+
+/* ---- buttons (Unity BackButton, PauseBtn, LogBook), top left inside the frame ---- */
+.header-buttons[b-e8qpjqoesr] {
+    position: fixed;
+    top: max(0.75rem, calc(70 * var(--u)));
+    left: max(0.75rem, calc(130 * var(--u)));
+    z-index: 1001;
+    display: flex;
+    gap: clamp(6px, calc(24 * var(--u)), 16px);
+}
+
+.back-button[b-e8qpjqoesr]          { background-image: url(images/ui/btn-back.webp); }
+.forward-button[b-e8qpjqoesr]       { background-image: url(images/ui/btn-back.webp); transform: scaleX(-1); }
+.pause-button[b-e8qpjqoesr]         { background-image: url(images/ui/btn-pause.webp); }
+.logbook-open-button[b-e8qpjqoesr]  { background-image: url(images/ui/btn-book.webp); }
+
+.forward-button:hover:not(:disabled)[b-e8qpjqoesr]  { transform: scaleX(-1) scale(1.06); }
+.forward-button:active:not(:disabled)[b-e8qpjqoesr] { transform: scaleX(-1) scale(0.92); }
+
+/* ---- page ---- */
+.gameplay-container[b-e8qpjqoesr] {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100vw;
+    max-width: 100%;
+    min-height: 100vh;
+    padding: max(4.75rem, calc(190 * var(--u))) max(12px, calc(75 * var(--u))) calc(150 * var(--u) + 1.5rem);
+    text-align: left;
+    color: #f1e8d4;
+    font-family: var(--mfw-font-text);
+}
+
+/* Unity TitleGE / TitleGH: Evil Dead, white */
+.gameplay-container h1[b-e8qpjqoesr] {
+    margin-bottom: 0.6rem;
+    font-family: var(--mfw-font-heading);
+    font-weight: 400;
+    font-size: clamp(1.9rem, calc(62 * var(--u)), 3.2rem);
+    letter-spacing: 0.02em;
+    line-height: 1.15;
+    text-align: center; /* a title that wraps (A Time of War's foreword) stays centered */
+    color: #fff;
+    text-shadow: 0 0 8px #000, 0 2px 3px #000, 0 0 2px #000;
+}
+
+.gameplay-container h2[b-e8qpjqoesr] {
+    margin-bottom: 1rem;
+    font-size: 1.35rem;
+    text-align: center;
+    color: #f1e4c4;
+    text-shadow: 0 1px 3px #000;
+}
+
+/* Story text on the Unity Wide_Textbox parchment, black Averia; size from Settings (--mfw-story-scale) */
+.parchment-box[b-e8qpjqoesr] {
+    width: 100%;
+    max-width: 56rem;
+    border: clamp(22px, 2.6vw, 38px) solid transparent;
+    border-image: url(images/ui/textbox.webp) 56 fill / clamp(22px, 2.6vw, 38px) stretch;
+    padding: clamp(0.6rem, 1.6vw, 1.4rem) clamp(0.9rem, 3.4vw, 3rem);
+    color: #17100a;
+    font-size: calc(1.25rem * var(--mfw-story-scale, 1));
+    line-height: 1.6;
+    letter-spacing: 0.025em;
+    -webkit-text-stroke: 0.35px currentColor;
+    filter: drop-shadow(0 10px 18px rgba(0, 0, 0, 0.6));
+}
+
+.parchment-box p[b-e8qpjqoesr] {
+    font-size: inherit;
+    line-height: inherit;
+    margin-bottom: 1rem;
+}
+
+/* Unity: "[Click to continue.]" and the other choices in red */
+.story-link[b-e8qpjqoesr] {
+    color: #7a170b;
+    font-weight: 700;
+    text-decoration: none;
+    cursor: pointer;
+    transition: color 0.2s, text-shadow 0.2s;
+}
+
+.story-link:hover[b-e8qpjqoesr] {
+    color: #a3170c;
+    text-decoration: underline;
+}
+
+.scenario-image[b-e8qpjqoesr] {
+    width: 180px;
+    margin-top: 1rem;
+}
+
+/* Round page: white Averia straight on the dark metal (Unity Scroll View), a light panel per section */
+.main-panel[b-e8qpjqoesr],
+.section-panel[b-e8qpjqoesr] {
+    width: 100%;
+    max-width: 52rem;
+    margin-bottom: 1.1rem;
+    padding: 0.9rem 1.4rem;
+    background: rgba(8, 7, 6, 0.5);
+    border: 1px solid rgba(201, 163, 90, 0.35);
+    border-radius: 6px;
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.45);
+    font-size: 1.1rem;
+    line-height: 1.5;
+    text-shadow: 0 1px 2px #000;
+}
+
+.main-panel[b-e8qpjqoesr] {
+    border-color: rgba(230, 190, 110, 0.6);
+}
+
+.main-panel h3[b-e8qpjqoesr],
+.section-panel h4[b-e8qpjqoesr] {
+    margin-bottom: 0.4rem;
+    font-weight: 700;
+    color: #f0c26a;
+}
+
+.main-panel h3[b-e8qpjqoesr] { font-size: 1.35rem; }
+.section-panel h4[b-e8qpjqoesr] { font-size: 1.15rem; }
+
+/* Unity: hub actions in light blue */
+.gameplay-link[b-e8qpjqoesr] {
+    color: #9fd6ff;
+    font-weight: 700;
+    text-decoration: none;
+    cursor: pointer;
+    transition: color 0.2s, text-shadow 0.2s;
+}
+
+.gameplay-link:hover[b-e8qpjqoesr] {
+    color: #d2ecff;
+    text-decoration: underline;
+    text-shadow: 0 0 8px rgba(120, 200, 255, 0.6);
+}
+
+.gameplay-link:active[b-e8qpjqoesr] {
+    color: #5fb4f0;
+}
+
+/* Icon inline (like 🔥) */
+.icon[b-e8qpjqoesr] {
+    font-weight: bold;
+    color: darkred;
+}
+
+/* ---- round bar: the frame's slot (Unity Progress), fixed at the bottom; the bar shows through the nine windows ---- */
+.round-tracker[b-e8qpjqoesr] {
+    position: fixed;
+    left: 50%;
+    bottom: 0;
+    z-index: 950;
+    width: calc(1200 * var(--u));
+    aspect-ratio: 1200 / 141;
+    transform: translateX(-50%);
+    pointer-events: none;
+}
+
+.round-bar[b-e8qpjqoesr],
+.round-tray[b-e8qpjqoesr],
+.round-step[b-e8qpjqoesr] {
+    position: absolute;
+}
+
+.round-bar[b-e8qpjqoesr] {
+    left: 6.17%;
+    width: 87.42%;
+    top: 56.7%;
+    height: 24.2%;
+    background: url(images/ui/round-bar.webp) center / 100% 100% no-repeat;
+}
+
+.round-tray[b-e8qpjqoesr] {
+    inset: 0;
+    background: url(images/ui/round-tray-story.webp) center / 100% 100% no-repeat;
+}
+
+.round-tracker.hub .round-tray[b-e8qpjqoesr] {
+    background-image: url(images/ui/round-tray-hub.webp);
+}
+
+/* One window per round: the bar is bright up to the current round, dark after it (Unity Fill) */
+.round-step[b-e8qpjqoesr] {
+    top: 56.7%;
+    height: 24.2%;
+    display: grid;
+    place-items: center;
+    font-family: var(--mfw-font-text);
+    font-weight: 700;
+    font-size: max(9px, calc(23 * var(--u)));
+    line-height: 1;
+    white-space: nowrap;
+    color: rgba(255, 255, 255, 0.75);
+    text-shadow: 0 1px 2px #000;
+}
+
+.round-step.future[b-e8qpjqoesr] {
+    background: rgba(28, 28, 28, 0.85);
+    color: rgba(255, 255, 255, 0.35);
+}
+
+/* Unity I1-glow ... III3-glow */
+.round-step.current[b-e8qpjqoesr] {
+    color: #fff;
+    text-shadow: 0 0 4px #fff, 0 0 10px rgba(255, 255, 255, 0.9), 0 0 18px rgba(255, 240, 200, 0.8);
+    animation: round-glow-b-e8qpjqoesr 2.4s ease-in-out infinite alternate;
+}
+
+@keyframes round-glow-b-e8qpjqoesr {
+    from { filter: brightness(0.9); }
+    to   { filter: brightness(1.25); }
+}
+
+/* "All players may again view the Storybook." on the hub after a secret page */
+/* Voice-over indicator on narrated windows (between the title and the parchment box) */
+.narration-pill[b-e8qpjqoesr] {
+    display: inline-flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    gap: 0.5rem;
+    margin: 0 auto 0.75rem;
+    padding: 0.25rem 0.75rem;
+    background: rgba(46, 31, 20, 0.85);
+    border: 1px solid #7a5a3c;
+    border-radius: 999px;
+    color: #e0d3b8;
+    font-size: 0.9rem;
+}
+
+.narration-button[b-e8qpjqoesr] {
+    padding: 0;
+    background: none;
+    border: none;
+    color: inherit;
+    font: inherit;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.narration-button:hover[b-e8qpjqoesr] {
+    text-decoration: underline;
+}
+
+/* Narration position (js/audio.js sets --p and the time); click or drag to seek, arrow keys jump 5 s */
+.narration-progress[b-e8qpjqoesr] {
+    position: relative;
+    width: clamp(90px, 22vw, 220px);
+    height: 18px;
+    cursor: pointer;
+    touch-action: none;
+}
+
+.narration-progress[b-e8qpjqoesr]::before,
+.narration-progress i[b-e8qpjqoesr] {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 50%;
+    height: 4px;
+    margin-top: -2px;
+    border-radius: 2px;
+}
+
+.narration-progress[b-e8qpjqoesr]::before {
+    right: 0;
+    background: rgba(224, 211, 184, 0.3);
+}
+
+.narration-progress i[b-e8qpjqoesr] {
+    width: calc(var(--p, 0) * 100%);
+    background: #e0b866;
+}
+
+.narration-progress i[b-e8qpjqoesr]::after {
+    content: "";
+    position: absolute;
+    right: -6px;
+    top: -4px;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: #f1e4c4;
+    box-shadow: 0 0 4px rgba(0, 0, 0, 0.6);
+}
+
+.narration-progress:focus-visible[b-e8qpjqoesr] {
+    outline: 2px solid #c9a35a;
+    outline-offset: 2px;
+}
+
+.narration-time[b-e8qpjqoesr] {
+    min-width: 5.5em;
+    font-size: 0.8rem;
+    font-variant-numeric: tabular-nums;
+    opacity: 0.85;
+}
+
+@media (max-width: 480px) {
+    .narration-time[b-e8qpjqoesr] { display: none; }
+}
+
+/* Equalizer bars while the narration speaks */
+.narration-bars[b-e8qpjqoesr] {
+    display: inline-flex;
+    align-items: flex-end;
+    gap: 2px;
+    height: 0.9em;
+}
+
+.narration-bars i[b-e8qpjqoesr] {
+    width: 3px;
+    height: 100%;
+    background-color: #e0d3b8;
+    animation: narration-bar-b-e8qpjqoesr 0.9s ease-in-out infinite;
+}
+
+.narration-bars i:nth-child(2)[b-e8qpjqoesr] {
+    animation-delay: -0.3s;
+}
+
+.narration-bars i:nth-child(3)[b-e8qpjqoesr] {
+    animation-delay: -0.6s;
+}
+
+@keyframes narration-bar-b-e8qpjqoesr {
+    0%, 100% { height: 30%; }
+    50%      { height: 100%; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .narration-bars i[b-e8qpjqoesr] {
+        animation: none;
+    }
+
+    .narration-bars i:nth-child(1)[b-e8qpjqoesr] { height: 60%; }
+    .narration-bars i:nth-child(3)[b-e8qpjqoesr] { height: 40%; }
+}
+
+/* Phones */
+@media (max-width: 600px) {
+    .main-panel[b-e8qpjqoesr], .section-panel[b-e8qpjqoesr] {
+        padding: 0.75rem 0.9rem;
+    }
+}
+
+/* Graphics: Low (js/atmosphere.js) or reduced motion: a still picture */
+html[data-graphics="low"] .scene-light[b-e8qpjqoesr],
+html[data-graphics="low"] .round-step.current[b-e8qpjqoesr] {
+    animation: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .scene-light[b-e8qpjqoesr], .round-step.current[b-e8qpjqoesr] { animation: none; }
+}
+
+/* Next button below THE END? and the ending page it opens (Shared/Gallery.cs) */
+.ending-next[b-e8qpjqoesr] {
+    margin: 1.5rem auto 0; /* keeps .mfw-button's display: grid, which centres the label */
+}
+
+.ending-page[b-e8qpjqoesr] {
+    position: fixed;
+    inset: 0;
+    z-index: 1400;
+    display: flex;
+    overflow-y: auto;
+    padding: 1rem;
+    background: rgba(0, 0, 0, 0.78);
+}
+
+.ending-panel[b-e8qpjqoesr] {
+    position: relative;
+    display: grid;
+    justify-items: center;
+    gap: 0.7rem;
+    width: min(620px, 100%);
+    margin: auto;
+    text-align: center;
+}
+
+.ending-panel p[b-e8qpjqoesr] { margin: 0; line-height: 1.5; }
+
+.ending-star[b-e8qpjqoesr] {
+    color: #e6c27a;
+    font-size: 2.6rem;
+    line-height: 1;
+    text-shadow: 0 0 18px rgba(230, 194, 122, 0.6);
+}
+
+.ending-panel.new .ending-star[b-e8qpjqoesr] { animation: ending-glow-b-e8qpjqoesr 2.4s ease-in-out infinite; }
+
+@keyframes ending-glow-b-e8qpjqoesr {
+    0%, 100% { transform: scale(1);    text-shadow: 0 0 14px rgba(230, 194, 122, 0.5); }
+    50%      { transform: scale(1.12); text-shadow: 0 0 30px rgba(255, 220, 140, 0.95); }
+}
+
+.ending-name[b-e8qpjqoesr] {
+    font-size: 1.35rem;
+    color: #f1e3c2;
+}
+
+.ending-count[b-e8qpjqoesr] { font-size: 1.1rem; }
+
+.ending-slots[b-e8qpjqoesr] {
+    display: flex;
+    gap: 0.45rem;
+}
+
+.ending-slots span[b-e8qpjqoesr] {
+    width: 0.9rem;
+    height: 0.9rem;
+    border: 2px solid #c9a45c;
+    border-radius: 50%;
+}
+
+.ending-slots span.done[b-e8qpjqoesr] {
+    background: #e6c27a;
+    box-shadow: 0 0 8px rgba(230, 194, 122, 0.8);
+}
+
+.ending-note[b-e8qpjqoesr] {
+    font-size: 0.85rem;
+    color: #b3a68c;
+}
+
+.ending-buttons[b-e8qpjqoesr] {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.8rem;
+    margin-top: 0.4rem;
+}
+
+.ending-buttons .mfw-button[b-e8qpjqoesr],
+.ending-next[b-e8qpjqoesr] {
+    width: min(250px, 70vw);
+    font-size: 1.05rem;
+}
+
+.ending-close[b-e8qpjqoesr] {
+    position: absolute;
+    top: 0.5rem;
+    right: 0.6rem;
+    width: 2.2rem;
+    height: 2.2rem;
+    background: none;
+    border: none;
+    color: #e0d3b8;
+    font-size: 1.2rem;
+    cursor: pointer;
+}
+
+/* Start Voting / Bidding above the links of a vote or bid special event (Shared/RevealPanel.razor) */
+.reveal-start[b-e8qpjqoesr] {
+    display: flex;
+    justify-content: center;
+    margin: 1.2rem 0 1rem;
+}
+
+/* Unity ViewSpecialEvent: line, SPECIAL EVENT, mirrored line; fades in, holds, fades out */
+.special-event-banner[b-e8qpjqoesr] {
+    position: fixed;
+    left: 0;
+    right: 0;
+    top: 38%;
+    z-index: 1300;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.6rem;
+    padding: 0 0.5rem;
+    pointer-events: none;
+    opacity: 0;
+    animation: special-event-banner-b-e8qpjqoesr 4.5s ease-in-out forwards;
+}
+
+.se-text[b-e8qpjqoesr] {
+    width: min(70vw, 620px);
+    aspect-ratio: 993 / 139;
+    background: url(images/ui/special-event-text.webp) center / contain no-repeat;
+    filter: drop-shadow(0 0 12px rgba(0, 0, 0, 0.9));
+}
+
+.se-line[b-e8qpjqoesr] {
+    width: min(14vw, 150px);
+    aspect-ratio: 344 / 55;
+    background: url(images/ui/special-event-line.webp) center / contain no-repeat;
+    transform: scaleX(-1);
+}
+
+.se-line.right[b-e8qpjqoesr] { transform: none; }
+
+@keyframes special-event-banner-b-e8qpjqoesr {
+    0%   { opacity: 0; transform: scale(0.92); }
+    44%  { opacity: 1; transform: scale(1); }
+    56%  { opacity: 1; transform: scale(1); }
+    100% { opacity: 0; transform: scale(1.03); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .special-event-banner[b-e8qpjqoesr] { animation-duration: 3s; }
+    .ending-panel.new .ending-star[b-e8qpjqoesr] { animation: none; }
+}
+/* /Pages/Help.razor.rz.scp.css */
+.help-page[b-rw34moyyzu] {
+    max-width: 50rem;
+    font-size: calc(1.05rem * var(--mfw-story-scale, 1));
+}
+
+.help-page h2[b-rw34moyyzu] {
+    margin: 0 0 0.8rem;
+    font-family: var(--mfw-font-heading);
+    font-size: 2rem;
+    font-weight: 400;
+    text-align: center;
+    -webkit-text-stroke: 0;
+    color: #3a1408;
+}
+
+.help-page[b-rw34moyyzu]  b,
+.help-page[b-rw34moyyzu]  strong {
+    color: #3a1408;
+}
+
+.help-page[b-rw34moyyzu]  img {
+    max-width: 100%;
+}
+/* /Pages/Home.razor.rz.scp.css */
+/* Main Menu, laid out like the Unity canvas (1920 x 1082). .menu-art covers the window, .menu fits inside it; children
+   of both are placed in % of that canvas (Pages/Home.razor). Phones in portrait keep the manor in view and stack the
+   menu instead. Image urls are relative to the bundled MyFathersWorkApp.styles.css at the app root. */
+.menu-art[b-z1i1zbgtzh] {
+    position: fixed;
+    left: 50%;
+    top: 50%;
+    width: max(100vw, 100svh * 1920 / 1082);
+    height: max(100svh, 100vw * 1082 / 1920);
+    transform: translate(-50%, -50%);
+    overflow: hidden;
+    background: #05070b;
+    pointer-events: none;
+}
+
+.layer[b-z1i1zbgtzh] {
+    position: absolute;
+    display: block;
+}
+
+/* Unity tints the trees grey (colour 0.557) */
+.tree[b-z1i1zbgtzh] {
+    filter: brightness(0.557);
+}
+
+.fx[b-z1i1zbgtzh] {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+}
+
+.village-light[b-z1i1zbgtzh] {
+    background: radial-gradient(circle, rgba(255, 184, 40, 0.52), transparent 65%);
+    mix-blend-mode: screen;
+    animation: village-flicker-b-z1i1zbgtzh 4.2s ease-in-out infinite;
+}
+
+.village-light:nth-of-type(2n)[b-z1i1zbgtzh] { animation-delay: -1.7s; }
+.village-light:nth-of-type(3n)[b-z1i1zbgtzh] { animation-delay: -3.1s; }
+
+@keyframes village-flicker-b-z1i1zbgtzh {
+    0%, 100% { opacity: 0.7; }
+    30%      { opacity: 1; }
+    55%      { opacity: 0.6; }
+    80%      { opacity: 0.9; }
+}
+
+.vignette[b-z1i1zbgtzh] {
+    inset: 0;
+    background: url(images/ui/vignette.webp) center / 100% 100% no-repeat;
+    opacity: 0.57;
+}
+
+.blue-light[b-z1i1zbgtzh] {
+    background: radial-gradient(closest-side, rgba(40, 146, 255, 0.57), transparent);
+    mix-blend-mode: screen;
+}
+
+/* Lightning: js/atmosphere.js adds .on now and then */
+.lightning[b-z1i1zbgtzh] {
+    inset: 0;
+    background: #cfe3ff;
+    opacity: 0;
+    mix-blend-mode: overlay;
+}
+
+.lightning.on[b-z1i1zbgtzh] {
+    animation: lightning-b-z1i1zbgtzh 1.1s ease-out;
+}
+
+@keyframes lightning-b-z1i1zbgtzh {
+    0%   { opacity: 0; }
+    6%   { opacity: 0.55; }
+    12%  { opacity: 0.05; }
+    18%  { opacity: 0.4; }
+    100% { opacity: 0; }
+}
+
+/* Unity Main_Border, a 9-slice frame (180 px corners on the 1920 canvas) around the whole window */
+.menu-frame[b-z1i1zbgtzh] {
+    position: fixed;
+    inset: 0;
+    border: solid transparent;
+    border-width: min(9.375vw, 16.64svh);
+    border-image: url(images/ui/main-border.webp) 180 / min(9.375vw, 16.64svh) stretch;
+    pointer-events: none;
+}
+
+/* ---- menu ---- */
+.menu[b-z1i1zbgtzh] {
+    position: fixed;
+    left: 50%;
+    top: 50%;
+    width: min(100vw, 100svh * 1920 / 1082);
+    aspect-ratio: 1920 / 1082;
+    transform: translate(-50%, -50%);
+    container-type: size;
+}
+
+.menu > *[b-z1i1zbgtzh] {
+    position: absolute;
+}
+
+.help-button[b-z1i1zbgtzh] {
+    left: 8.07%;
+    top: 7.39%;
+    width: 5.21%;
+    aspect-ratio: 1;
+    padding: 0;
+    border: 0;
+    background: url(images/ui/button-help.webp) center / contain no-repeat;
+    filter: drop-shadow(0 3px 4px rgba(0, 0, 0, 0.7));
+    cursor: pointer;
+    transition: transform 0.12s, filter 0.25s;
+}
+
+.help-button:hover[b-z1i1zbgtzh]  { filter: brightness(1.2); transform: scale(1.06); }
+.help-button:active[b-z1i1zbgtzh] { transform: scale(0.94); }
+
+/* Unity LogoAnim: the logo floats up and down with a slight sway. Stretched a little wider, as Unity draws it. */
+.menu-logo[b-z1i1zbgtzh] {
+    left: 55.52%;
+    top: 5.5%;
+    width: 28.13%;
+    height: 45.75%;
+    filter: drop-shadow(0 8px 14px rgba(0, 0, 0, 0.8));
+    animation: logo-bob-b-z1i1zbgtzh 3.6s ease-in-out infinite alternate;
+    pointer-events: none;
+}
+
+/* Windows taller than 16:9 leave room above the canvas: the logo moves up into it, away from the buttons */
+@media (orientation: landscape) and (max-aspect-ratio: 16 / 10) {
+    .menu-logo[b-z1i1zbgtzh] { top: 1%; }
+}
+
+@media (orientation: landscape) and (max-aspect-ratio: 4 / 3) {
+    .menu-logo[b-z1i1zbgtzh] { top: -5%; }
+}
+
+@keyframes logo-bob-b-z1i1zbgtzh {
+    from { transform: translateY(-1.5%) rotate(-0.6deg); }
+    to   { transform: translateY(1.5%) rotate(0.6deg); }
+}
+
+/* Unity GridButtons: two columns of 357 x 127 with 15 spacing, here at 90% to fit a third row */
+.menu-buttons[b-z1i1zbgtzh] {
+    left: 52.5%;
+    top: 55.45%;
+    width: 34.17%;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.25cqh 0.7cqw;
+}
+
+.menu-buttons .mfw-button[b-z1i1zbgtzh] {
+    aspect-ratio: 357 / 127;
+    font-size: 1.6cqw;
+    white-space: nowrap;
+}
+
+.menu-buttons .mfw-button:disabled[b-z1i1zbgtzh] {
+    opacity: 0.45;
+    filter: grayscale(0.4);
+    transform: none;
+    cursor: default;
+}
+
+.disclaimer[b-z1i1zbgtzh] {
+    left: 52.5%;
+    top: 90.5%;
+    width: 34.17%;
+    margin: 0;
+    text-align: center;
+    font-family: var(--mfw-font-text);
+    font-style: italic;
+    font-size: max(9px, 0.85cqw);
+    line-height: 1.3;
+    color: rgba(225, 215, 195, 0.85);
+    text-shadow: 0 1px 2px #000;
+}
+
+/* Phone in portrait: the manor (centre at 28% of the canvas) stays in view; logo on top, buttons and note at the bottom */
+@media (orientation: portrait) {
+    .menu-art[b-z1i1zbgtzh] {
+        transform: translate(-28%, -50%);
+    }
+
+    .menu[b-z1i1zbgtzh] {
+        inset: 0;
+        width: auto;
+        aspect-ratio: auto;
+        transform: none;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding: max(30px, 6svh) 8vw max(30px, 4svh);
+        container-type: normal;
+    }
+
+    .menu > *[b-z1i1zbgtzh] {
+        position: static;
+    }
+
+    .help-button[b-z1i1zbgtzh] {
+        position: absolute;
+        left: max(30px, 6vw);
+        top: max(30px, 3svh);
+        width: min(12vw, 56px);
+    }
+
+    .menu-logo[b-z1i1zbgtzh] {
+        width: min(62vw, 34svh);
+        height: auto;
+        aspect-ratio: 600 / 495;
+    }
+
+    .menu-buttons[b-z1i1zbgtzh] {
+        width: 100%;
+        margin-top: auto;
+        gap: 1.2svh 2vw;
+    }
+
+    .menu-buttons .mfw-button[b-z1i1zbgtzh] {
+        font-size: max(11px, min(4.1vw, 2.4svh));
+    }
+
+    .disclaimer[b-z1i1zbgtzh] {
+        width: 100%;
+        margin-top: 1.5svh;
+        font-size: max(9px, min(2.6vw, 1.4svh));
+    }
+}
+
+/* Graphics: Low (js/atmosphere.js) or the device asking for less motion: a still picture */
+html[data-graphics="low"] .village-light[b-z1i1zbgtzh],
+html[data-graphics="low"] .menu-logo[b-z1i1zbgtzh] {
+    animation: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .village-light[b-z1i1zbgtzh], .menu-logo[b-z1i1zbgtzh] { animation: none; }
+}
+/* /Pages/PlayersNameEntry.razor.rz.scp.css */
+/* "Carefully pass the storybook to Player X" on a steel plate */
+.pass-book[b-8n3htrjiqu] {
+    max-width: 40rem;
+    padding: 0.7rem 1.4rem;
+    border: 12px solid transparent;
+    border-image: url(images/ui/input-box.webp) 40 fill / 12px stretch;
+    font-family: var(--mfw-font-heading);
+    font-size: clamp(1.4rem, 3.4vw, 2.1rem);
+    line-height: 1.2;
+    color: #ffd27a;
+    text-shadow: 0 2px 3px #000;
+}
+
+.same-table[b-8n3htrjiqu] {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+    width: min(100%, 30rem);
+}
+
+.same-table-names[b-8n3htrjiqu] {
+    font-size: 1.15rem;
+    color: #ffd98a;
+}
+
+.remembered[b-8n3htrjiqu] {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+    max-width: 40rem;
+}
+
+.remembered-names[b-8n3htrjiqu] {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.35rem;
+}
+/* /Pages/PlayersScenario.razor.rz.scp.css */
+/* Unity Scenario view: the scenario art in a steel border (MFW_Scenario_Unelected_Border), gold on hover (Selected) */
+.scenario-options[b-tn07osxrvr] {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: clamp(0.8rem, 2vw, 1.8rem);
+    width: 100%;
+    max-width: 72rem;
+}
+
+.scenario-card[b-tn07osxrvr] {
+    display: flex;
+    flex-direction: column;
+    width: clamp(15rem, 28vw, 21rem);
+    padding: 0;
+    border: 26px solid transparent;
+    border-image: url(images/ui/scenario-border-steel.webp) 36 / 26px stretch;
+    background: #111318 padding-box;
+    color: #f1e8d4;
+    font-family: var(--mfw-font-text);
+    text-align: left;
+    cursor: pointer;
+    filter: drop-shadow(0 12px 18px rgba(0, 0, 0, 0.7));
+    transition: transform 0.18s, filter 0.25s;
+}
+
+.scenario-card:hover[b-tn07osxrvr],
+.scenario-card:focus-visible[b-tn07osxrvr] {
+    border-image-source: url(images/ui/scenario-border-gold.webp);
+    transform: translateY(-4px);
+    filter: drop-shadow(0 0 14px rgba(255, 190, 80, 0.4)) drop-shadow(0 12px 18px rgba(0, 0, 0, 0.7));
+    outline: none;
+}
+
+.scenario-card:active[b-tn07osxrvr] { transform: scale(0.98); }
+
+.scenario-art[b-tn07osxrvr] {
+    display: block;
+    aspect-ratio: 4 / 3;
+    background: center 20% / cover no-repeat;
+}
+
+.scenario-text[b-tn07osxrvr] {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    padding: 0.8rem 0.4rem 0.4rem;
+}
+
+.scenario-title[b-tn07osxrvr] {
+    font-family: var(--mfw-font-heading);
+    font-size: 1.75rem;
+    line-height: 1.1;
+    text-align: center;
+    color: #fff;
+    text-shadow: 0 2px 3px #000;
+}
+
+.scenario-desc[b-tn07osxrvr] {
+    font-size: 0.95rem;
+    line-height: 1.45;
+    color: #d9ccb0;
+}
+/* /Pages/PlayersScenarioLanguage.razor.rz.scp.css */
+.options[b-8nlnqvghf9] {
+    display: flex;
+    flex-direction: column;
+    gap: 1.1rem;
+    max-width: 36rem;
+}
+
+.mirror-option[b-8nlnqvghf9] {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.8rem;
+    line-height: 1.45;
+    cursor: pointer;
+}
+
+.mirror-option input[b-8nlnqvghf9] {
+    flex-shrink: 0;
+    width: 1.35rem;
+    height: 1.35rem;
+    margin-top: 0.15rem;
+    accent-color: #c9a35a;
+}
+
+.narration-option[b-8nlnqvghf9] {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.6rem;
+}
+
+.narration-option select[b-8nlnqvghf9] {
+    min-width: 11rem;
+    min-height: 44px;
+    padding: 0 0.6rem;
+    border: 1px solid #5d5547;
+    border-radius: 6px;
+    background: #0e1014;
+    color: #f1e4c4;
+    font-family: var(--mfw-font-text);
+    font-size: 1rem;
+}
+/* /Pages/PlayersSelect.razor.rz.scp.css */
+/* Unity GamePlayerCount: the player icons on their dark plates (images/ui/players-*.webp) */
+.player-options[b-o2u06v8lau] {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: clamp(0.8rem, 3vw, 2.5rem);
+    margin-top: 0.5rem;
+}
+
+.player-option[b-o2u06v8lau] {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.6rem;
+    width: clamp(7.5rem, 22vw, 12rem);
+    padding: 0;
+    border: 0;
+    background: none;
+    color: #f1e4c4;
+    font-family: var(--mfw-font-button);
+    font-size: clamp(1rem, 2.2vw, 1.35rem);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    text-shadow: 0 2px 3px #000;
+    cursor: pointer;
+    transition: transform 0.15s, filter 0.25s;
+}
+
+.player-option img[b-o2u06v8lau] {
+    width: 100%;
+    aspect-ratio: 1;
+    filter: drop-shadow(0 8px 12px rgba(0, 0, 0, 0.7));
+}
+
+.player-option:hover[b-o2u06v8lau]         { transform: scale(1.05); filter: brightness(1.2) drop-shadow(0 0 10px rgba(255, 190, 80, 0.45)); }
+.player-option:active[b-o2u06v8lau]        { transform: scale(0.96); }
+.player-option:focus-visible[b-o2u06v8lau] { outline: 2px solid #c9a35a; outline-offset: 4px; }
+/* /Pages/PlayersVillageConfirm.razor.rz.scp.css */
+.mp-parchment[b-6zu5m7v3zg]  .village-name {
+    color: #5a1a0e;
+}
+/* /Pages/PlayersWelcome.razor.rz.scp.css */
+/* Unity PlayerIntro: the welcome on the torn paper strip (MFWpaper, images/ui/paper-strip.webp) */
+.welcome-paper[b-13fa27u9fo] {
+    display: grid;
+    place-items: center;
+    width: min(100%, 42rem);
+    aspect-ratio: 1200 / 559; /* grows taller when the text needs it */
+    padding: 2rem 4rem;
+    background: url(images/ui/paper-strip.webp) center / 100% 100% no-repeat;
+    color: #17100a;
+    font-family: var(--mfw-font-text);
+    font-size: 1.3rem;
+    line-height: 1.45;
+    letter-spacing: 0.02em;
+    -webkit-text-stroke: 0.35px currentColor;
+    filter: drop-shadow(0 14px 22px rgba(0, 0, 0, 0.75));
+}
+
+.welcome-paper p[b-13fa27u9fo] { margin: 0; }
+
+.welcome-paper[b-13fa27u9fo]  .player-name {
+    font-family: var(--mfw-font-heading);
+    font-size: 2.6rem;
+    font-weight: 400;
+    -webkit-text-stroke: 0;
+    color: #5a1a0e;
+}
+
+@media (max-width: 480px) {
+    .welcome-paper[b-13fa27u9fo] { padding: 1.6rem 1.8rem; font-size: 1.1rem; }
+}
+/* /Pages/SavedGames.razor.rz.scp.css */
+.save-card[b-o3n1qk3ltt] {
+    display: flex;
+    flex-direction: column;
+    gap: 0.8rem;
+    width: 100%;
+    max-width: 40rem;
+    text-align: left;
+}
+
+.save-title[b-o3n1qk3ltt] {
+    font-size: 1.2rem;
+    color: #ffd98a;
+}
+
+.save-sub[b-o3n1qk3ltt] {
+    font-size: 0.9rem;
+    line-height: 1.4;
+    color: #cbbd9f;
+}
+
+.save-buttons[b-o3n1qk3ltt] {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.5rem 0.8rem;
+}
+
+.save-main[b-o3n1qk3ltt] {
+    min-width: clamp(10rem, calc(340 * var(--u)), 13rem);
+    font-size: clamp(0.95rem, calc(32 * var(--u)), 1.2rem);
+}
+
+.save-buttons[b-o3n1qk3ltt]  .import-file {
+    display: none;
+}
+
+.import-failed[b-o3n1qk3ltt] {
+    color: #ff9d8a;
+}
+/* /Shared/AudioToggles.razor.rz.scp.css */
+/* Top right, inside the game page frame (--u: css/theme.css) */
+.audio-toggles[b-42qbe0o22z] {
+    position: fixed;
+    top: max(0.75rem, calc(80 * var(--u)));
+    right: max(0.75rem, calc(130 * var(--u)));
+    z-index: 1001;
+    display: flex;
+    gap: 0.5rem;
+}
+
+/* Round dark-metal discs with a brass rim, next to the round Unity icon buttons */
+.audio-toggle[b-42qbe0o22z] {
+    width: clamp(36px, calc(80 * var(--u)), 52px);
+    aspect-ratio: 1;
+    padding: 0;
+    border: 2px solid #b0843f;
+    border-radius: 50%;
+    background: radial-gradient(circle at 35% 30%, #4a3a2a, #1b140e 70%);
+    color: #f1e4c4;
+    font-size: clamp(1rem, calc(34 * var(--u)), 1.35rem);
+    line-height: 1;
+    cursor: pointer;
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.7), inset 0 1px 1px rgba(255, 220, 160, 0.25);
+    transition: transform 0.12s, filter 0.25s;
+}
+
+.audio-toggle:hover[b-42qbe0o22z] {
+    filter: brightness(1.25);
+    transform: scale(1.06);
+}
+
+.audio-toggle:active[b-42qbe0o22z] {
+    transform: scale(0.92);
+}
+
+.audio-control[b-42qbe0o22z] {
+    position: relative;
+}
+
+.audio-glyph[b-42qbe0o22z] {
+    position: relative;
+    display: inline-block;
+}
+
+.audio-toggle.off .audio-glyph[b-42qbe0o22z] {
+    opacity: 0.5;
+}
+
+/* Diagonal strike through the glyph when the channel is off */
+.audio-toggle.off .audio-glyph[b-42qbe0o22z]::after {
+    content: "";
+    position: absolute;
+    left: -0.2em;
+    right: -0.2em;
+    top: 50%;
+    border-top: 2px solid #f1e4c4;
+    transform: rotate(-45deg);
+}
+
+/* Volume, shown below the toggle while it is hovered or focused */
+.volume-pop[b-42qbe0o22z] {
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.3rem;
+    margin-top: 0.4rem;
+    padding: 0.6rem 0.35rem 0.4rem;
+    background: rgba(18, 14, 10, 0.92);
+    border: 1px solid #b0843f;
+    border-radius: 8px;
+    box-shadow: 0 6px 14px rgba(0, 0, 0, 0.6);
+    color: #f1e4c4;
+    font-size: 0.75rem;
+    font-variant-numeric: tabular-nums;
+    opacity: 0;
+    visibility: hidden;
+    transform: translate(-50%, -6px);
+    transition: opacity 0.15s, transform 0.15s, visibility 0.15s;
+}
+
+/* A gap-free hover path from the button to the slider */
+.volume-pop[b-42qbe0o22z]::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 100%;
+    height: 0.5rem;
+}
+
+.audio-control:hover .volume-pop[b-42qbe0o22z],
+.audio-control:focus-within .volume-pop[b-42qbe0o22z] {
+    opacity: 1;
+    visibility: visible;
+    transform: translate(-50%, 0);
+}
+
+.volume-pop input[type="range"][b-42qbe0o22z] {
+    writing-mode: vertical-lr;
+    direction: rtl;
+    width: 1.4rem;
+    height: 110px;
+    margin: 0;
+    accent-color: #c9a35a;
+    cursor: pointer;
+}
+/* /Shared/CookieConsent.razor.rz.scp.css */
+.cookie-banner[b-rt493o08i8] {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: rgba(30, 30, 30, 0.95);
+    color: #f0f0f0;
+    padding: 1rem;
+    text-align: center;
+    z-index: 1000;
+    font-size: 0.9rem;
+    box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.5);
+}
+
+.cookie-buttons[b-rt493o08i8] {
+    margin-top: 0.5rem;
+}
+
+.cookie-buttons button[b-rt493o08i8] {
+    margin: 0 0.5rem;
+    padding: 0.4rem 1rem;
+    background-color: #4caf50;
+    border: none;
+    color: white;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.cookie-buttons button:last-child[b-rt493o08i8] {
+    background-color: #f44336;
+}
+/* /Shared/DisplaySettings.razor.rz.scp.css */
+.display-settings[b-decnok1vrw] {
+    display: grid;
+    gap: 0.8rem;
+    text-align: left;
+}
+
+.setting-row[b-decnok1vrw] {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.5rem 1rem;
+}
+
+.setting-label[b-decnok1vrw] {
+    min-width: 8rem;
+    font-weight: bold;
+}
+
+.graphics-choice[b-decnok1vrw] {
+    display: flex;
+    gap: 0.75rem;
+}
+
+/* Unity GFXQuality-Normal / -Selected brass rings */
+.graphics-option[b-decnok1vrw] {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    padding: 0;
+    border: 0;
+    background: none;
+    color: inherit;
+    font: inherit;
+    cursor: pointer;
+}
+
+.graphics-dot[b-decnok1vrw] {
+    width: 1.6rem;
+    height: 1.6rem;
+    background: url(images/ui/gfx-off.webp) center / contain no-repeat;
+}
+
+.graphics-option.selected .graphics-dot[b-decnok1vrw] {
+    background-image: url(images/ui/gfx-on.webp);
+}
+
+.setting-row input[type=range][b-decnok1vrw] {
+    flex: 1;
+    min-width: 8rem;
+    accent-color: #c9a35a;
+}
+
+.setting-value[b-decnok1vrw] {
+    min-width: 3rem;
+    text-align: right;
+    font-variant-numeric: tabular-nums;
+}
+
+/* Previews the slider on story text (same font and scale as the story windows) */
+.text-size-sample[b-decnok1vrw] {
+    margin: 0;
+    font-family: var(--mfw-font-text);
+    font-size: calc(1.05rem * var(--mfw-story-scale, 1));
+    line-height: 1.5;
+    opacity: 0.9;
+}
+/* /Shared/InfoPopup.razor.rz.scp.css */
+/* Background Overlay */
+.popup-overlay[b-w3ffvte82o] {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0,0,0,0.7);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 999;
+    overflow-y: auto;
+    padding: 1rem 0;
+}
+
+/* Auto margins centre the box but keep it scrollable when it is taller than the screen */
+.popup-overlay > *[b-w3ffvte82o] {
+    margin: auto;
+}
+
+/* Main Popup Box: parchment (css/theme.css .mfw-parchment) */
+.popup-box[b-w3ffvte82o] {
+    padding: 1rem clamp(1rem, 3vw, 2rem) 1.3rem;
+    max-width: 700px;
+    width: 92%;
+    text-align: center;
+}
+
+/* Inner Flex Layout */
+.popup-content[b-w3ffvte82o] {
+    display: flex;
+    align-items: flex-start;
+    gap: 1rem;
+}
+
+/* Image Block */
+.popup-image-wrapper[b-w3ffvte82o] {
+    background-color: white;
+    padding: 0.5rem;
+    border: 2px solid #2e1f14;
+    box-shadow: 2px 2px 8px rgba(0,0,0,0.4);
+}
+
+.popup-image[b-w3ffvte82o] {
+    width: 100px;
+    height: auto;
+    display: block;
+}
+
+/* Text Block */
+.popup-text[b-w3ffvte82o] {
+    text-align: left;
+    flex: 1;
+}
+
+/* Unity: the popup title in Evil Dead */
+.popup-text h2[b-w3ffvte82o] {
+    margin: 0 0 0.5rem;
+    font-family: var(--mfw-font-heading);
+    font-weight: 400;
+    font-size: 1.9rem;
+    letter-spacing: 0.02em;
+    color: #4a1d10;
+}
+
+.popup-text p[b-w3ffvte82o] {
+    margin: 0;
+    font-size: 1.15rem;
+    line-height: 1.55;
+}
+
+/* Accept Button (css/theme.css .mfw-button green) */
+.popup-button[b-w3ffvte82o] {
+    width: min(14rem, 70%);
+    margin: 1.2rem auto 0;
+    font-size: 1.15rem;
+}
+
+@media (max-width: 480px) {
+    .popup-content[b-w3ffvte82o] {
+        flex-direction: column;
+        align-items: center;
+    }
+}
+/* /Shared/InputPopup.razor.rz.scp.css */
+/* Overlay Same as InfoPopup */
+.popup-overlay[b-15vq23k1mn] {
+    position: fixed;
+    inset: 0;
+    background-color: rgba(0, 0, 0, 0.7);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 999;
+    overflow-y: auto;
+    padding: 1rem 0;
+}
+
+/* Auto margins centre the box but keep it scrollable when it is taller than the screen */
+.popup-overlay > *[b-15vq23k1mn] {
+    margin: auto;
+}
+
+/* Box: parchment (css/theme.css .mfw-parchment) */
+.popup-box.input-popup[b-15vq23k1mn] {
+    padding: 1rem 1.6rem 1.2rem;
+    max-width: 500px;
+    width: 90%;
+    text-align: center;
+}
+
+.input-content[b-15vq23k1mn] {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1.2rem;
+}
+
+.input-content p[b-15vq23k1mn] {
+    font-size: 1.2rem;
+    line-height: 1.5;
+    margin: 0;
+}
+
+.input-field[b-15vq23k1mn] {
+    width: 180px;
+    padding: 0.45rem 1rem;
+    font-family: var(--mfw-font-text);
+    font-size: 1.5rem;
+    text-align: center;
+    border: 2px solid #4a3522;
+    border-radius: 6px;
+    background-color: #1f1a15;
+    color: #f2c8a0;
+    box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.7);
+}
+
+.input-field:focus[b-15vq23k1mn] {
+    outline: 2px solid #c9a35a;
+    outline-offset: 1px;
+}
+
+.input-field.invalid[b-15vq23k1mn] {
+    border-color: #a3271b;
+    outline-color: #d0402f;
+}
+
+/* Score entry: name left, field right */
+.input-fields[b-15vq23k1mn] {
+    display: grid;
+    gap: 0.6rem;
+    width: 100%;
+}
+
+.input-row[b-15vq23k1mn] {
+    display: grid;
+    grid-template-columns: 1fr 7rem;
+    align-items: center;
+    gap: 1rem;
+    text-align: left;
+    font-size: 1.2rem;
+    font-weight: 700;
+}
+
+.input-row .input-field[b-15vq23k1mn] {
+    width: 100%;
+    font-size: 1.3rem;
+    padding: 0.3rem 0.5rem;
+}
+
+.popup-button[b-15vq23k1mn] {
+    width: min(14rem, 70%);
+    margin: 1.2rem auto 0;
+    font-size: 1.15rem;
+}
+/* /Shared/LogBookPopup.razor.rz.scp.css */
+.logbook-overlay[b-j1w1ivbisj] {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.75);
+    z-index: 2000;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow-y: auto;
+    padding: 1rem 0;
+}
+
+/* Auto margins centre the box but keep it scrollable when it is taller than the screen */
+.logbook-overlay > *[b-j1w1ivbisj] {
+    margin: auto;
+}
+
+.logbook[b-j1w1ivbisj] {
+    background: #d4bfa5;
+    border: 3px solid #2e1f14;
+    padding: 1.5rem 2rem;
+    border-radius: 10px;
+    width: min(700px, calc(100% - 2rem));
+    box-sizing: border-box;
+    color: #2e1f14;
+    text-align: center;
+}
+
+.logbook h2[b-j1w1ivbisj] {
+    margin-top: 0;
+}
+
+.logbook-empty[b-j1w1ivbisj] {
+    font-style: italic;
+}
+
+.logbook-entries[b-j1w1ivbisj] {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    text-align: left;
+}
+
+.logbook-entry[b-j1w1ivbisj] {
+    padding: 0.6rem 0;
+    border-bottom: 1px solid rgba(46,31,20,0.35);
+}
+
+.logbook-entry:last-child[b-j1w1ivbisj] {
+    border-bottom: none;
+}
+
+.logbook-entry-head[b-j1w1ivbisj] {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 0 1rem;
+}
+
+.logbook-entry-title[b-j1w1ivbisj] {
+    font-weight: bold;
+}
+
+.logbook-entry-location[b-j1w1ivbisj] {
+    font-size: 0.85rem;
+    font-style: italic;
+    color: #5c4633;
+}
+
+.logbook-entry-summary[b-j1w1ivbisj] {
+    margin-top: 0.2rem;
+    font-size: 0.95rem;
+}
+
+.logbook-nav[b-j1w1ivbisj] {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 0.5rem;
+    margin-top: 1rem;
+}
+
+.logbook-page[b-j1w1ivbisj] {
+    font-size: 0.9rem;
+}
+
+.logbook-button[b-j1w1ivbisj] {
+    min-height: 44px;
+    padding: 0.5rem 1rem;
+    font-size: 1rem;
+    font-weight: bold;
+    background-color: #5c4633;
+    color: #e0d3b8;
+    border: 2px solid #2e1f14;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+.logbook-button:disabled[b-j1w1ivbisj] {
+    opacity: 0.4;
+    cursor: default;
+}
+
+.logbook-close[b-j1w1ivbisj] {
+    margin-top: 1rem;
+    background-color: #3a5c3a;
+}
+
+@media (max-width: 600px) {
+    .logbook[b-j1w1ivbisj] {
+        padding: 1rem;
+    }
+
+    .logbook-button[b-j1w1ivbisj] {
+        padding: 0.5rem 0.75rem;
+    }
+}
+/* /Shared/MenuPage.razor.rz.scp.css */
+/* Layers as on the round pages (Pages/Gameplay.razor.css): scene, page, frame, back button. --u: css/theme.css. */
+.menu-page-scene[b-cavawepury] {
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    overflow: hidden;
+    background: #0d0d0f;
+}
+
+.menu-page-scene > *[b-cavawepury] {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+}
+
+.menu-page-bg[b-cavawepury] {
+    background: url(images/ui/hub-bg.webp) center / cover no-repeat;
+}
+
+/* Warm glow from below and a dim light from the top (Unity FakeLight on the setup views) */
+.menu-page-light[b-cavawepury] {
+    background:
+        radial-gradient(ellipse 70% 45% at 50% 0%, rgba(255, 246, 143, 0.22), transparent),
+        radial-gradient(closest-side, rgba(255, 127, 0, 0.22), transparent);
+    mix-blend-mode: screen;
+    animation: menu-page-flicker-b-cavawepury 5s ease-in-out infinite;
+}
+
+@keyframes menu-page-flicker-b-cavawepury {
+    0%, 100% { opacity: 0.85; }
+    40%      { opacity: 1; }
+    60%      { opacity: 0.75; }
+}
+
+.menu-page-vignette[b-cavawepury] {
+    background: url(images/ui/vignette.webp) center / 100% 100% no-repeat;
+    opacity: 0.57;
+}
+
+.menu-page-frame[b-cavawepury] {
+    position: fixed;
+    inset: 0;
+    z-index: 900;
+    pointer-events: none;
+    border: calc(140 * var(--u)) solid transparent;
+    border-image: url(images/ui/frame-hub.webp) 140 / calc(140 * var(--u)) stretch;
+}
+
+.menu-page-back[b-cavawepury] {
+    position: fixed;
+    top: max(0.75rem, calc(70 * var(--u)));
+    left: max(0.75rem, calc(130 * var(--u)));
+    z-index: 1001;
+    background-image: url(images/ui/btn-back.webp);
+}
+
+.menu-page[b-cavawepury] {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1.1rem;
+    width: 100vw; /* .page-root (css/app.css) centres its child at its own width */
+    max-width: 100%;
+    min-height: 100vh;
+    min-height: 100svh;
+    padding: max(4.75rem, calc(190 * var(--u))) max(14px, calc(150 * var(--u))) max(2.5rem, calc(170 * var(--u)));
+    color: #f1e8d4;
+    font-family: var(--mfw-font-text);
+    text-align: center;
+}
+
+/* A page with one short message keeps it in the middle of the window */
+.menu-page.centered[b-cavawepury] {
+    justify-content: center;
+}
+
+.menu-page-title[b-cavawepury] {
+    margin: 0;
+    font-family: var(--mfw-font-heading);
+    font-weight: 400;
+    font-size: clamp(2rem, calc(72 * var(--u)), 3.4rem);
+    letter-spacing: 0.02em;
+    line-height: 1.15;
+    color: #fff;
+    text-shadow: 0 0 8px #000, 0 2px 3px #000, 0 0 2px #000;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .menu-page-light[b-cavawepury] { animation: none; }
+}
+
+html[data-graphics="low"] .menu-page-light[b-cavawepury] { animation: none; }
+/* /Shared/MirrorPopup.razor.rz.scp.css */
+/* Overlay Same as InfoPopup */
+.popup-overlay[b-7c5rv7sm18] {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0,0,0,0.7);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 999;
+    overflow-y: auto;
+    padding: 1rem 0;
+}
+
+/* Auto margins centre the box but keep it scrollable when it is taller than the screen */
+.popup-overlay > *[b-7c5rv7sm18] {
+    margin: auto;
+}
+
+.popup-box.mirror-popup[b-7c5rv7sm18] {
+    background-color: #d4bfa5;
+    border: 3px solid #2e1f14;
+    padding: 1.5rem 2rem;
+    border-radius: 8px;
+    box-shadow: 0 0 15px rgba(0,0,0,0.8);
+    max-width: 700px;
+    max-height: 85vh;
+    overflow-y: auto;
+    width: 90%;
+    text-align: center;
+    color: #2e1f14;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+}
+
+.mirror-popup h2[b-7c5rv7sm18] {
+    margin: 0;
+}
+
+.mirror-question[b-7c5rv7sm18] {
+    margin: 0;
+    font-size: 1.1rem;
+    line-height: 1.5;
+}
+
+.mirror-heading[b-7c5rv7sm18] {
+    margin: 0;
+    font-family: 'Georgia', serif;
+    font-weight: bold;
+    text-align: center;
+}
+
+.mirror-context[b-7c5rv7sm18] {
+    margin: 0;
+    font-family: 'Georgia', serif;
+    font-style: italic;
+    line-height: 1.5;
+}
+
+.mirror-grid[b-7c5rv7sm18] {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.75rem;
+}
+
+.mirror-choice[b-7c5rv7sm18] {
+    min-width: 4rem;
+    padding: 0.6rem 1.2rem;
+    font-size: 1.2rem;
+    background-color: #5c4633;
+    color: #e0d3b8;
+    border: 3px solid #2e1f14;
+    border-radius: 8px;
+    cursor: pointer;
+    box-shadow: 0 0 8px rgba(0,0,0,0.6);
+    transition: transform 0.1s, background-color 0.3s;
+}
+
+.mirror-list[b-7c5rv7sm18] {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    width: 100%;
+}
+
+.mirror-card[b-7c5rv7sm18] {
+    text-align: left;
+    padding: 0.8rem 1rem;
+    font-family: 'Georgia', serif;
+    font-size: 1rem;
+    line-height: 1.5;
+    background-color: #e8d9c4;
+    color: #2a1a10;
+    border: 2px solid #2e1f14;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: transform 0.1s, background-color 0.3s;
+}
+
+.mirror-card-context[b-7c5rv7sm18] {
+    color: #6b5440;
+}
+
+.mirror-choice:hover[b-7c5rv7sm18], .mirror-card:hover[b-7c5rv7sm18] {
+    transform: scale(1.02);
+}
+
+.mirror-choice:hover[b-7c5rv7sm18] {
+    background-color: #7a5a3c;
+}
+
+.mirror-card:hover[b-7c5rv7sm18] {
+    background-color: #f3e8d8;
+}
+
+.mirror-error[b-7c5rv7sm18] {
+    margin: 0;
+    color: #8b1a1a;
+}
+
+.input-field[b-7c5rv7sm18] {
+    width: 180px;
+    padding: 0.5rem 1rem;
+    font-size: 1.5rem;
+    text-align: center;
+    border: 3px solid #2e1f14;
+    border-radius: 8px;
+    background-color: #1f1f1f;
+    color: #f2c8a0;
+}
+
+.popup-button[b-7c5rv7sm18] {
+    padding: 0.8rem 2.5rem;
+    font-size: 1.2rem;
+    background-color: #3a5c3a;
+    color: #e0d3b8;
+    border: 3px solid #2e1f14;
+    border-radius: 8px;
+    cursor: pointer;
+    box-shadow: 0 0 10px rgba(0,0,0,0.7);
+}
+
+.mirror-roll[b-7c5rv7sm18] {
+    background: none;
+    border: none;
+    color: #5c4633;
+    text-decoration: underline;
+    cursor: pointer;
+    font-size: 1rem;
+}
+/* /Shared/PauseMenu.razor.rz.scp.css */
+.pause-menu-overlay[b-b5rqit9hzx] {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.75);
+    z-index: 2000;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow-y: auto;
+    padding: 1rem 0;
+}
+
+/* Auto margins centre the box but keep it scrollable when it is taller than the screen */
+.pause-menu-overlay > *[b-b5rqit9hzx] {
+    margin: auto;
+}
+
+.pause-menu[b-b5rqit9hzx] {
+    display: grid;
+    gap: 1rem;
+    width: min(460px, calc(100vw - 2rem));
+    text-align: center;
+}
+
+.pause-menu h2[b-b5rqit9hzx] {
+    font-size: 2.2rem;
+}
+
+/* Unity: textured buttons stacked in the middle of the panel */
+.pause-buttons[b-b5rqit9hzx] {
+    display: grid;
+    justify-items: center;
+    gap: 0.6rem;
+}
+
+.pause-buttons .mfw-button[b-b5rqit9hzx] {
+    width: min(300px, 90%);
+    font-size: 1rem;
+    letter-spacing: 0.03em;
+}
+
+.save-box[b-b5rqit9hzx] {
+    width: 100%;
+    height: 120px;
+    margin: 1rem 0;
+    font-family: monospace;
+    font-size: 0.9rem;
+    padding: 0.5rem;
+    resize: none;
+    border: 2px solid #2e1f14;
+    border-radius: 6px;
+    background-color: #1e1e1e;
+    color: #f5deb3;
+}
+
+.dropdowns[b-b5rqit9hzx] {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 1rem;
+}
+
+/* Two per row (language, scenario language), the narration select wraps to its own row instead of squeezing all three */
+.dropdowns > div[b-b5rqit9hzx] {
+    flex: 1 1 8rem;
+}
+
+.dropdowns select[b-b5rqit9hzx] {
+    padding: 0.4rem;
+    font-size: 0.9rem;
+}
+
+.dropdowns label[b-b5rqit9hzx] {
+    display: block;
+    margin-bottom: 0.3rem;
+    font-weight: bold;
+    text-align: left;
+}
+
+.dropdowns select[b-b5rqit9hzx] {
+    width: 100%;
+    padding: 0.5rem;
+    border: 1px solid #6b5a3a;
+    border-radius: 4px;
+    background-color: #0d0f14;
+    color: inherit;
+    font-family: inherit;
+    font-size: 0.95rem;
+    transition: background-color 0.2s;
+}
+
+.dropdowns select:focus[b-b5rqit9hzx] {
+    outline: 2px solid #c9a35a;
+}
+/* /Shared/RevealPanel.razor.rz.scp.css */
+.reveal-overlay[b-x4064dcywx] {
+    position: fixed;
+    inset: 0;
+    z-index: 1500;
+    display: flex;
+    overflow-y: auto;
+    padding: 1rem;
+    background: rgba(0, 0, 0, 0.72);
+}
+
+.reveal-panel[b-x4064dcywx] {
+    display: grid;
+    gap: 1.1rem;
+    width: min(620px, 100%);
+    margin: auto;
+    padding: 1.2rem clamp(1rem, 3vw, 2rem) 1.4rem;
+    text-align: center;
+}
+
+.reveal-text p[b-x4064dcywx] {
+    margin: 0 0 0.6rem;
+    font-size: 1.15rem;
+    line-height: 1.5;
+}
+
+.reveal-buttons[b-x4064dcywx] {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.8rem;
+}
+
+.reveal-buttons .mfw-button[b-x4064dcywx] {
+    width: min(15rem, 80%);
+    font-size: 1.15rem;
+}
+
+/* Unity MFW_Reveal_BG: the dark plaque the numbers appear on */
+.reveal-count[b-x4064dcywx] {
+    justify-self: center;
+    display: grid;
+    place-items: center;
+    width: min(300px, 70vw);
+    aspect-ratio: 405 / 224;
+    background: url(images/ui/reveal-bg.webp) center / contain no-repeat;
+    font-family: var(--mfw-font-heading);
+    font-size: clamp(3rem, 12vw, 5rem);
+    line-height: 1;
+    color: #f1e4c4;
+    text-shadow: 0 0 12px rgba(255, 220, 150, 0.6), 0 3px 4px #000;
+}
+
+.reveal-count span[b-x4064dcywx] {
+    animation: reveal-pop-b-x4064dcywx 0.9s cubic-bezier(0.2, 1.4, 0.4, 1) both;
+}
+
+.reveal-count.go[b-x4064dcywx] {
+    font-size: clamp(2.2rem, 9vw, 3.6rem);
+    color: #ffd27a;
+}
+
+.reveal-count.go span[b-x4064dcywx] {
+    animation: reveal-go-b-x4064dcywx 0.7s cubic-bezier(0.2, 1.5, 0.4, 1) both;
+}
+
+@keyframes reveal-pop-b-x4064dcywx {
+    from { transform: scale(1.8); opacity: 0; }
+    30%  { opacity: 1; }
+    to   { transform: scale(1); opacity: 1; }
+}
+
+@keyframes reveal-go-b-x4064dcywx {
+    from { transform: scale(0.4); opacity: 0; letter-spacing: 0.4em; }
+    to   { transform: scale(1); opacity: 1; letter-spacing: 0.05em; }
+}
+
+html[data-graphics="low"] .reveal-count span[b-x4064dcywx] {
+    animation: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .reveal-count span[b-x4064dcywx] { animation: none; }
+}
+/* /Shared/SaveNotification.razor.rz.scp.css */
+.save-notification[b-6cp1mxele8] {
+    position: fixed;
+    top: 1.5rem;
+    right: 1.5rem;
+    background-color: #d4bfa5;
+    color: #2e1f14;
+    padding: 0.8rem 1.5rem;
+    border: 3px solid #2e1f14;
+    border-radius: 10px;
+    font-size: 1rem;
+    font-weight: bold;
+    z-index: 2000;
+    box-shadow: 0 0 10px rgba(0,0,0,0.5);
+    opacity: 0;
+    animation: fadeInOut-b-6cp1mxele8 3s ease-in-out forwards;
+}
+
+@keyframes fadeInOut-b-6cp1mxele8 {
+    0%   { opacity: 0; transform: translateY(-10px); }
+    10%  { opacity: 1; transform: translateY(0); }
+    90%  { opacity: 1; transform: translateY(0); }
+    100% { opacity: 0; transform: translateY(-10px); }
+}
+/* /Shared/SavePopup.razor.rz.scp.css */
+.pause-menu-overlay[b-mv3t5anjuk] {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.75);
+    z-index: 2000;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow-y: auto;
+    padding: 1rem 0;
+}
+
+/* Auto margins centre the box but keep it scrollable when it is taller than the screen */
+.pause-menu-overlay > *[b-mv3t5anjuk] {
+    margin: auto;
+}
+
+.pause-menu[b-mv3t5anjuk] {
+    background: #d4bfa5;
+    border: 3px solid #2e1f14;
+    padding: 2rem;
+    border-radius: 10px;
+    width: 400px;
+    text-align: center;
+}
+
+.pause-button[b-mv3t5anjuk] {
+    margin: 0.5rem 0;
+    padding: 0.7rem 1.5rem;
+    font-size: 1rem;
+    font-weight: bold;
+    background-color: #3a5c3a;
+    color: #e0d3b8;
+    border: 2px solid #2e1f14;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+.save-box[b-mv3t5anjuk] {
+    width: 100%;
+    height: 120px;
+    margin: 1rem 0;
+    font-family: monospace;
+    font-size: 0.9rem;
+    padding: 0.5rem;
+    resize: none;
+    border: 2px solid #2e1f14;
+    border-radius: 6px;
+    background-color: #1e1e1e;
+    color: #f5deb3;
+}
+
+.dropdowns[b-mv3t5anjuk] {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 1rem;
+    gap: 1rem;
+}
+
+.dropdowns select[b-mv3t5anjuk] {
+    padding: 0.4rem;
+    font-size: 0.9rem;
+}
+/* /Shared/SettingsPopup.razor.rz.scp.css */
+.settings-overlay[b-7j4de5mqbz] {
+    position: fixed;
+    inset: 0;
+    z-index: 2000;
+    display: flex;
+    overflow-y: auto;
+    padding: 1rem;
+    background: rgba(0, 0, 0, 0.7);
+}
+
+.settings-panel[b-7j4de5mqbz] {
+    display: grid;
+    gap: 1rem;
+    width: min(560px, 100%);
+    margin: auto;
+}
+
+.settings-panel h2[b-7j4de5mqbz] {
+    text-align: center;
+    font-size: 2.2rem;
+}
+
+.settings-row[b-7j4de5mqbz] {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.5rem 1rem;
+}
+
+.settings-row label[b-7j4de5mqbz] {
+    min-width: 8rem;
+    font-weight: bold;
+}
+
+.settings-row select[b-7j4de5mqbz] {
+    padding: 0.35rem 0.7rem;
+    border: 1px solid #6b5a3a;
+    border-radius: 4px;
+    background: #0d0f14;
+    color: inherit;
+    font: inherit;
+}
+
+.settings-close[b-7j4de5mqbz] {
+    justify-self: center;
+    width: min(220px, 60%);
+    font-size: 1.3rem;
+}
+/* /Shared/VolumeSliders.razor.rz.scp.css */
+.volume-sliders[b-16y0vqkl9t] {
+    margin-top: 1rem;
+    text-align: left;
+}
+
+.volume-title[b-16y0vqkl9t] {
+    display: block;
+    margin-bottom: 0.3rem;
+    color: inherit;
+    font-weight: bold;
+}
+
+.volume-row[b-16y0vqkl9t] {
+    display: grid;
+    grid-template-columns: 8rem 1fr 3rem;
+    align-items: center;
+    gap: 0.5rem;
+    color: inherit;
+    font-size: 0.95rem;
+}
+
+.volume-row input[type="range"][b-16y0vqkl9t] {
+    width: 100%;
+    accent-color: #c9a35a;
+}
+
+.volume-value[b-16y0vqkl9t] {
+    text-align: right;
+    font-variant-numeric: tabular-nums;
+}
