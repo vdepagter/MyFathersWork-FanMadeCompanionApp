@@ -1,0 +1,85 @@
+/* Back Button (as on the other menu pages) */
+.back-button {
+    position: fixed;
+    top: 1rem;
+    left: 1rem;
+    background-color: #5c4633;
+    color: #e0d3b8;
+    padding: 0.5rem 1rem;
+    border: 2px solid #2e1f14;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: bold;
+    box-shadow: 0 0 8px rgba(0,0,0,0.6);
+    transition: background-color 0.3s, transform 0.1s;
+    z-index: 10;
+}
+
+.back-button:hover {
+    background-color: #7a5a3c;
+    transform: scale(1.05);
+}
+
+.help-container {
+    width: 560px;
+    max-width: 100vw;
+    padding: 4.5rem 1rem 2rem;
+    color: #e0d3b8;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.help-container h1 {
+    font-size: 2rem;
+    font-weight: normal;
+    color: gold;
+    text-shadow: 2px 2px 4px black;
+}
+
+/* Tabs wrap onto several rows on a phone */
+.help-tabs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+}
+
+.help-tabs button {
+    min-height: 40px;
+    padding: 0 0.8rem;
+    border: 1px solid #5c4633;
+    border-radius: 999px;
+    background: transparent;
+    color: #b3a68c;
+    font-family: inherit;
+    font-size: 0.95rem;
+    cursor: pointer;
+}
+
+.help-tabs button.selected {
+    background-color: #5c4633;
+    color: #f3ead8;
+}
+
+.help-page {
+    border: 1px solid #5c4633;
+    border-radius: 10px;
+    padding: 1rem 1.1rem;
+    background-color: rgba(20, 14, 9, 0.55);
+    line-height: 1.55;
+}
+
+.help-page h2 {
+    margin: 0 0 0.5rem;
+    font-size: 1.25rem;
+    font-weight: normal;
+    color: gold;
+}
+
+.help-page ::deep p {
+    margin: 0 0 0.75rem;
+}
+
+.help-page ::deep p:last-child {
+    margin-bottom: 0;
+}
