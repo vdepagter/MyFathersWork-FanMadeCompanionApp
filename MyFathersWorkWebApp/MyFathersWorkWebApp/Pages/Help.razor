@@ -1,0 +1,47 @@
+@page "/Help"
+@inject NavigationManager Nav
+@inject AudioService      Audio
+
+<div class="back-button" @onclick="GoBack">
+    ⬅ @GlobalData.GetLocalizedUITag(GlobalTags.MainMenu_Back)
+</div>
+
+<div class="help-container">
+    <h1>@GlobalData.GetLocalizedUITag(GlobalTags.MainMenu_Help)</h1>
+
+    <div class="help-tabs" role="tablist">
+        @foreach (string page in _Pages)
+        {
+            <button role="tab" aria-selected="@(page == _Page)" class="@(page == _Page ? "selected" : "")" @onclick="() => SelectPage(page)">
+                @GlobalData.GetLocalizedUITag("Help_Tab_" + page)
+            </button>
+        }
+    </div>
+
+    <div class="help-page" role="tabpanel">
+        <h2>@GlobalData.GetLocalizedUITag("Help_Tab_" + _Page)</h2>
+        @((MarkupString)GlobalData.GetLocalizedUITag("Help_" + _Page))
+    </div>
+</div>
+
+@code
+{
+    [CascadingParameter] private GlobalData GlobalData { get; set; } = null!;
+
+    // The first three and End of Round are the official app's Help tabs; the others cover screens it left out and this app's additions
+    private static readonly string[] _Pages = ["HowToUse", "StoryActions", "Setup", "EndOfRound", "EndOfGeneration", "Secret", "Bids", "ThisApp"];
+
+    private string _Page = _Pages[0];
+
+    private void GoBack()
+    {
+        Audio.PlayClick();
+        Nav.NavigateTo("");
+    }
+
+    private void SelectPage(string page)
+    {
+        Audio.PlayClick();
+        _Page = page;
+    }
+}

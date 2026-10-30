@@ -175,6 +175,9 @@ public static class GlobalTags
     public const string Gallery_FamilyWin           = "Gallery_FamilyWin";
     public const string Gallery_RecordedNote        = "Gallery_RecordedNote";
 
+    // Help
+    public const string MainMenu_Help = "MainMenu_Help"; // pages: Help_Tab_<Page> (tab label) and Help_<Page>, listed in Pages/Help.razor
+
     // Others
     public const string GameplayStartTag = "Gameplay_";
 }

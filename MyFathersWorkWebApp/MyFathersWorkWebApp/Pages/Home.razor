@@ -19,6 +19,7 @@
         <button @onclick="OnNewGameClick">@GlobalData.GetLocalizedUITag(GlobalTags.MainMenu_NewGame)</button>
         <button @onclick="ShowLoadPopup">@GlobalData.GetLocalizedUITag(GlobalTags.MainMenu_LoadGame)</button>
         <button @onclick="OpenGallery">@GlobalData.GetLocalizedUITag(GlobalTags.MainMenu_Gallery)</button>
+        <button @onclick="OpenHelp">@GlobalData.GetLocalizedUITag(GlobalTags.MainMenu_Help)</button>
 
         @if (GlobalData.UI_Localization.Count > 1)
         {
@@ -74,6 +75,12 @@
     {
         Audio.PlayClick();
         Nav.NavigateTo("EndingsGallery");
+    }
+
+    private void OpenHelp()
+    {
+        Audio.PlayClick();
+        Nav.NavigateTo("Help");
     }
 
     private async Task OnNewGameClick()

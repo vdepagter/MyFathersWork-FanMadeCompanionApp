@@ -161,6 +161,9 @@ Details per branch: the "Ported" notes in `docs/ATOW_PORT_MAP.md` 2.1-2.8; sourc
   random draws are made where they become visible (factions, buildings, Fever cure rewards, Symposium target).
 - End of Generation texts of Gen II (`DevastationEndOfGeneration`, `HospitalEndOfGeneration`) are separate popups, as the official app shows them on their own screen.
 - Not ported: the original achievements list, sharing, 5-player games. The Endings Gallery replaces the original endings list (see below).
+- Help (`Pages/Help.razor`, main menu): the official app's tabs (How to use, Story Actions, End of Round, its text
+  kept) plus Setup, End of Generation, Secret pages, Bids and votes, and This app. Text in `UI_Localization.csv`
+  (`Help_Tab_<Page>` label, `Help_<Page>` HTML); the page list is in the razor file.
 
 ## Endings Gallery
 

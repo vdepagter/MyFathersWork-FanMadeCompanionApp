@@ -160,3 +160,21 @@ Gallery_ScenarioProgress;{{0=...|Fear of the Unknown}} · {{1=...|3}} of 8 endin
 Gallery_WinFor;Win for {{0=...|Anna}}: win number {{1=...|5}}
 Gallery_FamilyWin;Shared win for the family
 Gallery_RecordedNote;Saved in the Endings Gallery on this device. Going back with Undo and correcting a score replaces this result, so a game is never counted twice.
+//====== Help ======;
+MainMenu_Help;Help
+Help_Tab_HowToUse;How to use
+Help_HowToUse;<p>My Father's Work is a game of Victorian era mad scientist ambition told over three generations. The Storybook App controls the direction of the Town depending on the decisions made by the players. It will require that players interact with it by clicking on specific passages at certain times.</p><p>Each Generation has three rounds: the Early, Middle and Late Years. The round screen lists what can happen this round. Read new story pages aloud unless the app says otherwise.</p>
+Help_Tab_StoryActions;Story Actions
+Help_StoryActions;<p>Sometimes, the game will require that a player click a certain link when an action has been performed. This may be taking an action in the Town, your Estate, or completing a specific goal. Be sure to click these links to receive a special story passage.</p>
+Help_Tab_Setup;Setup
+Help_Setup;<p><b>Setup</b> and <b>Special Setup</b> pop-ups tell you what to change on the board: tokens to place, tiles to add, cards to retrieve, or which page of the Village Chronicle to turn to. The picture shows the piece involved. Make the change before you confirm.</p>
+Help_Tab_EndOfRound;End of Round
+Help_EndOfRound;<p>There are three rounds in each Generation. At the end of each round, you must click the bottom link to resolve any special events and move play to the next round. The screen will then display the current round and changes to gameplay (if any).</p><p>Perform all End of Round actions from the rulebook before you continue.</p>
+Help_Tab_EndOfGeneration;End of Generation
+Help_EndOfGeneration;<p>After the Late Years the app shows an <b>End of Generation</b> page. Remove all player pieces from the board and perform the End of a Generation from the rulebook, plus any extra steps the page lists.</p><p>The story then moves years ahead: the next Generation is played by the heirs of the previous one, and the story may take a different branch depending on what happened.</p>
+Help_Tab_Secret;Secret pages
+Help_Secret;<p>Some pages say <i>"Carefully hand this storybook device to … and do not allow any other players to see the screen."</i> Only that player reads on. They tap <i>"Once you are ready, click here to reveal your secret conversation"</i>, make their choice and pass the device back.</p><p>Secret pages are never read aloud by themselves. The reader can press Play to hear them, for example with headphones.</p><p>When a page asks you to hand the device to a player and does not mention secrecy, read it aloud and make the choice in full view of everyone.</p>
+Help_Tab_Bids;Bids and votes
+Help_Bids;<p>For a bid or a vote, the app explains what is at stake. Everyone chooses in secret at the table, for example with money or a card hidden in a closed hand, and then reveals at the same time.</p><p>Then click the link after resolving the bid or vote and pick the result in the app. The screen explains how ties are broken.</p>
+Help_Tab_ThisApp;This app
+Help_ThisApp;<p>This fan-made version adds a few things to the official app.</p><p><b>Back (⬅)</b> undoes the last screen, all the way back to the start of the game. Your progress is saved in this browser after every screen, so <b>Continue</b> picks up where you left off, even after closing the page.</p><p><b>Pause (⏸)</b> lets you save a game as text or a file to load elsewhere, change the narration (the original male or female recordings, Oliver's AI narration, or off) and return to the main menu.</p><p><b>Play along with the official app</b>, chosen when you start a game, rolls nothing at random. Whenever the story depends on chance, you pick what the official app shows, so both apps tell the same story.</p><p>The <b>Endings Gallery</b> counts each player's wins and the endings you have reached. You can tick endings reached elsewhere, and export or import the gallery to move it to another device.</p>
