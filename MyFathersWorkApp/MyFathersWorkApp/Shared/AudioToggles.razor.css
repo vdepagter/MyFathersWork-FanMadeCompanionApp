@@ -1,32 +1,36 @@
-﻿.audio-toggles {
+﻿/* Top right, inside the game page frame (--u: css/theme.css) */
+.audio-toggles {
     position: fixed;
-    top: 1rem;
-    right: 1rem;
+    top: max(0.75rem, calc(80 * var(--u)));
+    right: max(0.75rem, calc(130 * var(--u)));
     z-index: 1001;
     display: flex;
     gap: 0.5rem;
 }
 
-/* Same look as .back-button in Pages/Gameplay.razor.css */
+/* Round dark-metal discs with a brass rim, next to the round Unity icon buttons */
 .audio-toggle {
-    background-color: #5c4633;
-    color: #e0d3b8;
-    padding: 0.5rem 1rem;
-    border: 2px solid #2e1f14;
-    border-radius: 6px;
+    width: clamp(36px, calc(80 * var(--u)), 52px);
+    aspect-ratio: 1;
+    padding: 0;
+    border: 2px solid #b0843f;
+    border-radius: 50%;
+    background: radial-gradient(circle at 35% 30%, #4a3a2a, #1b140e 70%);
+    color: #f1e4c4;
+    font-size: clamp(1rem, calc(34 * var(--u)), 1.35rem);
+    line-height: 1;
     cursor: pointer;
-    font-weight: bold;
-    box-shadow: 0 0 8px rgba(0,0,0,0.6);
-    transition: background-color 0.3s, transform 0.1s;
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.7), inset 0 1px 1px rgba(255, 220, 160, 0.25);
+    transition: transform 0.12s, filter 0.25s;
 }
 
 .audio-toggle:hover {
-    background-color: #7a5a3c;
-    transform: scale(1.05);
+    filter: brightness(1.25);
+    transform: scale(1.06);
 }
 
 .audio-toggle:active {
-    transform: scale(0.95);
+    transform: scale(0.92);
 }
 
 .music-glyph {

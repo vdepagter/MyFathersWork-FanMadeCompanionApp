@@ -5,8 +5,10 @@
 //                            The hold must match _REVEAL_DELAY_MS in Pages/Gameplay.razor (the reveal sound starts with the recede).
 //                  "popup" - a new GameplayPopup: recede only (400 ms).
 //   enter(kind)  - entrance animations of the elements on the new screen:
-//                  "popup" (GameplayPopup), "input" (GameplayInputPopup), "same" (window -> window, hub -> hub),
-//                  "page" (setup / menu page after a navigation, from Layout/MainLayout.razor).
+//                  "popup" (GameplayPopup: setup and rules drop from the top, end of round / Generation zoom in on
+//                  the parchment), "input" (GameplayInputPopup, zooms in), "rise" (a new story page slides up from the
+//                  bottom, as in Unity), "same" (hub -> hub), "page" (setup / menu page after a navigation, from
+//                  Layout/MainLayout.razor).
 //   scrollTop()  - back to the top of the page when a new story window or a new round's hub is shown.
 //   restoreScroll() - back to where the last click on the page was (not on a popup): the hub is not rendered while a
 //                  popup covers it, so the page shrinks and the browser cuts the scroll position back.
@@ -20,11 +22,11 @@
 
     // [selector, class, duration] per entrance kind
     const ENTRANCES = {
-        popup: [[".popup-box:not(.input-popup):not(.mirror-popup) > .popup-content", "mfw-enter-popup-panel", 450],
-                [".popup-box:not(.input-popup):not(.mirror-popup) > .popup-button", "mfw-enter-popup-button", 450]],
-        input: [[".popup-box.input-popup > .popup-content", "mfw-enter-input-panel", 450],
-                [".popup-box.input-popup > .popup-button", "mfw-enter-input-button", 450]],
+        popup: [[".popup-box.drop:not(.input-popup):not(.mirror-popup)", "mfw-enter-drop", 650],
+                [".popup-box.zoom:not(.input-popup):not(.mirror-popup)", "mfw-enter-zoom", 550]],
+        input: [[".popup-box.input-popup", "mfw-enter-zoom", 550]],
         same:  [[".gameplay-container", "mfw-enter-fade", 200]],
+        rise:  [[".gameplay-container", "mfw-enter-rise", 500]],
         page:  [[".page-root > *", "mfw-enter-page", 350]]
     };
 

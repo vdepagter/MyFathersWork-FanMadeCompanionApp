@@ -1,66 +1,285 @@
-﻿/* Header Buttons */
+﻿/* Game pages as the Unity GanrationEnding (story) and GanrationHUb (round) views. --u is one pixel of the Unity canvas
+   (css/theme.css). Layers, back to front: .game-scene (background, light, embers, vignette), the page itself, the
+   frame, the round bar, the buttons; popups (999) and the pause menu (2000) cover them. */
+
+/* ---- scene ---- */
+.game-scene {
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    overflow: hidden;
+    background: #0d0d0f;
+}
+
+.game-scene > * {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+}
+
+.scene-bg {
+    background: url(images/ui/hub-bg.webp) center / cover no-repeat;
+}
+
+.game-scene.story.cod  .scene-bg { background-image: url(images/ui/story-bg-cod.webp); }
+.game-scene.story.fotu .scene-bg { background-image: url(images/ui/story-bg-fotu.webp); }
+.game-scene.story.atow .scene-bg { background-image: url(images/ui/story-bg-atow.webp); }
+
+/* Unity FakeLight: a soft blue glow over the illustration; on the round pages a warm glow from the fire below and a
+   yellow light from the top */
+.game-scene.story .scene-light {
+    background: radial-gradient(closest-side, rgba(122, 214, 255, 0.2), transparent);
+    mix-blend-mode: screen;
+}
+
+.game-scene.hub .scene-light {
+    background:
+        radial-gradient(ellipse 70% 45% at 50% 0%, rgba(255, 246, 143, 0.32), transparent),
+        radial-gradient(closest-side, rgba(255, 127, 0, 0.3), transparent);
+    mix-blend-mode: screen;
+    animation: scene-flicker 5s ease-in-out infinite;
+}
+
+@keyframes scene-flicker {
+    0%, 100% { opacity: 0.85; }
+    40%      { opacity: 1; }
+    60%      { opacity: 0.75; }
+}
+
+.scene-vignette {
+    background: url(images/ui/vignette.webp) center / 100% 100% no-repeat;
+    opacity: 0.57;
+}
+
+/* ---- frame: Unity MFW_Border_Gold2 (story) / MFW_Border_1 (round), the round slot moved to .round-tray ---- */
+.game-frame {
+    position: fixed;
+    inset: 0;
+    z-index: 900;
+    pointer-events: none;
+    border: calc(140 * var(--u)) solid transparent;
+    border-image: url(images/ui/frame-story.webp) 140 / calc(140 * var(--u)) stretch;
+}
+
+.game-frame.hub {
+    border-image-source: url(images/ui/frame-hub.webp);
+}
+
+/* ---- buttons (Unity BackButton, PauseBtn, LogBook), top left inside the frame ---- */
 .header-buttons {
     position: fixed;
-    top: 1rem;
-    left: 1rem;
-    display: flex;
-    gap: 1rem;
+    top: max(0.75rem, calc(70 * var(--u)));
+    left: max(0.75rem, calc(130 * var(--u)));
     z-index: 1001;
+    display: flex;
+    gap: clamp(6px, calc(24 * var(--u)), 16px);
 }
 
-.back-button, .pause-button, .logbook-open-button {
-    background-color: #5c4633;
-    color: #e0d3b8;
-    padding: 0.5rem 1rem;
-    border: 2px solid #2e1f14;
-    border-radius: 6px;
-    cursor: pointer;
-    font-weight: bold;
-    box-shadow: 0 0 8px rgba(0,0,0,0.6);
-    transition: background-color 0.3s, transform 0.1s;
-}
+.back-button          { background-image: url(images/ui/btn-back.webp); }
+.forward-button       { background-image: url(images/ui/btn-back.webp); transform: scaleX(-1); }
+.pause-button         { background-image: url(images/ui/btn-pause.webp); }
+.logbook-open-button  { background-image: url(images/ui/btn-book.webp); }
 
-.back-button:hover, .pause-button:hover, .logbook-open-button:hover {
-    background-color: #7a5a3c;
-    transform: scale(1.05);
-}
+.forward-button:hover:not(:disabled)  { transform: scaleX(-1) scale(1.06); }
+.forward-button:active:not(:disabled) { transform: scaleX(-1) scale(0.92); }
 
-.back-button:active, .pause-button:active, .logbook-open-button:active {
-    transform: scale(0.95);
-}
-
-.back-button:disabled {
-    background-color: #888;
-    color: #ccc;
-    cursor: not-allowed;
-    border-color: #444;
-    opacity: 0.6;
-}
-
-/* Main Gameplay Container */
+/* ---- page ---- */
 .gameplay-container {
+    position: relative;
+    z-index: 1;
     display: flex;
     flex-direction: column;
     align-items: center;
-    padding: 2rem;
+    width: 100vw;
+    max-width: 100%;
     min-height: 100vh;
+    padding: max(4.75rem, calc(190 * var(--u))) max(12px, calc(75 * var(--u))) calc(150 * var(--u) + 1.5rem);
     text-align: left;
-    color: #e0d3b8;
+    color: #f1e8d4;
+    font-family: var(--mfw-font-text);
 }
 
-/* Title */
+/* Unity TitleGE / TitleGH: Evil Dead, white */
 .gameplay-container h1 {
-    font-size: 2.8rem;
+    margin-bottom: 0.6rem;
+    font-family: var(--mfw-font-heading);
+    font-weight: 400;
+    font-size: clamp(1.9rem, calc(62 * var(--u)), 3.2rem);
+    letter-spacing: 0.02em;
+    line-height: 1.15;
     text-align: center; /* a title that wraps (A Time of War's foreword) stays centered */
-    margin-bottom: 0.5rem;
-    color: #9ebed9;
-    text-shadow: 2px 2px 4px black;
+    color: #fff;
+    text-shadow: 0 0 8px #000, 0 2px 3px #000, 0 0 2px #000;
 }
 
 .gameplay-container h2 {
-    margin-bottom: 1.5rem;
-    font-size: 1.5rem;
-    color: #e0d3b8;
+    margin-bottom: 1rem;
+    font-size: 1.35rem;
+    text-align: center;
+    color: #f1e4c4;
+    text-shadow: 0 1px 3px #000;
+}
+
+/* Story text on the Unity Wide_Textbox parchment, black Averia; size from Settings (--mfw-story-scale) */
+.parchment-box {
+    width: 100%;
+    max-width: 56rem;
+    border: clamp(22px, 2.6vw, 38px) solid transparent;
+    border-image: url(images/ui/textbox.webp) 56 fill / clamp(22px, 2.6vw, 38px) stretch;
+    padding: 0.5rem clamp(0.4rem, 2vw, 1.4rem);
+    color: #1e140b;
+    font-size: calc(1.2rem * var(--mfw-story-scale, 1));
+    line-height: 1.55;
+    filter: drop-shadow(0 10px 18px rgba(0, 0, 0, 0.6));
+}
+
+.parchment-box p {
+    font-size: inherit;
+    line-height: inherit;
+    margin-bottom: 1rem;
+}
+
+/* Unity: "[Click to continue.]" and the other choices in red */
+.story-link {
+    color: #a3170c;
+    font-weight: 700;
+    text-decoration: none;
+    cursor: pointer;
+    transition: color 0.2s, text-shadow 0.2s;
+}
+
+.story-link:hover {
+    color: #d1261a;
+    text-decoration: underline;
+}
+
+.scenario-image {
+    width: 180px;
+    margin-top: 1rem;
+}
+
+/* Round page: white Averia straight on the dark metal (Unity Scroll View), a light panel per section */
+.main-panel,
+.section-panel {
+    width: 100%;
+    max-width: 52rem;
+    margin-bottom: 1.1rem;
+    padding: 0.9rem 1.4rem;
+    background: rgba(8, 7, 6, 0.5);
+    border: 1px solid rgba(201, 163, 90, 0.35);
+    border-radius: 6px;
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.45);
+    font-size: 1.1rem;
+    line-height: 1.5;
+    text-shadow: 0 1px 2px #000;
+}
+
+.main-panel {
+    border-color: rgba(230, 190, 110, 0.6);
+}
+
+.main-panel h3,
+.section-panel h4 {
+    margin-bottom: 0.4rem;
+    font-weight: 700;
+    color: #f0c26a;
+}
+
+.main-panel h3 { font-size: 1.35rem; }
+.section-panel h4 { font-size: 1.15rem; }
+
+/* Unity: hub actions in light blue */
+.gameplay-link {
+    color: #9fd6ff;
+    font-weight: 700;
+    text-decoration: none;
+    cursor: pointer;
+    transition: color 0.2s, text-shadow 0.2s;
+}
+
+.gameplay-link:hover {
+    color: #d2ecff;
+    text-decoration: underline;
+    text-shadow: 0 0 8px rgba(120, 200, 255, 0.6);
+}
+
+.gameplay-link:active {
+    color: #5fb4f0;
+}
+
+/* Icon inline (like 🔥) */
+.icon {
+    font-weight: bold;
+    color: darkred;
+}
+
+/* ---- round bar: the frame's slot (Unity Progress), fixed at the bottom; the bar shows through the nine windows ---- */
+.round-tracker {
+    position: fixed;
+    left: 50%;
+    bottom: 0;
+    z-index: 950;
+    width: calc(1200 * var(--u));
+    aspect-ratio: 1200 / 141;
+    transform: translateX(-50%);
+    pointer-events: none;
+}
+
+.round-bar,
+.round-tray,
+.round-step {
+    position: absolute;
+}
+
+.round-bar {
+    left: 6.17%;
+    width: 87.42%;
+    top: 56.7%;
+    height: 24.2%;
+    background: url(images/ui/round-bar.webp) center / 100% 100% no-repeat;
+}
+
+.round-tray {
+    inset: 0;
+    background: url(images/ui/round-tray-story.webp) center / 100% 100% no-repeat;
+}
+
+.round-tracker.hub .round-tray {
+    background-image: url(images/ui/round-tray-hub.webp);
+}
+
+/* One window per round: the bar is bright up to the current round, dark after it (Unity Fill) */
+.round-step {
+    top: 56.7%;
+    height: 24.2%;
+    display: grid;
+    place-items: center;
+    font-family: var(--mfw-font-text);
+    font-weight: 700;
+    font-size: max(9px, calc(23 * var(--u)));
+    line-height: 1;
+    white-space: nowrap;
+    color: rgba(255, 255, 255, 0.75);
+    text-shadow: 0 1px 2px #000;
+}
+
+.round-step.future {
+    background: rgba(28, 28, 28, 0.85);
+    color: rgba(255, 255, 255, 0.35);
+}
+
+/* Unity I1-glow ... III3-glow */
+.round-step.current {
+    color: #fff;
+    text-shadow: 0 0 4px #fff, 0 0 10px rgba(255, 255, 255, 0.9), 0 0 18px rgba(255, 240, 200, 0.8);
+    animation: round-glow 2.4s ease-in-out infinite alternate;
+}
+
+@keyframes round-glow {
+    from { filter: brightness(0.9); }
+    to   { filter: brightness(1.25); }
 }
 
 /* "All players may again view the Storybook." on the hub after a secret page */
@@ -73,215 +292,6 @@
     font-weight: bold;
     text-align: center;
     background-color: rgba(0, 0, 0, 0.35);
-}
-
-/* Parchment Box */
-.parchment-box {
-    background-color: #d4bfa5;
-    padding: 2rem;
-    border-radius: 8px;
-    max-width: 800px;
-    box-shadow: 0 0 15px rgba(0,0,0,0.6);
-    border: 3px solid #2e1f14;
-    font-family: 'Georgia', serif;
-    color: #2a1a10;
-}
-
-.parchment-box p {
-    font-size: 1.2rem;
-    line-height: 1.6;
-    margin-bottom: 1rem;
-}
-
-.scenario-image {
-    width: 180px;
-    margin-top: 1rem;
-}
-
-/* Main Panel */
-.main-panel {
-    background-color: rgba(40, 40, 40, 0.9);
-    border: 3px solid #5c4633;
-    border-radius: 8px;
-    padding: 1rem 2rem;
-    width: 80%;
-    max-width: 800px;
-    box-shadow: 0 0 12px rgba(0,0,0,0.7);
-    margin-bottom: 2rem;
-}
-
-.main-panel h3 {
-    color: gold;
-    margin-bottom: 0.5rem;
-}
-
-.main-panel p {
-    text-align: left;
-    font-size: 1.1rem;
-}
-
-/* Section Panels */
-.section-panel {
-    background-color: rgba(30, 30, 30, 0.9);
-    border: 2px solid #5c4633;
-    border-radius: 8px;
-    padding: 0.8rem 1.5rem;
-    width: 80%;
-    max-width: 700px;
-    box-shadow: 0 0 10px rgba(0,0,0,0.6);
-    margin-bottom: 1rem;
-    text-align: left;
-}
-
-.section-panel h4 {
-    color: #f2b96d;
-    margin-bottom: 0.3rem;
-}
-
-.section-panel p {
-    font-size: 1rem;
-}
-
-/* Link Styling */
-a {
-    color: #9ebed9;
-    text-decoration: underline;
-    cursor: pointer;
-    font-weight: bold;
-}
-
-a:hover {
-    color: #7a5a3c;
-}
-
-/* Icon inline (like 🔥) */
-.icon {
-    font-weight: bold;
-    color: darkred;
-}
-
-/* Continue Button */
-.continue-button {
-    margin-top: 2rem;
-    padding: 1rem 2rem;
-    font-size: 1.2rem;
-    background-color: #5c4633;
-    color: #e0d3b8;
-    border: 3px solid #2e1f14;
-    border-radius: 8px;
-    cursor: pointer;
-    box-shadow: 0 0 10px rgba(0,0,0,0.7);
-    transition: transform 0.1s, background-color 0.3s;
-}
-
-.continue-button:hover {
-    background-color: #7a5a3c;
-    transform: scale(1.05);
-}
-
-.continue-button:active {
-    transform: scale(0.95);
-}
-
-/* 🔗 Link Styles */
-a {
-    color: #3a1e12;
-    text-decoration: underline;
-    font-weight: bold;
-    cursor: pointer;
-    transition: color 0.2s;
-}
-
-a:hover {
-    color: #7a5a3c;
-}
-
-/* Round Tracker - sticks to the top while the page scrolls. It stays in the flow (sticky, not fixed), so it never
-   covers content at rest; the padding on top keeps it clear of the fixed back/pause buttons and audio toggles, and
-   the page-coloured band hides the text scrolling underneath. Below popups (999) and the fixed buttons (1001). */
-.round-tracker {
-    position: sticky;
-    top: 0;
-    z-index: 990;
-    display: flex;
-    justify-content: center;
-    flex-wrap: wrap;
-    gap: 0.5rem;
-    margin-top: 4rem;
-    margin-bottom: 1rem;
-    padding: 4rem 0.5rem 0.5rem;
-    max-width: 100%;
-    background-color: #111;
-    box-shadow: 0 0.75rem 0.75rem -0.5rem #111;
-}
-
-.round-step {
-    width: 52px;
-    height: 52px;
-    background-color: #444;
-    border: 2px solid #5c4633;
-    color: #e0d3b8;
-    border-radius: 8px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    font-weight: bold;
-    font-size: 0.9rem;
-    box-shadow: 0 0 6px rgba(0,0,0,0.6);
-    transition: transform 0.2s, background-color 0.3s;
-    flex-direction: column;
-    text-align: center;
-}
-
-.round-step:hover {
-    transform: scale(1.08);
-}
-
-/* ✅ Color by generation */
-.round-step.generation1 {
-    background-color: #3a5c3a;
-}
-
-.round-step.generation2 {
-    background-color: #a88832;
-}
-
-.round-step.generation3 {
-    background-color: #802d2d;
-}
-
-/* ✅ Grey for future */
-.round-step.future {
-    background-color: #555;
-    opacity: 0.7;
-}
-
-/* ✅ Highlight current round */
-.round-step.current {
-    outline: 3px solid #e0d3b8;
-    box-shadow: 0 0 10px rgba(255,255,255,0.8);
-    opacity: 1;
-}
-
-/* Optional - Text Adjustments */
-.round-step span {
-    line-height: 1;
-}
-
-.gameplay-link {
-    color: #4ea9ff;
-    text-decoration: underline;
-    cursor: pointer;
-    font-weight: bold;
-    transition: color 0.3s;
-}
-
-.gameplay-link:hover {
-    color: #82caff;
-}
-
-.gameplay-link:active {
-    color: #2986cc;
 }
 
 /* Voice-over indicator on narrated windows (between the title and the parchment box) */
@@ -349,42 +359,21 @@ a:hover {
     .narration-bars i:nth-child(3) { height: 40%; }
 }
 
-/* Phones: keep all 9 round steps on one row and let the content use the full width */
+/* Phones */
 @media (max-width: 600px) {
-    .round-tracker {
-        flex-wrap: nowrap;
-        gap: 0.25rem;
-        margin-top: 0.75rem;
-        padding-top: 3.75rem;
-    }
-
-    .round-step {
-        flex: 1 1 0;
-        min-width: 0;
-        max-width: 52px;
-        width: auto;
-        height: 44px;
-        font-size: 0.65rem;
-        border-width: 1px;
-        border-radius: 6px;
-    }
-
-    .gameplay-container {
-        padding: 1rem 0.75rem;
-    }
-
-    .gameplay-container h1 {
-        font-size: 2rem;
-    }
-
-    .parchment-box {
-        padding: 1rem;
-    }
-
     .main-panel, .section-panel {
-        width: 100%;
-        padding: 0.75rem 1rem;
+        padding: 0.75rem 0.9rem;
     }
+}
+
+/* Graphics: Low (js/atmosphere.js) or reduced motion: a still picture */
+html[data-graphics="low"] .scene-light,
+html[data-graphics="low"] .round-step.current {
+    animation: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .scene-light, .round-step.current { animation: none; }
 }
 
 /* Endings Gallery card below the final ending (Shared/Gallery.cs) */

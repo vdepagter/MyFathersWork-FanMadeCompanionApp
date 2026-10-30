@@ -13,13 +13,32 @@ sparkle, lightning, Graphics quality in localStorage `mfwGraphics`, `html[data-g
 `UnityOriginalApp/Assets` in `wwwroot/images/ui/` (WebP and WOFF2 are not LFS, so the cloud can push them). Fonts in
 `wwwroot/fonts/`: Evil Dead (headings), Absolute Empire (buttons), Averia (text, OFL); the first two are free for personal use only.
 
-- Phase 1, Main Menu: manor scene (`Pages/Home.razor` + `.css`): sky drift, mountain, village, manor with flickering
-  window lights, rain, fog, smoke, embers, trees, vignette, lightning; bobbing logo; textured buttons incl. Saved Games;
-  tap sparkle everywhere.
-- Phase 2 (next): Settings menu (Graphics High/Medium/Low, story text size slider), Averia/Evil Dead on all pages,
-  page frame, story pages rising / setup dialogs dropping, parchment zoom, red continue links, light blue hub links,
-  embers on hubs, round indicator at the bottom.
-- Phase 3: SPECIAL EVENT banner, vote/bid countdown 3-2-1 REVEAL, one-page score entry, THE END? -> unlocked ending card.
+- Phase 1, Main Menu (`Pages/Home.razor` + `.css`): the Unity scene rebuilt from its RectTransforms (canvas 1920 x 1082,
+  `Layer` records in %): sky, mountain, village with flickering lights, the big manor with the trees in front of it (Unity
+  tints them grey 0.557), rain, fog, smoke, embers, vignette, blue glow, lightning, the Main_Border frame fixed to the
+  window, the bobbing logo, the red help "?" (opens Help) and a 2 x 3 grid of textured buttons (Continue, New Game,
+  Saved Games, Load Game, Settings, Endings). Tap sparkle everywhere. Phones in portrait stack logo and buttons.
+- Phase 2:
+  - Settings (`Shared/SettingsPopup.razor`, Main Menu): `Shared/DisplaySettings.razor` (Graphics High/Medium/Low,
+    story text size 0.85-1.6 in localStorage `mfwTextSize` -> CSS `--mfw-story-scale`), voice, language, volumes. The
+    pause menu (`Shared/PauseMenu.razor`, dark Settings Panel) shows the same DisplaySettings. Default voice: Oliver.
+  - Game pages (`Pages/Gameplay.razor` + `.css`) as the Unity views: a story window (or a popup over it) is the
+    GanrationEnding view - the scenario illustration (`story-bg-cod/fotu/atow.webp`, Unity GenerationEnding/BGs 1-3),
+    blue glow, the Wide_Textbox parchment with black Averia text, red links (`.story-link`), the gold frame
+    (MFW_Border_Gold2); a hub is the GanrationHUb view - dark metal (Main_BG), warm glow, embers and smoke
+    (`mfwAtmosphere.start("game-fx")`), white text in light panels, light blue links, the steel frame (MFW_Border_1).
+    Titles in Evil Dead. `--u` (css/theme.css) is one Unity canvas pixel; portrait phones use a bigger unit.
+  - The frames' round slot was cut out of the frame images (`frame-*.webp` are 9-slice, slice 140) into
+    `round-tray-*.webp`; the round bar (`round-bar.webp`, Unity MFW_ProgressBar) shows through its nine windows, dark
+    after the current round, which glows. Cell positions: `_RoundCells` in Gameplay.razor.
+  - Round icon buttons (Back_BTN, mirrored for redo, PauseBTN, BookIcon) top left; sound toggles top right.
+  - Dialogs on parchment (`.mfw-parchment`): setup / special rule popups drop from the top, end of round / Generation
+    and input popups zoom in (`js/transitions.js` ENTRANCES, keyframes in css/styles.css), a new story page rises from
+    the bottom; Graphics Low and reduced motion fade instead.
+  - Final scores on one page (`FinalScoring.ScoreEntry`, `GameplayInputPopup.Fields` / `OnCloseFields`, tag
+    `ScoreEntry_Player`), first field focused, Enter moves to the next field. Every input popup focuses its field.
+- Phase 3 (next): SPECIAL EVENT banner, vote/bid countdown 3-2-1 REVEAL, THE END? -> unlocked ending card. Optional:
+  first-unlock flourish, "5 of 8" on the scenario picker, locked silhouettes. Setup/menu pages still have the old look.
 
 ## A Time of War - table play test (October 2026)
 
@@ -56,7 +75,7 @@ scenario code only sets `GameplayWindow.SetCue` / `MarkFinalEnding` - never call
 
 Next steps:
 - Test on a real iPhone/iPad (Safari autoplay unlock, MP3 playback) and at the table (volume of the effects vs music).
-- Voice-over: 17 narrated passages in Cost of Disease / Fear of the Unknown (map section 8), Female/Male/Off (default Male as in Unity), "Narrated" pill on those windows.
+- Voice-over: 17 narrated passages in Cost of Disease / Fear of the Unknown (map section 8), Female/Male/Oliver/Off (default Oliver since 30 Oct 2026; Unity defaulted to Male), "Narrated" pill on those windows.
   Uncertain: the female `GloomyWolvesIntro` clip lives in Unity's male folder (judged female by pitch). Recordings follow the
   English source text, so other text versions differ from the narration.
 - A Time of War VO: 11 narrated passages wired (map 8.3, `ParadoxIntro` reuses the `WarningIntro` clip as in Unity).

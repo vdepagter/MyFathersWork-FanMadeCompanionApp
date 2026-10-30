@@ -206,6 +206,18 @@ public static class GlobalTags
     public const string LogBook_Next     = "LogBook_Next";
     public const string LogBook_Close    = "LogBook_Close";
 
+    // Settings (main menu and pause menu, Shared/SettingsPanel.razor)
+    public const string Settings_Title          = "Settings_Title";
+    public const string Settings_Graphics       = "Settings_Graphics";
+    public const string Settings_GraphicsLow    = "Settings_GraphicsLow";
+    public const string Settings_GraphicsMedium = "Settings_GraphicsMedium";
+    public const string Settings_GraphicsHigh   = "Settings_GraphicsHigh";
+    public const string Settings_TextSize       = "Settings_TextSize";
+    public const string Settings_TextSizeSample = "Settings_TextSizeSample";
+    public const string Settings_Close          = "Settings_Close";
+    public const string MainMenu_Settings       = "MainMenu_Settings";
+    public const string MainMenu_Endings        = "MainMenu_Endings"; // main menu button (Unity: "Endings"); the page is MainMenu_Gallery
+
     // Others
     public const string GameplayStartTag = "Gameplay_";
 }

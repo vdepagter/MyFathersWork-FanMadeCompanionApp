@@ -19,24 +19,26 @@
 }
 
 .pause-menu {
-    background: #d4bfa5;
-    border: 3px solid #2e1f14;
-    padding: 2rem;
-    border-radius: 10px;
-    width: 400px;
+    display: grid;
+    gap: 1rem;
+    width: min(460px, calc(100vw - 2rem));
     text-align: center;
 }
 
-.pause-button {
-    margin: 0.5rem 0;
-    padding: 0.7rem 1.5rem;
-    font-size: 1rem;
-    font-weight: bold;
-    background-color: #3a5c3a;
-    color: #e0d3b8;
-    border: 2px solid #2e1f14;
-    border-radius: 6px;
-    cursor: pointer;
+.pause-menu h2 {
+    font-size: 2.2rem;
+}
+
+/* Unity: textured buttons stacked in the middle of the panel */
+.pause-buttons {
+    display: grid;
+    justify-items: center;
+    gap: 0.6rem;
+}
+
+.pause-buttons .mfw-button {
+    width: min(300px, 90%);
+    font-size: 1.15rem;
 }
 
 .save-box {
@@ -57,7 +59,6 @@
     display: flex;
     flex-wrap: wrap;
     justify-content: space-between;
-    margin-top: 1rem;
     gap: 1rem;
 }
 
@@ -74,25 +75,22 @@
 .dropdowns label {
     display: block;
     margin-bottom: 0.3rem;
-    color: #2e1f14;
     font-weight: bold;
+    text-align: left;
 }
 
 .dropdowns select {
     width: 100%;
     padding: 0.5rem;
-    border: 2px solid #2e1f14;
-    border-radius: 6px;
-    background-color: #f5f0e6;
-    color: #2e1f14;
+    border: 1px solid #6b5a3a;
+    border-radius: 4px;
+    background-color: #0d0f14;
+    color: inherit;
+    font-family: inherit;
     font-size: 0.95rem;
-    font-weight: bold;
-    box-shadow: inset 1px 1px 2px rgba(0,0,0,0.2);
     transition: background-color 0.2s;
 }
 
 .dropdowns select:focus {
-    outline: none;
-    background-color: #fffbe8;
-    border-color: #7a5a3c;
+    outline: 2px solid #c9a35a;
 }

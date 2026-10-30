@@ -202,3 +202,14 @@ LogBook_Page;Page {{0=...|1}} of {{1=...|3}}
 LogBook_Previous;Previous
 LogBook_Next;Next
 LogBook_Close;Close
+//====== Settings ======;
+MainMenu_Settings;Settings
+MainMenu_Endings;Endings
+Settings_Title;Settings
+Settings_Graphics;Graphics
+Settings_GraphicsLow;Low
+Settings_GraphicsMedium;Medium
+Settings_GraphicsHigh;High
+Settings_TextSize;Story text size
+Settings_TextSizeSample;It is said that springtime under the watchful eye of the snow-tipped Carpathian mountains is a wondrous sight to behold.
+Settings_Close;Close

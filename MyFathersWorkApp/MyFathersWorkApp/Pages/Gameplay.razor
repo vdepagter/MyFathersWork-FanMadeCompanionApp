@@ -8,41 +8,48 @@
 @inject LogBookService    LogBook
 @implements IDisposable
 
+@* Unity GanrationEnding (story) / GanrationHUb (round) views: the scenario illustration or dark metal background with
+   its lights, embers on the round pages, the frame and the round bar in the frame (images/ui, HANDOFF.md "Visual overhaul") *@
+<div class="game-scene @SceneClass" aria-hidden="true">
+    <div class="scene-bg"></div>
+    <div class="scene-light"></div>
+    <canvas id="game-fx" class="scene-fx"></canvas>
+    <div class="scene-vignette"></div>
+</div>
+<div class="game-frame @SceneClass" aria-hidden="true"></div>
+
 <div class="header-buttons" xmlns="http://www.w3.org/1999/html">
-    <button class="back-button" disabled="@GlobalData.IsUndoDisabled" @onclick="GoBack"
+    <button class="icon-button back-button" disabled="@GlobalData.IsUndoDisabled" @onclick="GoBack"
             aria-label="@GlobalData.GetLocalizedUITag(GlobalTags.Gameplay_Undo)"
-            title="@GlobalData.GetLocalizedUITag(GlobalTags.Gameplay_Undo)">⬅</button>
-    <button class="back-button" disabled="@GlobalData.IsRedoDisabled" @onclick="GoForward"
+            title="@GlobalData.GetLocalizedUITag(GlobalTags.Gameplay_Undo)"></button>
+    <button class="icon-button forward-button" disabled="@GlobalData.IsRedoDisabled" @onclick="GoForward"
             aria-label="@GlobalData.GetLocalizedUITag(GlobalTags.Gameplay_Redo)"
-            title="@GlobalData.GetLocalizedUITag(GlobalTags.Gameplay_Redo)">➡</button>
-    <button class="pause-button" @onclick="Pause">⏸</button>
+            title="@GlobalData.GetLocalizedUITag(GlobalTags.Gameplay_Redo)"></button>
+    <button class="icon-button pause-button" @onclick="Pause"
+            aria-label="@GlobalData.GetLocalizedUITag(GlobalTags.Gameplay_PauseMenu)"
+            title="@GlobalData.GetLocalizedUITag(GlobalTags.Gameplay_PauseMenu)"></button>
     @if (LogBookService.HasLogBook(GlobalData))
     {
-        <button class="logbook-open-button"
+        <button class="icon-button logbook-open-button"
                 aria-label="@GlobalData.GetLocalizedUITag(GlobalTags.LogBook_Open)"
                 title="@GlobalData.GetLocalizedUITag(GlobalTags.LogBook_Open)"
-                @onclick="OpenLogBook">📖</button>
+                @onclick="OpenLogBook"></button>
     }
 </div>
 
 <SaveNotification Visible="@_ShowSaveNotification" GlobalData="GlobalData"/>
 
-<div class="round-tracker">
+@* Round and Generation, in the slot of the frame (Unity Progress: MFW_ProgressBar behind the frame's nine windows) *@
+<div class="round-tracker @SceneClass" role="list">
+    <div class="round-bar"></div>
     @for (int i = 0; i < _RoundLabels.Length; i++)
     {
-        bool isFuture = i > CurrentRoundIndex;
-        string genClass = i switch
-        {
-            <= 2 => "generation1",
-            <= 5 => "generation2",
-            <= 8 => "generation3",
-            _    => ""
-        };
+        string state = i < CurrentRoundIndex ? "past" : i == CurrentRoundIndex ? "current" : "future";
 
-        <div class="round-step @(genClass) @(isFuture ? "future" : "") @(i == CurrentRoundIndex ? "current" : "")">
-            @_RoundLabels[i]
-        </div>
+        <div class="round-step @state" role="listitem" style="@_RoundCells[i]"
+             aria-current="@(i == CurrentRoundIndex ? "step" : null)">@_RoundLabels[i]</div>
     }
+    <div class="round-tray"></div>
 </div>
 
 @if (GlobalData.ActiveMirrorQuestion != null)
@@ -107,7 +114,7 @@
                 }
                 else
                 {
-                    <a @onclick="() => InvokeWindowCallback(element.Callback)">[@LinkText(element.Content)]</a>
+                    <a class="story-link" @onclick="() => InvokeWindowCallback(element.Callback)">[@LinkText(element.Content)]</a>
                 }
             }
         </div>
@@ -240,6 +247,36 @@
 
     private int CurrentRoundIndex => (int)GlobalData.Generation * 3 + (int)GlobalData.Years;
 
+    // The nine windows of the frame's round slot, as left / width in % of images/ui/round-tray-*.webp (1200 px wide)
+    private static readonly string[] _RoundCells =
+        new (int X0, int X1)[] { (74, 187), (194, 304), (311, 418), (431, 537), (545, 654), (662, 766), (780, 887), (894, 1004), (1011, 1123) }
+           .Select(c => FormattableString.Invariant($"left: {c.X0 / 12.0:0.##}%; width: {(c.X1 - c.X0 + 1) / 12.0:0.##}%")).ToArray();
+
+    // Story window (or a popup over one, or nothing yet): the scenario illustration with the gold frame; the round hub
+    // (or a popup over it): dark metal with embers
+    private bool IsHubScene => GlobalData.ActiveWindow == null && GlobalData.ActiveHub != null;
+
+    private string SceneClass => IsHubScene
+        ? "hub"
+        : "story " + GlobalData.ScenarioId switch
+        {
+            ScenarioId.FearOfUnknown => "fotu",
+            ScenarioId.TimeOfWar     => "atow",
+            _                        => "cod"
+        };
+
+    // Embers rise on the round pages only (js/atmosphere.js; Graphics Low draws none)
+    private bool? _EmbersOn;
+
+    private void UpdateEmbers()
+    {
+        bool on = IsHubScene;
+        if (_EmbersOn == on) return;
+        _EmbersOn = on;
+        if (on) _ = Js.InvokeVoidAsync("mfwAtmosphere.start", "game-fx", new object[] { new { kind = "ember", count = 50 }, new { kind = "smoke", count = 5 } });
+        else _ = Js.InvokeVoidAsync("mfwAtmosphere.stop", "game-fx");
+    }
+
     // Link labels are plain text (often a player name): encode, then mark the names translate="no"
     private MarkupString LinkText(string content) => System.Net.WebUtility.HtmlEncode(content).ProtectNames(GlobalData).AsMarkup();
 
@@ -275,6 +312,7 @@
         UpdateVoiceOver(info);
         PlayScreenTransition(info);
         ScrollToTop(info);
+        UpdateEmbers();
         UpdateMusic();
         _ = GlobalData.PersistAsync(Js); // the game and its undo history, after every screen and every undo
         _ = NoteGalleryAsync();
@@ -455,9 +493,11 @@
         {
             case ScreenChange.BaseKind:
                 _ = Js.InvokeVoidAsync("mfwTransitions.run", "base");
+                if (info.Presented is GameplayWindow) _ = Js.InvokeVoidAsync("mfwTransitions.enter", "rise");
                 break;
             case ScreenChange.SameKind:
-                _ = Js.InvokeVoidAsync("mfwTransitions.enter", "same");
+                // A new story page rises from the bottom (Unity), a rebuilt hub fades
+                _ = Js.InvokeVoidAsync("mfwTransitions.enter", info.Presented is GameplayWindow ? "rise" : "same");
                 break;
             case ScreenChange.Popup:
                 _ = Js.InvokeVoidAsync("mfwTransitions.run", "popup");
@@ -630,6 +670,7 @@
 
     public void Dispose()
     {
+        _ = Js.InvokeVoidAsync("mfwAtmosphere.stop", "game-fx");
         Audio.VoiceUnsubscribe();
         StopVoice();
         _VoiceListener?.Dispose();

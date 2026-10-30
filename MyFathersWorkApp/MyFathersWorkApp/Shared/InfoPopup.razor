@@ -1,7 +1,9 @@
 ﻿@inject AudioService Audio
 
 <div class="popup-overlay">
-    <div class="popup-box">
+    @* Parchment (Unity Prompt-panel). Setup and rules drop down from the top, the end of round and of a Generation
+       zoom in (entrances in js/transitions.js) *@
+    <div class="popup-box mfw-parchment @(GameplayPopUp.PopUpTitle is PopUpTitle.EndOfRound or PopUpTitle.EndOfGeneration ? "zoom" : "drop")">
         <div class="popup-content">
             @if (!string.IsNullOrEmpty(GameplayPopUp.ImageSrc))
             {
@@ -16,7 +18,7 @@
             </div>
         </div>
 
-        <button class="popup-button" @onclick="OnAcceptClicked">
+        <button class="mfw-button green popup-button" @onclick="OnAcceptClicked">
             @GameplayPopUp.ButtonText
         </button>
     </div>

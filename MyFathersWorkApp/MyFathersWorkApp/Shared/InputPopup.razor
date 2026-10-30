@@ -1,19 +1,46 @@
 ﻿@inject AudioService Audio
 
 <div class="popup-overlay">
-    <div class="popup-box input-popup">
+    <div class="popup-box input-popup mfw-parchment">
         <div class="popup-content input-content">
             <p>@GameplayPopUp.Message.InsertImages().ProtectNames(GlobalData).AsMarkup()</p>
 
-            <input @bind="_Value" 
-                   @bind:event="oninput"
-                   type="text"
-                   class="input-field" 
-                   placeholder="@GameplayPopUp.Placeholder"
-                   @onkeydown="OnKeyDown" />
+            @if (GameplayPopUp.Fields.Length == 0)
+            {
+                <input @ref="_First"
+                       @bind="_Value"
+                       @bind:event="oninput"
+                       type="text"
+                       class="input-field"
+                       placeholder="@GameplayPopUp.Placeholder"
+                       @onkeydown="OnKeyDown" />
+            }
+            else
+            {
+                // One row per field (final scores); Enter moves to the next field, on the last one it confirms
+                <div class="input-fields">
+                    @for (int i = 0; i < GameplayPopUp.Fields.Length; i++)
+                    {
+                        int  index   = i;
+                        bool invalid = _Tried && !GameplayPopUp.Validate(_Values[index]);
+                        <label class="input-row">
+                            <span>@GameplayPopUp.Fields[index].InsertImages().ProtectNames(GlobalData).AsMarkup()</span>
+                            <input @ref="_Inputs[index]"
+                                   value="@_Values[index]"
+                                   @oninput="e => _Values[index] = e.Value?.ToString() ?? string.Empty"
+                                   type="text"
+                                   inputmode="numeric"
+                                   enterkeyhint="@(index == GameplayPopUp.Fields.Length - 1 ? "done" : "next")"
+                                   class="input-field @(invalid ? "invalid" : "")"
+                                   placeholder="@GameplayPopUp.Placeholder"
+                                   @onkeydown="e => OnFieldKeyDown(e, index)" />
+                        </label>
+                    }
+                </div>
+            }
         </div>
 
-        <button class="popup-button" @onclick="OnAcceptClicked">
+        <button class="mfw-button green popup-button" @onclick="OnAcceptClicked">
             @GameplayPopUp.ButtonText
         </button>
     </div>
@@ -25,25 +52,73 @@
     [Parameter] public GlobalData         GlobalData    { get; set; } = null!;
     [Parameter] public Action             Refresh       { get; set; } = null!;
     
-    private string _Value = string.Empty;
-    private bool   _Accepted; // Enter held down repeats keydown: accept once (until this popup shows again, e.g. back from a mirror question)
+    private string           _Value = string.Empty;
+    private string[]         _Values = [];
+    private ElementReference _First;
+    private ElementReference[] _Inputs = [];
+    private bool             _Tried;    // Confirm pressed with a wrong value: mark the fields to fix
+    private bool             _Accepted; // Enter held down repeats keydown: accept once (until this popup shows again, e.g. back from a mirror question)
+
+    protected override void OnParametersSet()
+    {
+        if (_Values.Length == GameplayPopUp.Fields.Length) return;
+        _Values = new string[GameplayPopUp.Fields.Length];
+        Array.Fill(_Values, string.Empty);
+        _Inputs = new ElementReference[GameplayPopUp.Fields.Length];
+    }
+
+    // The first field has focus straight away, so the players can type without tapping it
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (!firstRender) return;
+        try { await (_Inputs.Length > 0 ? _Inputs[0] : _First).FocusAsync(); }
+        catch (Exception) { /* element gone: popup closed during the first render */ }
+    }
 
     // Enter submits the value, like the button
     private void OnKeyDown(KeyboardEventArgs e)
     {
         if (e.Key is "Enter" or "NumpadEnter") OnAcceptClicked();
     }
-    
+
+    private async Task OnFieldKeyDown(KeyboardEventArgs e, int index)
+    {
+        if (e.Key is not ("Enter" or "NumpadEnter")) return;
+        if (index < _Inputs.Length - 1) await _Inputs[index + 1].FocusAsync();
+        else OnAcceptClicked();
+    }
+
     private void OnAcceptClicked()
     {
         Audio.PlayClick();
-        if (_Accepted || !GameplayPopUp.Validate(_Value)) return;
-        string value = _Value;
-        GlobalData.RunScenarioAction(() =>
+        if (_Accepted) return;
+
+        if (GameplayPopUp.Fields.Length > 0)
         {
-            GlobalData.ActiveInputPopup = null;
-            GameplayPopUp.OnClose(value);
-        });
+            string[] values = _Values.Select(value => value.Trim()).ToArray();
+            if (!values.All(GameplayPopUp.Validate))
+            {
+                _Tried = true;
+                return;
+            }
+
+            GlobalData.RunScenarioAction(() =>
+            {
+                GlobalData.ActiveInputPopup = null;
+                GameplayPopUp.OnCloseFields!(values);
+            });
+        }
+        else
+        {
+            if (!GameplayPopUp.Validate(_Value)) return;
+            string value = _Value;
+            GlobalData.RunScenarioAction(() =>
+            {
+                GlobalData.ActiveInputPopup = null;
+                GameplayPopUp.OnClose(value);
+            });
+        }
+
         _Accepted = GlobalData.ActiveInputPopup != GameplayPopUp;
         Refresh();
     }

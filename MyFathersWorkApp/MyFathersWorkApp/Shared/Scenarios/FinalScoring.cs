@@ -7,7 +7,6 @@ public static class FinalScoring
 {
     public static void Start(GlobalData globalData)
     {
-        globalData.ScenarioVars.ScoreIndex = 0;
         ScoreEntry(globalData);
     }
 
@@ -16,20 +15,22 @@ public static class FinalScoring
         return int.TryParse(value, out int score) && score is >= 0 and <= 999;
     }
 
+    // All final scores on one page, a field per player (Unity ViewScoreEntry asked them one by one)
     private static void ScoreEntry(GlobalData globalData)
     {
-        ScenarioVars vars   = globalData.ScenarioVars;
-        string       player = globalData.GetPlayerNameByIndex(vars.ScoreIndex);
+        ScenarioVars vars    = globalData.ScenarioVars;
+        string[]     players = globalData.GetActivePlayers();
 
         globalData.SaveToUndo();
-        globalData.ActiveInputPopup = new GameplayInputPopup(globalData, "0", PopUpButton.Confirm, IsValidScore, value =>
+        globalData.ActiveInputPopup = new GameplayInputPopup(globalData, "0", PopUpButton.Confirm, IsValidScore, _ => { })
         {
-            vars.Scores[player] =  int.Parse(value);
-            vars.ScoreIndex     += 1;
-
-            if (vars.ScoreIndex < globalData.PlayersNum) ScoreEntry(globalData);
-            else ScoreResult(globalData);
-        }, false, content => content.FormatWithReplacement(0, player));
+            Fields = players.Select(player => globalData.GetScenarioLocalizedTag("ScoreEntry_Player").FormatWithReplacement(0, player)).ToArray(),
+            OnCloseFields = values =>
+            {
+                for (int i = 0; i < players.Length; i++) vars.Scores[players[i]] = int.Parse(values[i]);
+                ScoreResult(globalData);
+            }
+        };
     }
 
     private static string[] TopScorers(GlobalData globalData)

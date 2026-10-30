@@ -19,15 +19,11 @@
     margin: auto;
 }
 
-/* Main Popup Box */
+/* Main Popup Box: parchment (css/theme.css .mfw-parchment) */
 .popup-box {
-    background-color: #d4bfa5;
-    border: 3px solid #2e1f14;
-    padding: 1.5rem 2rem;
-    border-radius: 8px;
-    box-shadow: 0 0 15px rgba(0,0,0,0.8);
+    padding: 0.8rem 1.4rem 1.2rem;
     max-width: 700px;
-    width: 90%;
+    width: 92%;
     text-align: center;
 }
 
@@ -58,37 +54,33 @@
     flex: 1;
 }
 
+/* Unity: the popup title in Evil Dead */
 .popup-text h2 {
-    margin-top: 0;
-    color: #2e1f14;
-    margin-bottom: 0.5rem;
+    margin: 0 0 0.5rem;
+    font-family: var(--mfw-font-heading);
+    font-weight: 400;
+    font-size: 1.9rem;
+    letter-spacing: 0.02em;
+    color: #4a1d10;
 }
 
 .popup-text p {
     margin: 0;
-    color: #2e1f14;
+    color: #2a2116;
+    font-size: 1.08rem;
     line-height: 1.5;
 }
 
-/* Accept Button */
+/* Accept Button (css/theme.css .mfw-button green) */
 .popup-button {
-    margin-top: 1.5rem;
-    padding: 0.8rem 2.5rem;
-    font-size: 1.2rem;
-    background-color: #3a5c3a;
-    color: #e0d3b8;
-    border: 3px solid #2e1f14;
-    border-radius: 8px;
-    cursor: pointer;
-    box-shadow: 0 0 10px rgba(0,0,0,0.7);
-    transition: transform 0.1s, background-color 0.3s;
+    width: min(14rem, 70%);
+    margin: 1.2rem auto 0;
+    font-size: 1.15rem;
 }
 
-.popup-button:hover {
-    background-color: #4e7b4e;
-    transform: scale(1.05);
-}
-
-.popup-button:active {
-    transform: scale(0.95);
+@media (max-width: 480px) {
+    .popup-content {
+        flex-direction: column;
+        align-items: center;
+    }
 }

@@ -13,6 +13,10 @@
 @font-face { font-family: "Evil Dead"; src: url(../fonts/evil-dead.woff2) format("woff2"); font-display: swap; }
 
 :root {
+    /* One pixel of the Unity canvas (1920 x 1081), fitted inside the window: game page frame, buttons, round bar.
+       Phones in portrait use a bigger unit so the round bar stays readable. */
+    --u: min(calc(100vw / 1920), calc(100vh / 1081));
+    --u: min(calc(100vw / 1920), calc(100svh / 1081));
     --mfw-font-heading: "Evil Dead", Georgia, serif;
     --mfw-font-button:  "Absolute Empire", Georgia, serif;
     --mfw-font-text:    "Averia", Georgia, serif;
@@ -41,18 +45,43 @@ body {
     letter-spacing: 0.06em;
     text-transform: uppercase;
     line-height: 1;
-    color: var(--mfw-cream);
-    text-shadow: 0 2px 2px #000, 0 0 8px rgba(0, 0, 0, 0.65);
+    color: #2b1b10;
+    text-shadow: 0 1px 0 rgba(255, 228, 185, 0.35), 0 -1px 0 rgba(0, 0, 0, 0.35);
     cursor: pointer;
     transition: transform 0.12s, filter 0.25s;
 }
 
+/* Unity: dark lettering on brown (AbsoluteEmpire-Brown), light lettering on green and red */
+.mfw-button.green,
+.mfw-button.red   { color: var(--mfw-cream); text-shadow: 0 2px 2px #000, 0 0 8px rgba(0, 0, 0, 0.65); }
 .mfw-button.green { background-image: url(../images/ui/button-green.webp); aspect-ratio: 425 / 151; }
 .mfw-button.red   { background-image: url(../images/ui/button-red.webp); }
 
 .mfw-button:hover         { filter: brightness(1.25) saturate(1.1); transform: scale(1.03); }
 .mfw-button:active        { transform: scale(0.96); }
 .mfw-button:focus-visible { outline: 2px solid #c9a35a; outline-offset: 2px; }
+
+@media (orientation: portrait) {
+    :root { --u: calc(100vw / 1250); }
+}
+
+/* Round icon buttons of the game pages (Unity Back_BTN, PauseBTN, BookIcon) and the sound toggles */
+.icon-button {
+    width: clamp(40px, calc(96 * var(--u)), 64px);
+    aspect-ratio: 1;
+    padding: 0;
+    border: 0;
+    border-radius: 50%;
+    background: center / contain no-repeat;
+    filter: drop-shadow(0 3px 4px rgba(0, 0, 0, 0.7));
+    cursor: pointer;
+    transition: transform 0.12s, filter 0.25s;
+}
+
+.icon-button:hover:not(:disabled)  { filter: drop-shadow(0 3px 4px rgba(0, 0, 0, 0.7)) brightness(1.2); transform: scale(1.06); }
+.icon-button:active:not(:disabled) { transform: scale(0.92); }
+.icon-button:focus-visible         { outline: 2px solid #c9a35a; outline-offset: 2px; }
+.icon-button:disabled              { filter: grayscale(1) brightness(0.6); opacity: 0.55; cursor: default; }
 
 /* Tap: expanding ring + sparks (js/atmosphere.js) */
 .mfw-tap-layer {
@@ -93,4 +122,60 @@ body {
 @keyframes mfw-tap-spark {
     from { transform: translate(0, 0) scale(1); opacity: 1; }
     to   { transform: translate(var(--dx), var(--dy)) scale(0.2); opacity: 0; }
+}
+
+/* Screen headings (Unity: Evil Dead) */
+.mfw-heading {
+    margin: 0;
+    font-family: var(--mfw-font-heading);
+    font-weight: 400;
+    letter-spacing: 0.02em;
+    color: #ead9b0;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.8);
+}
+
+/* Dark metal panel (Unity SettingsPanel): settings, pause menu */
+.mfw-dark-panel {
+    padding: 1.6rem 1.8rem;
+    border: 28px solid transparent;
+    border-image: url(../images/ui/settings-panel.webp) 60 / 28px / 0 stretch;
+    background: linear-gradient(#1b1f27, #12151b) padding-box;
+    color: #e6dcc6;
+    font-family: var(--mfw-font-text);
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.7);
+}
+
+/* Parchment panel (Unity Prompt-panel / EndOfRoundBlankPrompt): setup, end of round and other popups */
+.mfw-parchment {
+    border: 22px solid transparent;
+    border-image: url(../images/ui/parchment.webp) 44 fill / 22px / 0 stretch;
+    color: #2a2116;
+    font-family: var(--mfw-font-text);
+    filter: drop-shadow(0 18px 28px rgba(0, 0, 0, 0.75));
+}
+
+/* Dialogs zoom in with a small overshoot, then keep growing very slowly for drama (Unity PopupAnimator) */
+.mfw-zoom-in {
+    animation: mfw-zoom-in 0.55s cubic-bezier(0.2, 1.3, 0.4, 1) both, mfw-breathe 6s 0.55s ease-out forwards;
+}
+
+@keyframes mfw-zoom-in {
+    from { transform: scale(0.82); opacity: 0; }
+    to   { transform: scale(1); opacity: 1; }
+}
+
+@keyframes mfw-breathe {
+    from { transform: scale(1); }
+    to   { transform: scale(1.03); }
+}
+
+html[data-graphics="low"] .mfw-zoom-in,
+html[data-graphics="low"] .mfw-enter-drop,
+html[data-graphics="low"] .mfw-enter-zoom,
+html[data-graphics="low"] .mfw-enter-rise {
+    animation: mfw-fade-in 0.2s ease-out both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .mfw-zoom-in { animation: mfw-fade-in 0.2s ease-out both; }
 }

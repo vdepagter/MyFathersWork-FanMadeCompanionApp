@@ -7,6 +7,8 @@
 //   quality / setQuality(q) - "high" | "medium" | "low", kept in localStorage "mfwGraphics". Default high, or low when
 //                        the device asks for reduced motion. Low = no particles, no taps, no flashes; CSS freezes the
 //                        rest through html[data-graphics="low"].
+//   textSize / setTextSize(s) - story text scale 0.85-1.6 (Settings), localStorage "mfwTextSize", applied as the CSS
+//                        variable --mfw-story-scale on <html> (css/theme.css).
 // One requestAnimationFrame loop for all canvases; it skips hidden tabs and canvases that are not on screen.
 (function () {
     "use strict";
@@ -24,6 +26,12 @@
 
     let quality = readQuality();
     document.documentElement.dataset.graphics = quality;
+
+    const TEXT_KEY = "mfwTextSize";
+    function clampText(s) { return Math.min(1.6, Math.max(0.85, Number(s) || 1)); }
+    let textSize = 1;
+    try { textSize = clampText(localStorage.getItem(TEXT_KEY) ?? 1); } catch { /* storage blocked */ }
+    document.documentElement.style.setProperty("--mfw-story-scale", textSize);
 
     function image(name) {
         const img = new Image();
@@ -191,6 +199,16 @@
             document.documentElement.dataset.graphics = q;
             try { localStorage.setItem(KEY, q); } catch { /* storage blocked */ }
             for (const scene of scenes.values()) fill(scene);
+        },
+
+        get textSize() { return textSize; },
+        getQuality: () => quality,
+        getTextSize: () => textSize,
+
+        setTextSize(s) {
+            textSize = clampText(s);
+            document.documentElement.style.setProperty("--mfw-story-scale", textSize);
+            try { localStorage.setItem(TEXT_KEY, String(textSize)); } catch { /* storage blocked */ }
         },
 
         start(id, layers) {

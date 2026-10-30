@@ -15,4 +15,9 @@ public class GameplayInputPopup(GlobalData globalData, string placeholder, PopUp
 
     public Func<string, bool> Validate { get; } = validate;
     public Action<string>     OnClose  { get; } = onClose;
+
+    // Several fields on one page (final scores): a label per field, each value checked by Validate, OnCloseFields gets
+    // them in order and replaces OnClose
+    public string[]          Fields        { get; init; } = [];
+    public Action<string[]>? OnCloseFields { get; init; }
 }

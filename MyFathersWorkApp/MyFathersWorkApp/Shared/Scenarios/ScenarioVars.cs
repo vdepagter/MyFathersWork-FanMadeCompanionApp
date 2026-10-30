@@ -15,7 +15,6 @@ public abstract class ScenarioVars(int randomCount)
 
     // Final Scoring
     public Dictionary<string, int> Scores       { get; set; } = new();
-    public int                     ScoreIndex   { get; set; }
     public string[]                TiedPlayers  { get; set; } = [];
     public string[]                TieMasterworks { get; set; } = [];
     public int                     TieIndex     { get; set; }
@@ -105,7 +104,6 @@ public abstract class ScenarioVars(int randomCount)
     {
         _GlobalData = globalData;
 
-        ScoreIndex     = 0;
         TiedPlayers    = [];
         TieMasterworks = [];
         TieIndex       = 0;

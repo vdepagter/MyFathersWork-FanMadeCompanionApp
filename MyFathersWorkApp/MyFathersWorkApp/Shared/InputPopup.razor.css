@@ -1,11 +1,8 @@
 ﻿/* Overlay Same as InfoPopup */
 .popup-overlay {
     position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0,0,0,0.7);
+    inset: 0;
+    background-color: rgba(0, 0, 0, 0.7);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -19,65 +16,77 @@
     margin: auto;
 }
 
-/* Box */
+/* Box: parchment (css/theme.css .mfw-parchment) */
 .popup-box.input-popup {
-    background-color: #d4bfa5;
-    border: 3px solid #2e1f14;
-    padding: 1.5rem 2rem;
-    border-radius: 8px;
-    box-shadow: 0 0 15px rgba(0,0,0,0.8);
+    padding: 1rem 1.6rem 1.2rem;
     max-width: 500px;
     width: 90%;
     text-align: center;
 }
 
-/* Content */
 .input-content {
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 1.5rem;
+    gap: 1.2rem;
 }
 
 .input-content p {
-    color: #2e1f14;
+    color: #2a2116;
     font-size: 1.2rem;
     line-height: 1.5;
     margin: 0;
 }
 
-/* Input Field */
 .input-field {
     width: 180px;
-    padding: 0.5rem 1rem;
+    padding: 0.45rem 1rem;
+    font-family: var(--mfw-font-text);
     font-size: 1.5rem;
     text-align: center;
-    border: 3px solid #2e1f14;
-    border-radius: 8px;
-    background-color: #1f1f1f;
+    border: 2px solid #4a3522;
+    border-radius: 6px;
+    background-color: #1f1a15;
     color: #f2c8a0;
-    box-shadow: 0 0 8px rgba(0,0,0,0.6);
+    box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.7);
 }
 
-/* Button */
-.popup-button {
-    margin-top: 1rem;
-    padding: 0.8rem 2.5rem;
+.input-field:focus {
+    outline: 2px solid #c9a35a;
+    outline-offset: 1px;
+}
+
+.input-field.invalid {
+    border-color: #a3271b;
+    outline-color: #d0402f;
+}
+
+/* Score entry: name left, field right */
+.input-fields {
+    display: grid;
+    gap: 0.6rem;
+    width: 100%;
+}
+
+.input-row {
+    display: grid;
+    grid-template-columns: 1fr 7rem;
+    align-items: center;
+    gap: 1rem;
+    text-align: left;
     font-size: 1.2rem;
-    background-color: #3a5c3a;
-    color: #e0d3b8;
-    border: 3px solid #2e1f14;
-    border-radius: 8px;
-    cursor: pointer;
-    box-shadow: 0 0 10px rgba(0,0,0,0.7);
-    transition: transform 0.1s, background-color 0.3s;
+    font-weight: 700;
+    color: #2a2116;
 }
 
-.popup-button:hover {
-    background-color: #4e7b4e;
-    transform: scale(1.05);
+.input-row .input-field {
+    width: 100%;
+    font-size: 1.3rem;
+    padding: 0.3rem 0.5rem;
 }
 
-.popup-button:active {
-    transform: scale(0.95);
+.popup-button {
+    width: min(14rem, 70%);
+    margin: 1.2rem auto 0;
+    font-size: 1.15rem;
 }

@@ -9,63 +9,50 @@
 
 <PageTitle>My Father's Work Companion App</PageTitle>
 
-@* Main Menu scene from the Unity app (Scenes/Main.unity), back to front. The canvases are filled by js/atmosphere.js. *@
-<div class="menu-scene" aria-hidden="true">
-    <div class="sky"></div>
-    <img class="layer mountain" src="images/ui/menu-mountain.webp" alt="">
+@* Main Menu from the Unity app (Scenes/Main.unity, canvas 1920 x 1082). The art fills the window (cover) and the menu
+   fits inside it (contain), so the layers never slide against each other. Positions are the Unity RectTransforms;
+   the canvases are filled by js/atmosphere.js. *@
+<div class="menu-art" aria-hidden="true">
+    @foreach (Layer layer in _BackLayers)
+    {
+        <img class="layer @layer.Css" src="images/ui/@(layer.Image).webp" alt="" style="@layer.Style"/>
+    }
     <canvas class="fx" id="menu-fx-back"></canvas>
-    <img class="layer village" src="images/ui/menu-village.webp" alt="">
-    <div class="layer manor">
-        <img src="images/ui/menu-manor.webp" alt="">
-        @foreach ((int x, int y, int size, double delay) in _WindowLights)
-        {
-            <div class="window-light" style="left:@(x)%; top:@(y)%; width:@(size)%; animation-delay:-@(delay.ToString(System.Globalization.CultureInfo.InvariantCulture))s"></div>
-        }
-    </div>
-    <div class="layer ground"></div>
-    <canvas class="fx" id="menu-fx-mid"></canvas>
-    <img class="layer tree-left-back" src="images/ui/menu-trees-2.webp" alt="">
-    <img class="layer tree-right-back" src="images/ui/menu-tree-3.webp" alt="">
-    <img class="layer tree-left" src="images/ui/menu-trees-1.webp" alt="">
-    <img class="layer tree-right" src="images/ui/menu-tree-4.webp" alt="">
+    @foreach (Layer layer in _FrontLayers)
+    {
+        <img class="layer @layer.Css" src="images/ui/@(layer.Image).webp" alt="" style="@layer.Style"/>
+    }
+    @foreach (Layer light in _VillageLights)
+    {
+        <div class="layer village-light" style="@light.Style"></div>
+    }
     <canvas class="fx" id="menu-fx-front"></canvas>
     <div class="layer vignette"></div>
+    <div class="layer blue-light" style="@_BlueLight.Style"></div>
     <div class="layer lightning" id="menu-lightning"></div>
 </div>
+<div class="menu-frame" aria-hidden="true"></div>
 
 <div class="menu">
+    <button class="help-button" @onclick="OpenHelp" aria-label="@GlobalData.GetLocalizedUITag(GlobalTags.MainMenu_Help)"
+            title="@GlobalData.GetLocalizedUITag(GlobalTags.MainMenu_Help)"></button>
+
     <img class="menu-logo" src="images/ui/logo.webp" alt="My Father's Work">
 
     <div class="menu-buttons">
-        @if (IsContinueAvailable)
-        {
-            <button class="mfw-button" @onclick="OnContinue">@GlobalData.GetLocalizedUITag(GlobalTags.MainMenu_Continue)</button>
-        }
-
+        <button class="mfw-button" disabled="@(!IsContinueAvailable)" @onclick="OnContinue">@GlobalData.GetLocalizedUITag(GlobalTags.MainMenu_Continue)</button>
         <button class="mfw-button" @onclick="OnNewGameClick">@GlobalData.GetLocalizedUITag(GlobalTags.MainMenu_NewGame)</button>
         <button class="mfw-button" @onclick="OpenSavedGames">@GlobalData.GetLocalizedUITag(GlobalTags.MainMenu_SavedGames)</button>
         <button class="mfw-button" @onclick="ShowLoadPopup">@GlobalData.GetLocalizedUITag(GlobalTags.MainMenu_LoadGame)</button>
-        <button class="mfw-button" @onclick="OpenGallery">@GlobalData.GetLocalizedUITag(GlobalTags.MainMenu_Gallery)</button>
-        <button class="mfw-button" @onclick="OpenHelp">@GlobalData.GetLocalizedUITag(GlobalTags.MainMenu_Help)</button>
-
-        @if (GlobalData.UI_Localization.Count > 1)
-        {
-            <div class="language-select">
-                <label for="language">@GlobalData.GetLocalizedUITag(GlobalTags.MainMenu_Language):</label>
-                <select id="language" value="@GlobalData.Language" @onchange="OnLanguageChanges">
-                    @foreach (string lang in GlobalData.UI_Localization.Keys)
-                    {
-                        <option value="@lang">@GlobalData.GetLocalizedUITag(lang)</option>
-                    }
-                </select>
-            </div>
-        }
+        <button class="mfw-button" @onclick="ShowSettings">@GlobalData.GetLocalizedUITag(GlobalTags.MainMenu_Settings)</button>
+        <button class="mfw-button" @onclick="OpenGallery">@GlobalData.GetLocalizedUITag(GlobalTags.MainMenu_Endings)</button>
     </div>
 
     <p class="disclaimer">@GlobalData.GetLocalizedUITag(GlobalTags.MainMenu_FanMade)</p>
 </div>
 
 <LoadGamePopup Visible="@_ShowLoadGame" OnBack="HideLoadPopup" GlobalData="@GlobalData"/>
+<SettingsPopup Visible="@_ShowSettings" OnClose="HideSettings" OnLanguageChange="OnLanguageChanges" GlobalData="@GlobalData"/>
 
 @code
 {
@@ -74,6 +61,7 @@
     private bool IsContinueAvailable { get; set; }
     
     private bool _ShowLoadGame;
+    private bool _ShowSettings;
 
     protected override async Task OnInitializedAsync()
     {
@@ -81,23 +69,54 @@
         IsContinueAvailable = await GlobalData.IsContinueAvailableAsync(Js);
     }
 
-    // Lit windows of the manor (Unity "FakeLight" glows): centre x, centre y and size in % of the manor picture, delay (s)
-    private static readonly (int X, int Y, int Size, double Delay)[] _WindowLights =
-        [(66, 68, 22, 0), (66, 82, 16, 0.7), (48, 40, 12, 1.4), (30, 37, 10, 2.1), (29, 53, 10, 2.8), (43, 64, 10, 3.5), (78, 55, 10, 4.2)];
+    // A picture placed like a Unity RectTransform on the 1920 x 1082 canvas: left and top edge, width, height (canvas units)
+    private sealed record Layer(string Image, double X, double Top, double W, double H, string Css = "")
+    {
+        private static string P(double value, double of) => (value / of * 100).ToString("0.###", System.Globalization.CultureInfo.InvariantCulture) + "%";
+        public string Style => $"left:{P(X, 1920)}; top:{P(Top, 1082)}; width:{P(W, 1920)}; height:{P(H, 1082)}";
+    }
+
+    // Unity draws the square tree and manor sprites with "preserve aspect" (Trees-1 is 1:2, so half as wide as its rect)
+    private static readonly Layer[] _BackLayers =
+    [
+        new("menu-sky", 0, 0, 1920, 1082),
+        new("menu-mountain", 0, 0, 1920, 1082),
+        new("menu-village", 0, 0, 1920, 1080)
+    ];
+
+    private static readonly Layer[] _FrontLayers =
+    [
+        new("menu-trees-1", 1096, 568, 256, 512, "tree"),
+        new("menu-manor", -137, -112, 1364, 1364),
+        new("menu-tree-3", 94, 758, 220, 219, "tree"),
+        new("menu-tree-3", 531, 877, 173, 173, "tree"),
+        new("menu-trees-1", 398, 558, 256, 512, "tree"),
+        new("menu-tree-4", -29, 611, 512, 512, "tree"),
+        new("menu-tree-3", 254, 750, 300, 300, "tree"),
+        new("menu-tree-3", 77, 587, 512, 512, "tree"),
+        new("menu-trees-1", 985, 577, 256, 512, "tree"),
+        new("menu-tree-3", 704, 591, 512, 512, "tree")
+    ];
+
+    // Orange "FakeLight" glows over the village windows, and the large blue one that lights the whole scene
+    private static readonly Layer[] _VillageLights =
+    [
+        new("", 1688, 915, 108, 109), new("", 1494, 962, 108, 108), new("", 1534, 935, 108, 108), new("", 1619, 935, 109, 108)
+    ];
+
+    private static readonly Layer _BlueLight = new("", -216, -684, 2352, 1530);
 
     // Particle counts at High quality (Medium draws ~40%, Low none)
-    private static readonly object[] _BackFx  = [new { kind = "rainBack", count = 120 }, new { kind = "fog", count = 12 }];
-    private static readonly object[] _MidFx   = [new { kind = "smoke", count = 10 }];
-    private static readonly object[] _FrontFx = [new { kind = "rainFront", count = 170 }, new { kind = "ember", count = 28 }];
+    private static readonly object[] _BackFx  = [new { kind = "rainBack", count = 120 }, new { kind = "fog", count = 10 }];
+    private static readonly object[] _FrontFx = [new { kind = "rainFront", count = 170 }, new { kind = "ember", count = 28 }, new { kind = "smoke", count = 8 }];
 
-    private static readonly string[] _FxIds = ["menu-fx-back", "menu-fx-mid", "menu-fx-front", "menu-lightning"];
+    private static readonly string[] _FxIds = ["menu-fx-back", "menu-fx-front", "menu-lightning"];
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (!firstRender) return;
         Audio.PlayWelcomeOnce();
         await Js.InvokeVoidAsync("mfwAtmosphere.start", "menu-fx-back", _BackFx);
-        await Js.InvokeVoidAsync("mfwAtmosphere.start", "menu-fx-mid", _MidFx);
         await Js.InvokeVoidAsync("mfwAtmosphere.start", "menu-fx-front", _FrontFx);
         await Js.InvokeVoidAsync("mfwAtmosphere.lightning", "menu-lightning");
     }
@@ -118,6 +137,14 @@
     }
 
     private void HideLoadPopup() => _ShowLoadGame = false;
+
+    private void ShowSettings()
+    {
+        Audio.PlayClick();
+        _ShowSettings = true;
+    }
+
+    private void HideSettings() => _ShowSettings = false;
 
     private void OpenSavedGames()
     {
@@ -160,9 +187,9 @@
         Nav.NavigateTo("Gameplay");
     }
 
-    private void OnLanguageChanges(ChangeEventArgs e)
+    private void OnLanguageChanges(string language)
     {
-        GlobalData.Language = e.Value!.ToString()!;
+        GlobalData.Language = language;
         Nav.NavigateTo("");
     }
 }

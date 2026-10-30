@@ -1,0 +1,62 @@
+@inject AudioService Audio
+
+@* Settings from the Main Menu (the Unity "Settings UI"): graphics, story text size, narration voice, volumes, language.
+   The pause menu shows the same DisplaySettings and VolumeSliders. *@
+@if (Visible)
+{
+    <div class="settings-overlay" @onclick="Close">
+        <div class="settings-panel mfw-dark-panel mfw-zoom-in" role="dialog" aria-labelledby="settings-title" @onclick:stopPropagation="true">
+            <h2 id="settings-title" class="mfw-heading">@GlobalData.GetLocalizedUITag(GlobalTags.Settings_Title)</h2>
+
+            <DisplaySettings GlobalData="GlobalData"/>
+
+            <div class="settings-row">
+                <label for="settings-narration">@GlobalData.GetLocalizedUITag(GlobalTags.Audio_Narration)</label>
+                <select id="settings-narration" value="@Audio.Narration" @onchange="OnNarrationChanged">
+                    <option value="@NarrationVoice.Oliver">@GlobalData.GetLocalizedUITag(GlobalTags.Audio_NarrationOliver)</option>
+                    <option value="@NarrationVoice.Male">@GlobalData.GetLocalizedUITag(GlobalTags.Audio_NarrationMale)</option>
+                    <option value="@NarrationVoice.Female">@GlobalData.GetLocalizedUITag(GlobalTags.Audio_NarrationFemale)</option>
+                    <option value="@NarrationVoice.Off">@GlobalData.GetLocalizedUITag(GlobalTags.Audio_NarrationOff)</option>
+                </select>
+            </div>
+
+            @if (GlobalData.UI_Localization.Count > 1)
+            {
+                <div class="settings-row">
+                    <label for="settings-language">@GlobalData.GetLocalizedUITag(GlobalTags.MainMenu_Language)</label>
+                    <select id="settings-language" value="@GlobalData.Language" @onchange="OnLanguageChanged">
+                        @foreach (string lang in GlobalData.UI_Localization.Keys)
+                        {
+                            <option value="@lang">@GlobalData.GetLocalizedUITag(lang)</option>
+                        }
+                    </select>
+                </div>
+            }
+
+            <VolumeSliders GlobalData="GlobalData"/>
+
+            <button class="mfw-button green settings-close" @onclick="Close">@GlobalData.GetLocalizedUITag(GlobalTags.Settings_Close)</button>
+        </div>
+    </div>
+}
+
+@code
+{
+    [Parameter] public bool                   Visible           { get; set; }
+    [Parameter] public EventCallback          OnClose           { get; set; }
+    [Parameter] public EventCallback<string>  OnLanguageChange  { get; set; }
+    [Parameter] public GlobalData             GlobalData        { get; set; } = null!;
+
+    private Task Close()
+    {
+        Audio.PlayClick();
+        return OnClose.InvokeAsync();
+    }
+
+    private void OnNarrationChanged(ChangeEventArgs e)
+    {
+        if (Enum.TryParse(e.Value?.ToString(), out NarrationVoice narration)) Audio.SetNarration(narration);
+    }
+
+    private Task OnLanguageChanged(ChangeEventArgs e) => OnLanguageChange.InvokeAsync(e.Value!.ToString()!);
+}

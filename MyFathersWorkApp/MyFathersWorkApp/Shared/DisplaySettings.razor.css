@@ -1,0 +1,66 @@
+.display-settings {
+    display: grid;
+    gap: 0.8rem;
+    text-align: left;
+}
+
+.setting-row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.5rem 1rem;
+}
+
+.setting-label {
+    min-width: 8rem;
+    font-weight: bold;
+}
+
+.graphics-choice {
+    display: flex;
+    gap: 0.75rem;
+}
+
+/* Unity GFXQuality-Normal / -Selected brass rings */
+.graphics-option {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    padding: 0;
+    border: 0;
+    background: none;
+    color: inherit;
+    font: inherit;
+    cursor: pointer;
+}
+
+.graphics-dot {
+    width: 1.6rem;
+    height: 1.6rem;
+    background: url(images/ui/gfx-off.webp) center / contain no-repeat;
+}
+
+.graphics-option.selected .graphics-dot {
+    background-image: url(images/ui/gfx-on.webp);
+}
+
+.setting-row input[type=range] {
+    flex: 1;
+    min-width: 8rem;
+    accent-color: #c9a35a;
+}
+
+.setting-value {
+    min-width: 3rem;
+    text-align: right;
+    font-variant-numeric: tabular-nums;
+}
+
+/* Previews the slider on story text (same font and scale as the story windows) */
+.text-size-sample {
+    margin: 0;
+    font-family: var(--mfw-font-text);
+    font-size: calc(1.05rem * var(--mfw-story-scale, 1));
+    line-height: 1.5;
+    opacity: 0.9;
+}

@@ -276,7 +276,7 @@
     // Pause menu: pause; resume during the lead-in skips the rest of it (SoundManager.OnVOResume).
 
     const VOICES        = ["female", "male", "oliver", "off"];
-    const VOICE_DEFAULT = "male"; // Unity: PlayerPrefs "AudioTrack" defaults to 0 = male (ViewAudioTrack, ViewMainMenu)
+    const VOICE_DEFAULT = "oliver"; // Oliver (owner, 30 Oct 2026); Unity defaulted to male (PlayerPrefs "AudioTrack" 0)
     const LEAD_IN_MS    = 4500;
     const THUNDER       = src("sfx-vo-thunder");
 

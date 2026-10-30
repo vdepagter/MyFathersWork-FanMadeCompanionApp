@@ -89,12 +89,12 @@ public sealed class AudioService(IJSRuntime js)
     private NarrationVoice? _Narration;
 
     // Narration setting (localStorage via audio.js); read once, then cached
-    public NarrationVoice Narration => _Narration ??= Invoke("mfwAudio.getVoice", "male") switch
+    public NarrationVoice Narration => _Narration ??= Invoke("mfwAudio.getVoice", "oliver") switch
     {
         "female" => NarrationVoice.Female,
+        "male"   => NarrationVoice.Male,
         "off"    => NarrationVoice.Off,
-        "oliver" => NarrationVoice.Oliver,
-        _        => NarrationVoice.Male
+        _        => NarrationVoice.Oliver
     };
 
     // Stores the setting and stops the current narration (a change never starts one)

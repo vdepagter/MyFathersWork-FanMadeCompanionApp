@@ -1,0 +1,61 @@
+@inject IJSRuntime Js
+
+@* Graphics quality and story text size (js/atmosphere.js keeps both in localStorage, outside the game save) *@
+<div class="display-settings">
+    <div class="setting-row">
+        <span class="setting-label">@GlobalData.GetLocalizedUITag(GlobalTags.Settings_Graphics)</span>
+        <div class="graphics-choice" role="radiogroup" aria-label="@GlobalData.GetLocalizedUITag(GlobalTags.Settings_Graphics)">
+            @foreach ((string value, string tag) in _Qualities)
+            {
+                <button role="radio" aria-checked="@(_Quality == value ? "true" : "false")"
+                        class="graphics-option @(_Quality == value ? "selected" : "")"
+                        @onclick="() => SetQuality(value)">
+                    <span class="graphics-dot"></span>
+                    @GlobalData.GetLocalizedUITag(tag)
+                </button>
+            }
+        </div>
+    </div>
+
+    <div class="setting-row">
+        <label class="setting-label" for="text-size">@GlobalData.GetLocalizedUITag(GlobalTags.Settings_TextSize)</label>
+        <input id="text-size" type="range" min="0.85" max="1.6" step="0.05"
+               value="@_TextSize.ToString(System.Globalization.CultureInfo.InvariantCulture)" @oninput="OnTextSize"/>
+        <span class="setting-value">@Math.Round(_TextSize * 100)%</span>
+    </div>
+    <p class="text-size-sample">@GlobalData.GetLocalizedUITag(GlobalTags.Settings_TextSizeSample)</p>
+</div>
+
+@code
+{
+    [Parameter] public GlobalData GlobalData { get; set; } = null!;
+
+    private static readonly (string, string)[] _Qualities =
+    [
+        ("low", GlobalTags.Settings_GraphicsLow),
+        ("medium", GlobalTags.Settings_GraphicsMedium),
+        ("high", GlobalTags.Settings_GraphicsHigh)
+    ];
+
+    private string _Quality  = "high";
+    private double _TextSize = 1;
+
+    protected override async Task OnInitializedAsync()
+    {
+        _Quality  = await Js.InvokeAsync<string>("mfwAtmosphere.getQuality");
+        _TextSize = await Js.InvokeAsync<double>("mfwAtmosphere.getTextSize");
+    }
+
+    private async Task SetQuality(string value)
+    {
+        _Quality = value;
+        await Js.InvokeVoidAsync("mfwAtmosphere.setQuality", value);
+    }
+
+    private async Task OnTextSize(ChangeEventArgs e)
+    {
+        if (!double.TryParse(e.Value?.ToString(), System.Globalization.NumberStyles.Float, System.Globalization.CultureInfo.InvariantCulture, out double size)) return;
+        _TextSize = size;
+        await Js.InvokeVoidAsync("mfwAtmosphere.setTextSize", size);
+    }
+}

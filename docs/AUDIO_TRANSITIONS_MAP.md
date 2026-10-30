@@ -252,7 +252,7 @@ Constraints:
   the first user gesture does not play (browser autoplay rule, pill shows Play); an Off setting exists (pill "Narration
   available" + Play, which plays the female voice without the lead-in); Play / Replay in the pill play the clip without the
   lead-in; no auto-scroll; VO volume is independent of the music and effects toggles.
-- Setting: `localStorage` `audio.voice` = `female` | `male` | `oliver` (8.4) | `off`, default `male` (the Unity default). UI: Narration select on
+- Setting: `localStorage` `audio.voice` = `female` | `male` | `oliver` (8.4) | `off`, default `oliver` (owner, 30 Oct 2026; Unity defaulted to male). UI: Narration select on
   `Pages/PlayersScenarioLanguage.razor` and in `Shared/PauseMenu.razor`.
 
 ### 8.3 Passage -> web window -> clips

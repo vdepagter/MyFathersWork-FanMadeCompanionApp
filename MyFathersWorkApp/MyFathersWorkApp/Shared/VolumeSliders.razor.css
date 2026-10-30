@@ -6,7 +6,7 @@
 .volume-title {
     display: block;
     margin-bottom: 0.3rem;
-    color: #2e1f14;
+    color: inherit;
     font-weight: bold;
 }
 
@@ -15,13 +15,13 @@
     grid-template-columns: 8rem 1fr 3rem;
     align-items: center;
     gap: 0.5rem;
-    color: #2e1f14;
+    color: inherit;
     font-size: 0.95rem;
 }
 
 .volume-row input[type="range"] {
     width: 100%;
-    accent-color: #2e1f14;
+    accent-color: #c9a35a;
 }
 
 .volume-value {
