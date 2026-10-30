@@ -26,5 +26,6 @@
 }
 
 @media (max-width: 480px) {
-    .welcome-paper { padding: 1.6rem 1.8rem; font-size: 1.1rem; }
+    /* the strip grows with the text, clear of the torn edges */
+    .welcome-paper { aspect-ratio: auto; min-height: 13rem; padding: 2.2rem 1.6rem 2.8rem; font-size: 1.05rem; }
 }
