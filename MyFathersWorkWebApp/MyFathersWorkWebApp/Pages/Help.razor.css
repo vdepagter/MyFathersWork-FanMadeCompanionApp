@@ -23,7 +23,7 @@
 .help-container {
     width: 560px;
     max-width: 100vw;
-    padding: 4.5rem 1rem 2rem;
+    padding: 4.5rem 1rem 3.5rem; /* bottom room for the fixed version label */
     color: #e0d3b8;
     display: flex;
     flex-direction: column;
