@@ -38,7 +38,8 @@
 
 .pause-buttons .mfw-button {
     width: min(300px, 90%);
-    font-size: 1.15rem;
+    font-size: 1rem;
+    letter-spacing: 0.03em;
 }
 
 .save-box {

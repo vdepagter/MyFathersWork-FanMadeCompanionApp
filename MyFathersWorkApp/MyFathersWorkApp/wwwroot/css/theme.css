@@ -145,6 +145,10 @@ body {
     box-shadow: 0 20px 50px rgba(0, 0, 0, 0.7);
 }
 
+@media (max-width: 480px) {
+    .mfw-dark-panel { padding: 1.1rem 0.8rem; }
+}
+
 /* Parchment panel (Unity Prompt-panel / EndOfRoundBlankPrompt): setup, end of round and other popups */
 .mfw-parchment {
     border: 22px solid transparent;
