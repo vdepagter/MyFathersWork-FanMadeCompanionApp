@@ -33,22 +33,77 @@
     transform: scale(0.92);
 }
 
-.music-glyph {
+.audio-control {
+    position: relative;
+}
+
+.audio-glyph {
     position: relative;
     display: inline-block;
 }
 
-.music-glyph.off {
+.audio-toggle.off .audio-glyph {
     opacity: 0.5;
 }
 
-/* Diagonal strike through the note when the music is off */
-.music-glyph.off::after {
+/* Diagonal strike through the glyph when the channel is off */
+.audio-toggle.off .audio-glyph::after {
     content: "";
     position: absolute;
     left: -0.2em;
     right: -0.2em;
     top: 50%;
-    border-top: 2px solid currentColor;
+    border-top: 2px solid #f1e4c4;
     transform: rotate(-45deg);
+}
+
+/* Volume, shown below the toggle while it is hovered or focused */
+.volume-pop {
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.3rem;
+    margin-top: 0.4rem;
+    padding: 0.6rem 0.35rem 0.4rem;
+    background: rgba(18, 14, 10, 0.92);
+    border: 1px solid #b0843f;
+    border-radius: 8px;
+    box-shadow: 0 6px 14px rgba(0, 0, 0, 0.6);
+    color: #f1e4c4;
+    font-size: 0.75rem;
+    font-variant-numeric: tabular-nums;
+    opacity: 0;
+    visibility: hidden;
+    transform: translate(-50%, -6px);
+    transition: opacity 0.15s, transform 0.15s, visibility 0.15s;
+}
+
+/* A gap-free hover path from the button to the slider */
+.volume-pop::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 100%;
+    height: 0.5rem;
+}
+
+.audio-control:hover .volume-pop,
+.audio-control:focus-within .volume-pop {
+    opacity: 1;
+    visibility: visible;
+    transform: translate(-50%, 0);
+}
+
+.volume-pop input[type="range"] {
+    writing-mode: vertical-lr;
+    direction: rtl;
+    width: 1.4rem;
+    height: 110px;
+    margin: 0;
+    accent-color: #c9a35a;
+    cursor: pointer;
 }

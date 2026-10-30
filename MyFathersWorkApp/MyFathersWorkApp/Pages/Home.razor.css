@@ -109,8 +109,8 @@
     aspect-ratio: 1;
     padding: 0;
     border: 0;
-    border-radius: 50%;
     background: url(images/ui/button-help.webp) center / contain no-repeat;
+    filter: drop-shadow(0 3px 4px rgba(0, 0, 0, 0.7));
     cursor: pointer;
     transition: transform 0.12s, filter 0.25s;
 }

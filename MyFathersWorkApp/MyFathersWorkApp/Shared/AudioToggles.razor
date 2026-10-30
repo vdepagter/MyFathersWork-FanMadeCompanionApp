@@ -1,42 +1,99 @@
 ﻿@inject AudioService Audio
 
+@* Sound effects, music and narration toggles (top right). Hovering or focusing one shows its volume as a vertical
+   slider below it (the same volumes as the pause menu, Shared/VolumeSliders.razor). *@
 <div class="audio-toggles">
-    <button class="audio-toggle"
-            aria-pressed="@(_EffectsOn ? "true" : "false")"
-            aria-label="@GlobalData.GetLocalizedUITag(GlobalTags.Audio_SoundEffects)"
-            title="@GlobalData.GetLocalizedUITag(GlobalTags.Audio_SoundEffects)"
-            @onclick="ToggleEffects">@(_EffectsOn ? "🔊" : "🔇")</button>
-    <button class="audio-toggle"
-            aria-pressed="@(_MusicOn ? "true" : "false")"
-            aria-label="@GlobalData.GetLocalizedUITag(GlobalTags.Audio_Music)"
-            title="@GlobalData.GetLocalizedUITag(GlobalTags.Audio_Music)"
-            @onclick="ToggleMusic"><span class="music-glyph @(_MusicOn ? "" : "off")">♪</span></button>
+    @foreach (Channel channel in _Channels)
+    {
+        bool on = IsOn(channel);
+
+        <div class="audio-control">
+            <button class="audio-toggle @(on ? "" : "off")"
+                    aria-pressed="@(on ? "true" : "false")"
+                    aria-label="@GlobalData.GetLocalizedUITag(channel.Tag)"
+                    title="@GlobalData.GetLocalizedUITag(channel.Tag)"
+                    @onclick="() => Toggle(channel)">
+                <span class="audio-glyph" aria-hidden="true">@channel.Glyph</span>
+            </button>
+            <div class="volume-pop">
+                <input type="range" min="0" max="100" step="5"
+                       aria-label="@GlobalData.GetLocalizedUITag(channel.VolumeTag)"
+                       value="@_Values[channel.Volume]"
+                       @oninput="e => OnVolume(channel.Volume, e)"
+                       @onchange="() => OnRelease(channel.Volume)"/>
+                <span>@_Values[channel.Volume]</span>
+            </div>
+        </div>
+    }
 </div>
 
 @code
 {
     [Parameter] public GlobalData GlobalData { get; set; } = null!;
 
+    private enum Kind { Effects, Music, Narration }
+
+    private sealed record Channel(Kind Kind, string Glyph, string Tag, AudioVolume Volume, string VolumeTag);
+
+    private static readonly Channel[] _Channels =
+    [
+        new(Kind.Effects, "🔊", GlobalTags.Audio_SoundEffects, AudioVolume.Effects, GlobalTags.Audio_SoundEffects),
+        new(Kind.Music, "♪", GlobalTags.Audio_Music, AudioVolume.Music, GlobalTags.Audio_Music),
+        new(Kind.Narration, "🎙", GlobalTags.Audio_NarrationToggle, AudioVolume.Speech, GlobalTags.Audio_Speech)
+    ];
+
     private bool _EffectsOn = true;
     private bool _MusicOn   = true;
+
+    private readonly Dictionary<AudioVolume, int> _Values = new();
 
     protected override void OnInitialized()
     {
         _EffectsOn = Audio.EffectsOn;
         _MusicOn   = Audio.MusicOn;
+        foreach (Channel channel in _Channels) _Values[channel.Volume] = Audio.GetVolume(channel.Volume);
+        Audio.NarrationChanged += OnNarrationChanged;
     }
 
-    private void ToggleEffects()
+    private bool IsOn(Channel channel) => channel.Kind switch
     {
-        _EffectsOn = !_EffectsOn;
-        Audio.SetEffectsOn(_EffectsOn);
-        if (_EffectsOn) Audio.PlayClick();
+        Kind.Effects => _EffectsOn,
+        Kind.Music   => _MusicOn,
+        _            => Audio.Narration != NarrationVoice.Off
+    };
+
+    private void Toggle(Channel channel)
+    {
+        switch (channel.Kind)
+        {
+            case Kind.Effects:
+                _EffectsOn = !_EffectsOn;
+                Audio.SetEffectsOn(_EffectsOn);
+                if (_EffectsOn) Audio.PlayClick();
+                break;
+            case Kind.Music:
+                Audio.PlayClick();
+                _MusicOn = !_MusicOn;
+                Audio.SetMusicOn(_MusicOn);
+                break;
+            default:
+                Audio.PlayClick();
+                Audio.ToggleNarration();
+                break;
+        }
     }
 
-    private void ToggleMusic()
+    private void OnVolume(AudioVolume kind, ChangeEventArgs e)
     {
-        Audio.PlayClick();
-        _MusicOn = !_MusicOn;
-        Audio.SetMusicOn(_MusicOn);
+        if (!int.TryParse(e.Value?.ToString(), out int value)) return;
+        _Values[kind] = value;
+        Audio.SetVolume(kind, value);
     }
+
+    private void OnRelease(AudioVolume kind)
+    {
+        if (kind == AudioVolume.Effects) Audio.PlayClick();
+    }
+
+    private void OnNarrationChanged() => InvokeAsync(StateHasChanged);
 }

@@ -1,0 +1,83 @@
+.reveal-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 1500;
+    display: flex;
+    overflow-y: auto;
+    padding: 1rem;
+    background: rgba(0, 0, 0, 0.72);
+}
+
+.reveal-panel {
+    display: grid;
+    gap: 1.1rem;
+    width: min(620px, 100%);
+    margin: auto;
+    padding: 1.2rem clamp(1rem, 3vw, 2rem) 1.4rem;
+    text-align: center;
+}
+
+.reveal-text p {
+    margin: 0 0 0.6rem;
+    font-size: 1.15rem;
+    line-height: 1.5;
+}
+
+.reveal-buttons {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.8rem;
+}
+
+.reveal-buttons .mfw-button {
+    width: min(15rem, 80%);
+    font-size: 1.15rem;
+}
+
+/* Unity MFW_Reveal_BG: the dark plaque the numbers appear on */
+.reveal-count {
+    justify-self: center;
+    display: grid;
+    place-items: center;
+    width: min(300px, 70vw);
+    aspect-ratio: 405 / 224;
+    background: url(images/ui/reveal-bg.webp) center / contain no-repeat;
+    font-family: var(--mfw-font-heading);
+    font-size: clamp(3rem, 12vw, 5rem);
+    line-height: 1;
+    color: #f1e4c4;
+    text-shadow: 0 0 12px rgba(255, 220, 150, 0.6), 0 3px 4px #000;
+}
+
+.reveal-count span {
+    animation: reveal-pop 0.9s cubic-bezier(0.2, 1.4, 0.4, 1) both;
+}
+
+.reveal-count.go {
+    font-size: clamp(2.2rem, 9vw, 3.6rem);
+    color: #ffd27a;
+}
+
+.reveal-count.go span {
+    animation: reveal-go 0.7s cubic-bezier(0.2, 1.5, 0.4, 1) both;
+}
+
+@keyframes reveal-pop {
+    from { transform: scale(1.8); opacity: 0; }
+    30%  { opacity: 1; }
+    to   { transform: scale(1); opacity: 1; }
+}
+
+@keyframes reveal-go {
+    from { transform: scale(0.4); opacity: 0; letter-spacing: 0.4em; }
+    to   { transform: scale(1); opacity: 1; letter-spacing: 0.05em; }
+}
+
+html[data-graphics="low"] .reveal-count span {
+    animation: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .reveal-count span { animation: none; }
+}

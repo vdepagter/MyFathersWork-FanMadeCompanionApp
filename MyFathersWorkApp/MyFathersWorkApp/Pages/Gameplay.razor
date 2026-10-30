@@ -84,6 +84,16 @@
                         break;
                     case VoicePillState.Speaking:
                         <span class="narration-bars" aria-hidden="true"><i></i><i></i><i></i></span>
+                        @* Progress, seeking and the 10 s jumps are handled in js/audio.js (no round trip per frame) *@
+                        <button class="narration-button" data-voice-skip="-10"
+                                aria-label="@GlobalData.GetLocalizedUITag(GlobalTags.Narration_Back)"
+                                title="@GlobalData.GetLocalizedUITag(GlobalTags.Narration_Back)">⟲</button>
+                        <div class="narration-progress" role="slider" tabindex="0" aria-valuemin="0" aria-valuemax="100"
+                             aria-label="@GlobalData.GetLocalizedUITag(GlobalTags.Narration_Position)"><i></i></div>
+                        <button class="narration-button" data-voice-skip="10"
+                                aria-label="@GlobalData.GetLocalizedUITag(GlobalTags.Narration_Forward)"
+                                title="@GlobalData.GetLocalizedUITag(GlobalTags.Narration_Forward)">⟳</button>
+                        <span class="narration-time"></span>
                         <button class="narration-button"
                                 aria-label="@GlobalData.GetLocalizedUITag(GlobalTags.Narration_Stop)"
                                 title="@GlobalData.GetLocalizedUITag(GlobalTags.Narration_Stop)"
@@ -100,8 +110,24 @@
         }
 
         <div class="parchment-box">
+            @{
+                // A vote or bid special event without its own "start the vote" link gets a Start button above its links
+                bool? revealKind   = RevealKind(GlobalData.ActiveWindow);
+                bool  revealButton = revealKind != null && !GlobalData.ActiveWindow.Elements.Any(IsRevealLink);
+            }
             @foreach (GameplayElement element in GlobalData.ActiveWindow.Elements)
             {
+                if (revealButton && element.Callback != null)
+                {
+                    revealButton = false;
+                    bool bid = revealKind == true;
+                    <div class="reveal-start">
+                        <button class="mfw-button green" @onclick="() => OpenReveal(bid, null)">
+                            @GlobalData.GetLocalizedUITag(bid ? GlobalTags.Reveal_StartBid : GlobalTags.Reveal_StartVote)
+                        </button>
+                    </div>
+                }
+
                 if (element.FromNewLine)
                 {
                     <br/>
@@ -114,26 +140,15 @@
                 }
                 else
                 {
-                    <a class="story-link" @onclick="() => InvokeWindowCallback(element.Callback)">[@LinkText(element.Content)]</a>
+                    <a class="story-link" @onclick="() => OnWindowLinkClicked(element)">[@LinkText(element.Content)]</a>
                 }
             }
         </div>
 
         @if (GlobalData.ActiveWindow.IsFinalEnding && _GalleryCard != null && ReferenceEquals(_GalleryNoted, GlobalData.ActiveWindow))
         {
-            // What the Endings Gallery recorded for this playthrough (Shared/Gallery.cs)
-            <div class="gallery-card">
-                <div class="gallery-card-head">
-                    <span class="gallery-star" aria-hidden="true">★</span>
-                    <div>
-                        <div>@GlobalData.GetLocalizedUITag(_GalleryCard.NewEnding ? GlobalTags.Gallery_NewEnding : GlobalTags.Gallery_EndingRecorded)</div>
-                        <div class="gallery-card-sub">@_GalleryCard.Progress</div>
-                    </div>
-                </div>
-                <div>@_GalleryCard.WinLine</div>
-                <div class="gallery-card-sub">@GlobalData.GetLocalizedUITag(GlobalTags.Gallery_RecordedNote)</div>
-                <button class="gallery-card-button" @onclick="OpenGallery">@GlobalData.GetLocalizedUITag(GlobalTags.MainMenu_Gallery)</button>
-            </div>
+            // After THE END?: Next opens the ending page (Unity ViewEndingPage)
+            <button class="mfw-button green ending-next" @onclick="ShowEndingPage">@GlobalData.GetLocalizedUITag(GlobalTags.Ending_Next)</button>
         }
     }
     else if (GlobalData.ActiveMirrorQuestion == null && GlobalData.ActivePopup == null && GlobalData.ActiveInputPopup == null && GlobalData.ActiveHub != null)
@@ -208,6 +223,46 @@
     <InputPopup @key="GlobalData.ActiveInputPopup" GlobalData=@GlobalData GameplayPopUp=@GlobalData.ActiveInputPopup Refresh=Refresh/>
 }
 
+@if (_ShowEndingPage && _GalleryCard != null)
+{
+    // What the Endings Gallery recorded for this playthrough (Shared/Gallery.cs); closing goes to the Main Menu
+    <div class="ending-page" role="dialog" aria-labelledby="ending-page-title">
+        <div class="ending-panel mfw-dark-panel mfw-zoom-in @(_GalleryCard.NewEnding ? "new" : "")">
+            <div class="ending-star" aria-hidden="true">★</div>
+            <h2 id="ending-page-title" class="mfw-heading">
+                @GlobalData.GetLocalizedUITag(_GalleryCard.NewEnding ? GlobalTags.Ending_Unlocked : GlobalTags.Ending_Recorded)
+            </h2>
+            <p class="ending-name">@_GalleryCard.EndingTitle.InsertImages().ProtectNames(GlobalData).AsMarkup()</p>
+            <p class="ending-count">@GlobalData.GetLocalizedUITag(GlobalTags.Ending_UnlockedCount).FormatWithReplacement(0, _GalleryCard.Done.ToString())</p>
+            <div class="ending-slots" aria-hidden="true">
+                @for (int i = 0; i < 8; i++)
+                {
+                    <span class="@(i < _GalleryCard.Done ? "done" : "")"></span>
+                }
+            </div>
+            <p>@_GalleryCard.WinLine</p>
+            <p class="ending-note">@GlobalData.GetLocalizedUITag(GlobalTags.Gallery_RecordedNote)</p>
+            <div class="ending-buttons">
+                <button class="mfw-button" @onclick="OpenGallery">@GlobalData.GetLocalizedUITag(GlobalTags.MainMenu_Endings)</button>
+                <button class="mfw-button green" @onclick="GoToMainMenu">@GlobalData.GetLocalizedUITag(GlobalTags.Gameplay_ReturnToMainMenu)</button>
+            </div>
+            <button class="ending-close" aria-label="@GlobalData.GetLocalizedUITag(GlobalTags.Settings_Close)" @onclick="CloseEndingPage">✕</button>
+        </div>
+    </div>
+}
+
+<RevealPanel Visible="@_ShowReveal" Bid="@_RevealBid" GlobalData="@GlobalData" OnAccept="AcceptReveal" OnCancel="CancelReveal"/>
+
+@if (_BannerKey > 0)
+{
+    // Unity ViewSpecialEvent: "SPECIAL EVENT" fades in and out over the new special event window (4.5 s)
+    <div class="special-event-banner" @key="_BannerKey" role="img" aria-label="@GlobalData.GetLocalizedUITag(GlobalTags.SpecialEvent_Title)">
+        <i class="se-line"></i>
+        <div class="se-text"></div>
+        <i class="se-line right"></i>
+    </div>
+}
+
 <PauseMenu 
     Visible="@_ShowPauseMenu"
     OnResume="HidePauseMenu"
@@ -265,6 +320,9 @@
             _                        => "cod"
         };
 
+    // The narration toggle (Shared/AudioToggles.razor) changed the voice: redraw the narration pill
+    private void OnNarrationSettingChanged() => InvokeAsync(StateHasChanged);
+
     // Embers rise on the round pages only (js/atmosphere.js; Graphics Low draws none)
     private bool? _EmbersOn;
 
@@ -289,6 +347,7 @@
     protected override async Task OnInitializedAsync()
     {
         _VoiceListener = DotNetObjectReference.Create(this);
+        Audio.NarrationChanged += OnNarrationSettingChanged;
         Audio.VoiceSubscribe(_VoiceListener);
 
         await base.OnInitializedAsync();
@@ -311,6 +370,7 @@
         PlayScreenSounds(info);
         UpdateVoiceOver(info);
         PlayScreenTransition(info);
+        ShowSpecialEventBanner(info);
         ScrollToTop(info);
         UpdateEmbers();
         UpdateMusic();
@@ -340,7 +400,27 @@
 
     #region Endings Gallery
 
-    private record GalleryCard(bool NewEnding, string Progress, string WinLine);
+    private record GalleryCard(bool NewEnding, string Progress, string WinLine, int Done, string EndingTitle);
+
+    private bool _ShowEndingPage;
+
+    private void ShowEndingPage()
+    {
+        Audio.PlayClick();
+        _ShowEndingPage = true;
+    }
+
+    private void CloseEndingPage()
+    {
+        Audio.PlayClick();
+        _ShowEndingPage = false;
+    }
+
+    private void GoToMainMenu()
+    {
+        Audio.PlayClick();
+        Nav.NavigateTo("");
+    }
 
     private object?      _GalleryNoted; // the hub or final ending window last passed to the gallery
     private GalleryCard? _GalleryCard;
@@ -363,15 +443,19 @@
                 GalleryData data = await Gallery.GetAsync();
                 int         wins = data.Games.Count(other => !other.FamilyWinner && other.Winner == game.Winner);
 
+                int done = GalleryService.EndingsDone(data, game.Scenario).Count;
+                _ShowEndingPage = false;
                 _GalleryCard = new GalleryCard(newEnding,
                                                GlobalData.GetLocalizedUITag(GlobalTags.Gallery_ScenarioProgress)
                                                          .FormatWithReplacement(0, GalleryTrees.Name(game.Scenario))
-                                                         .FormatWithReplacement(1, GalleryService.EndingsDone(data, game.Scenario).Count.ToString()),
+                                                         .FormatWithReplacement(1, done.ToString()),
                                                game.FamilyWinner
                                                    ? GlobalData.GetLocalizedUITag(GlobalTags.Gallery_FamilyWin)
                                                    : GlobalData.GetLocalizedUITag(GlobalTags.Gallery_WinFor)
                                                                .FormatWithReplacement(0, game.Winner)
-                                                               .FormatWithReplacement(1, wins.ToString()));
+                                                               .FormatWithReplacement(1, wins.ToString()),
+                                               done,
+                                               window.Title);
                 StateHasChanged();
             }
             else if (GlobalData.ActiveWindow == null && GlobalData.ActiveHub != null)
@@ -671,6 +755,7 @@
     public void Dispose()
     {
         _ = Js.InvokeVoidAsync("mfwAtmosphere.stop", "game-fx");
+        Audio.NarrationChanged -= OnNarrationSettingChanged;
         Audio.VoiceUnsubscribe();
         StopVoice();
         _VoiceListener?.Dispose();
@@ -737,6 +822,71 @@
         _ShowSaveNotification = false;
         StateHasChanged();
     }
+
+    #region Special events: banner, vote / bid countdown (Shared/RevealPanel.razor)
+
+    private int  _BannerKey; // > 0 once a banner was shown; a new key restarts its animation
+    private bool _ShowReveal;
+    private bool _RevealBid;
+    private Action<GlobalData>? _RevealCallback; // the "start the vote" link that opened the panel, followed on Accept
+
+    private static readonly System.Text.RegularExpressions.Regex _StartRevealLink =
+        new(@"\bstart the (vote|bid)\b", System.Text.RegularExpressions.RegexOptions.IgnoreCase);
+
+    private static bool IsRevealLink(GameplayElement element) => element.Callback != null && _StartRevealLink.IsMatch(element.Content);
+
+    // Special event windows (SoundCue.SpecialEvent) are votes or bids: true = bid, false = vote, null = neither
+    private static bool? RevealKind(GameplayWindow window)
+    {
+        if (window.Cue != SoundCue.SpecialEvent) return null;
+        string text = string.Concat(window.Elements.Select(element => element.Content));
+        if (System.Text.RegularExpressions.Regex.IsMatch(text, @"\bbid(s|ding)?\b", System.Text.RegularExpressions.RegexOptions.IgnoreCase)) return true;
+        if (System.Text.RegularExpressions.Regex.IsMatch(text, @"\bvot(e|es|ed|ing)\b", System.Text.RegularExpressions.RegexOptions.IgnoreCase)) return false;
+        return null;
+    }
+
+    private void OnWindowLinkClicked(GameplayElement element)
+    {
+        if (IsRevealLink(element) && GlobalData.ActiveWindow != null)
+        {
+            OpenReveal(_StartRevealLink.Match(element.Content).Groups[1].Value.Equals("bid", StringComparison.OrdinalIgnoreCase), element.Callback);
+            return;
+        }
+
+        InvokeWindowCallback(element.Callback!);
+    }
+
+    private void OpenReveal(bool bid, Action<GlobalData>? callback)
+    {
+        Audio.PlayClick();
+        Audio.Play(SoundCue.Setup);
+        _RevealBid      = bid;
+        _RevealCallback = callback;
+        _ShowReveal     = true;
+    }
+
+    private void AcceptReveal()
+    {
+        _ShowReveal = false;
+        Action<GlobalData>? callback = _RevealCallback;
+        _RevealCallback = null;
+        if (callback != null) InvokeWindowCallback(callback);
+    }
+
+    private void CancelReveal()
+    {
+        _ShowReveal     = false;
+        _RevealCallback = null;
+    }
+
+    private void ShowSpecialEventBanner(ScreenChangeInfo info)
+    {
+        if (info.Suppressed || info.Change == ScreenChange.None || info.Presented is not GameplayWindow { Cue: SoundCue.SpecialEvent }) return;
+        _BannerKey++;
+        StateHasChanged();
+    }
+
+    #endregion
 
     private void InvokeWindowCallback(Action<GlobalData> nextCallback)
     {

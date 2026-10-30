@@ -102,7 +102,21 @@ public sealed class AudioService(IJSRuntime js)
     {
         _Narration = narration;
         InvokeVoid("mfwAudio.setVoice", VoiceName(narration));
+        NarrationChanged?.Invoke();
     }
+
+    // Raised by SetNarration, so a page showing the narration state (Pages/Gameplay.razor) can redraw
+    public event Action? NarrationChanged;
+
+    // Narration toggle next to the sound toggles: Off, or back to the voice used before
+    public void ToggleNarration() => SetNarration(Narration != NarrationVoice.Off
+        ? NarrationVoice.Off
+        : Invoke("mfwAudio.getLastVoice", "oliver") switch
+        {
+            "female" => NarrationVoice.Female,
+            "male"   => NarrationVoice.Male,
+            _        => NarrationVoice.Oliver
+        });
 
     // Plays the original recording of a narrated window (GameplayWindow.VoiceOver) in the given voice (Male or Female),
     // optionally after the thunder lead-in. Returns the request id reported to the listener, or 0 when nothing started.

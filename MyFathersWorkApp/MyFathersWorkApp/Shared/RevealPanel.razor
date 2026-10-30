@@ -1,0 +1,102 @@
+@inject AudioService Audio
+@implements IDisposable
+
+@* Unity ViewBiddingSystem: the vote / bid panel of a special event. "Start" counts down 3, 2, 1, then REVEAL: everyone
+   shows their vote or bid at the same moment. UI only (no game state): Accept closes it, or follows the link that
+   opened it (Pages/Gameplay.razor). *@
+@if (Visible)
+{
+    <div class="reveal-overlay">
+        <div class="reveal-panel mfw-parchment mfw-zoom-in" role="dialog">
+            <div class="reveal-text mfw-ink">
+                <p>@GlobalData.GetLocalizedUITag(Bid ? GlobalTags.Reveal_DetailsBid : GlobalTags.Reveal_DetailsVote)</p>
+                <p>@GlobalData.GetLocalizedUITag(Bid ? GlobalTags.Reveal_ShowBid : GlobalTags.Reveal_ShowVote)</p>
+            </div>
+
+            @if (_Count is null)
+            {
+                <div class="reveal-buttons">
+                    <button class="mfw-button green" @onclick="Start">
+                        @GlobalData.GetLocalizedUITag(Bid ? GlobalTags.Reveal_StartBid : GlobalTags.Reveal_StartVote)
+                    </button>
+                    <button class="mfw-button red" @onclick="Cancel">@GlobalData.GetLocalizedUITag(GlobalTags.MainMenu_Back)</button>
+                </div>
+            }
+            else
+            {
+                <div class="reveal-count @(_Count == 0 ? "go" : "")" aria-live="assertive">
+                    @* @key restarts the pop animation for every number *@
+                    <span @key="_Count">@(_Count == 0 ? GlobalData.GetLocalizedUITag(GlobalTags.Reveal_Word) : _Count.ToString())</span>
+                </div>
+                @if (_Count == 0)
+                {
+                    <div class="reveal-buttons">
+                        <button class="mfw-button green" @onclick="Accept">@GlobalData.GetLocalizedUITag(GlobalTags.Gameplay_Accept)</button>
+                    </div>
+                }
+            }
+        </div>
+    </div>
+}
+
+@code
+{
+    [Parameter] public bool          Visible    { get; set; }
+    [Parameter] public bool          Bid        { get; set; } // bid, else vote
+    [Parameter] public EventCallback OnAccept   { get; set; }
+    [Parameter] public EventCallback OnCancel   { get; set; }
+    [Parameter] public GlobalData    GlobalData { get; set; } = null!;
+
+    private int?                     _Count;
+    private CancellationTokenSource? _Countdown;
+
+    protected override void OnParametersSet()
+    {
+        if (Visible) return;
+        _Countdown?.Cancel();
+        _Count = null;
+    }
+
+    private async Task Start()
+    {
+        Audio.PlayClick();
+        _Countdown?.Cancel();
+        _Countdown = new CancellationTokenSource();
+        CancellationToken token = _Countdown.Token;
+
+        try
+        {
+            for (int i = 3; i > 0; i--)
+            {
+                _Count = i;
+                StateHasChanged();
+                await Task.Delay(1000, token);
+            }
+        }
+        catch (TaskCanceledException)
+        {
+            return;
+        }
+
+        _Count = 0;
+        Audio.Play(SoundCue.SpecialEvent);
+        StateHasChanged();
+    }
+
+    private Task Accept()
+    {
+        Audio.PlayClick();
+        _Count = null;
+        return OnAccept.InvokeAsync();
+    }
+
+    private Task Cancel()
+    {
+        Audio.PlayClick();
+        _Countdown?.Cancel();
+        _Count = null;
+        return OnCancel.InvokeAsync();
+    }
+
+    public void Dispose() => _Countdown?.Cancel();
+}

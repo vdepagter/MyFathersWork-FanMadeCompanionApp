@@ -90,6 +90,26 @@ public static class GlobalTags
     public const string Narration_Play        = "Narration_Play";
     public const string Narration_Replay      = "Narration_Replay";
     public const string Narration_Stop        = "Narration_Stop";
+    public const string Narration_Back        = "Narration_Back";
+    public const string Narration_Forward     = "Narration_Forward";
+    public const string Narration_Position    = "Narration_Position";
+    public const string Audio_NarrationToggle = "Audio_NarrationToggle";
+
+    // Vote / bid countdown (Shared/RevealPanel.razor) and the special event banner
+    public const string Reveal_StartVote   = "Reveal_StartVote";
+    public const string Reveal_StartBid    = "Reveal_StartBid";
+    public const string Reveal_DetailsVote = "Reveal_DetailsVote";
+    public const string Reveal_DetailsBid  = "Reveal_DetailsBid";
+    public const string Reveal_ShowVote    = "Reveal_ShowVote";
+    public const string Reveal_ShowBid     = "Reveal_ShowBid";
+    public const string Reveal_Word        = "Reveal_Word";
+    public const string SpecialEvent_Title = "SpecialEvent_Title";
+
+    // Ending page after THE END? (Pages/Gameplay.razor)
+    public const string Ending_Next          = "Ending_Next";
+    public const string Ending_Unlocked      = "Ending_Unlocked";
+    public const string Ending_Recorded      = "Ending_Recorded";
+    public const string Ending_UnlockedCount = "Ending_UnlockedCount";
 
     // Gameplay
     public const string Gameplay_Yes                        = "Gameplay_Yes";

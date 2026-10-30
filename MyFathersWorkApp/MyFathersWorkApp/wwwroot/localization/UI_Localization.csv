@@ -73,6 +73,22 @@ Narration_Starting;starting…
 Narration_Play;Play
 Narration_Replay;Replay
 Narration_Stop;Stop narration
+Narration_Back;Back 10 seconds
+Narration_Forward;Forward 10 seconds
+Narration_Position;Narration position
+Audio_NarrationToggle;Narration on or off
+Reveal_StartVote;Start Voting
+Reveal_StartBid;Start Bidding
+Reveal_DetailsVote;Click on the 'Start Voting' button to start the vote. This will start a 3-second countdown.
+Reveal_DetailsBid;Click on the 'Start Bidding' button to start the bid. This will start a 3-second countdown.
+Reveal_ShowVote;When you see the word 'REVEAL' on the screen, simultaneously show everyone your vote.
+Reveal_ShowBid;When you see the word 'REVEAL' on the screen, simultaneously show everyone your bid.
+Reveal_Word;REVEAL!
+SpecialEvent_Title;Special Event
+Ending_Next;Next
+Ending_Unlocked;Ending unlocked!
+Ending_Recorded;Ending reached
+Ending_UnlockedCount;You have unlocked {{0=...|3}} out of 8 endings
 //====== Scenario Settings ======;
 ScenarioLang_English_Source;English - Source
 ScenarioLang_English_Simple;English - Simple

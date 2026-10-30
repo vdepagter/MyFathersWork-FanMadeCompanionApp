@@ -21,7 +21,7 @@
 
 /* Main Popup Box: parchment (css/theme.css .mfw-parchment) */
 .popup-box {
-    padding: 0.8rem 1.4rem 1.2rem;
+    padding: 1rem clamp(1rem, 3vw, 2rem) 1.3rem;
     max-width: 700px;
     width: 92%;
     text-align: center;
@@ -66,9 +66,8 @@
 
 .popup-text p {
     margin: 0;
-    color: #2a2116;
-    font-size: 1.08rem;
-    line-height: 1.5;
+    font-size: 1.15rem;
+    line-height: 1.55;
 }
 
 /* Accept Button (css/theme.css .mfw-button green) */

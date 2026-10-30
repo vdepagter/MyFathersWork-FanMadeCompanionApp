@@ -32,7 +32,6 @@
 }
 
 .input-content p {
-    color: #2a2116;
     font-size: 1.2rem;
     line-height: 1.5;
     margin: 0;
@@ -76,7 +75,6 @@
     text-align: left;
     font-size: 1.2rem;
     font-weight: 700;
-    color: #2a2116;
 }
 
 .input-row .input-field {

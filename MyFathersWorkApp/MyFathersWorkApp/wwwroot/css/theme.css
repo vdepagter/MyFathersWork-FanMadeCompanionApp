@@ -71,7 +71,6 @@ body {
     aspect-ratio: 1;
     padding: 0;
     border: 0;
-    border-radius: 50%;
     background: center / contain no-repeat;
     filter: drop-shadow(0 3px 4px rgba(0, 0, 0, 0.7));
     cursor: pointer;
@@ -149,13 +148,20 @@ body {
     .mfw-dark-panel { padding: 1.1rem 0.8rem; }
 }
 
-/* Parchment panel (Unity Prompt-panel / EndOfRoundBlankPrompt): setup, end of round and other popups */
+/* Parchment panel (Unity Prompt-panel / EndOfRoundBlankPrompt): setup, end of round and other popups.
+   Ink: near-black, slightly heavier and spaced than the plain font, like Unity's TextMeshPro rendering of Averia. */
 .mfw-parchment {
     border: 22px solid transparent;
     border-image: url(../images/ui/parchment.webp) 44 fill / 22px / 0 stretch;
-    color: #2a2116;
+    color: #17100a;
     font-family: var(--mfw-font-text);
     filter: drop-shadow(0 18px 28px rgba(0, 0, 0, 0.75));
+}
+
+.mfw-ink {
+    color: #17100a;
+    letter-spacing: 0.02em;
+    -webkit-text-stroke: 0.35px currentColor;
 }
 
 /* Dialogs zoom in with a small overshoot, then keep growing very slowly for drama (Unity PopupAnimator) */

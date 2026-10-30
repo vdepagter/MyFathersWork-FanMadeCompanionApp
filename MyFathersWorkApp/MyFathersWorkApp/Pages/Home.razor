@@ -126,6 +126,7 @@
         try
         {
             foreach (string id in _FxIds) await Js.InvokeVoidAsync("mfwAtmosphere.stop", id);
+            await Js.InvokeVoidAsync("mfwAudio.cancelWelcome"); // Unity stops the welcome sound when the main menu hides
         }
         catch (JSDisconnectedException) { }
     }

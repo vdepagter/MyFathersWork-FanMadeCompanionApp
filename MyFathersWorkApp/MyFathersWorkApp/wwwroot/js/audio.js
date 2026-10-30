@@ -113,7 +113,11 @@
 
     // channel: "effects" | "popup" | "click"; delayMs: start later (a newer request on the channel cancels it)
     function play(name, channelName, delayMs) {
-        if (!settings.effects || !unlocked || !clips[name]) return;
+        if (!settings.effects || !clips[name]) return;
+        if (!unlocked) {
+            if (channelName === "effects" && name === "sfx-welcome") pendingWelcome = true; // played on the first gesture
+            return;
+        }
 
         if (channelName === "click") {
             const clone  = clips[name].cloneNode();
@@ -300,6 +304,9 @@
         phase:    null,     // null | "leadin" | "clip"
         clip:     null,     // url of the narration clip of the current request
         queue:    [],       // urls still to play after clip (Oliver narration: one clip per text chunk)
+        list:     [],       // every clip of the request, in order (progress bar and seeking)
+        index:    0,        // position of clip in list
+        lengths:  [],       // duration in seconds per clip of list, NaN until its metadata is loaded
         timer:    0,        // lead-in timer
         paused:   false,    // paused by the pause menu
         listener: null      // DotNetObjectReference (Pages/Gameplay.razor), method OnVoiceState(id, state)
@@ -348,6 +355,9 @@
         voice.phase  = null;
         voice.clip   = null;
         voice.queue  = [];
+        voice.list   = [];
+        voice.index  = 0;
+        voice.lengths = [];
         voice.paused = false;
         try {
             voiceElement.pause();
@@ -369,6 +379,7 @@
 
         voice.id   = ++voice.counter;
         voice.clip = "audio/vo/" + (which === "male" ? "male" : "female") + "/" + name + ".mp3";
+        setVoiceList([voice.clip]);
         duckMusic(true);
 
         if (leadIn) {
@@ -390,10 +401,133 @@
         voice.id    = ++voice.counter;
         voice.clip  = urls[0];
         voice.queue = urls.slice(1);
+        setVoiceList(urls);
         duckMusic(true);
         startClip();
         return voice.id;
     }
+
+    // Loads the duration of every clip of the request (metadata only) for the progress bar
+    function setVoiceList(urls) {
+        voice.list    = urls.slice();
+        voice.index   = 0;
+        voice.lengths = urls.map(() => NaN);
+        const id = voice.id;
+        urls.forEach((url, i) => {
+            const probe   = new Audio();
+            probe.preload = "metadata";
+            probe.addEventListener("loadedmetadata", () => {
+                if (voice.id === id && isFinite(probe.duration)) voice.lengths[i] = probe.duration;
+            }, { once: true });
+            probe.src = url;
+        });
+    }
+
+    // Length of clip i: its duration once known, else the average of the known ones (10 s when none is known)
+    function clipLength(i) {
+        if (isFinite(voice.lengths[i])) return voice.lengths[i];
+        const known = voice.lengths.filter(isFinite);
+        return known.length ? known.reduce((a, b) => a + b, 0) / known.length : 10;
+    }
+
+    function voiceTotal() {
+        let total = 0;
+        for (let i = 0; i < voice.list.length; i++) total += clipLength(i);
+        return total;
+    }
+
+    // Seconds from the start of the narration (0 during the thunder lead-in)
+    function voicePosition() {
+        if (voice.phase !== "clip") return 0;
+        let pos = 0;
+        for (let i = 0; i < voice.index; i++) pos += clipLength(i);
+        return pos + (voiceElement.currentTime || 0);
+    }
+
+    // Jumps to the given second of the narration (across clips); past the end stops it
+    function voiceSeek(seconds) {
+        if (!voice.phase || !voice.list.length) return;
+        let target = Math.max(0, seconds);
+        let i = 0;
+        while (i < voice.list.length && target >= clipLength(i)) {
+            target -= clipLength(i);
+            i++;
+        }
+        if (i >= voice.list.length) {
+            endVoice();
+            return;
+        }
+        clearTimeout(voice.timer);
+        voice.timer = 0;
+        if (voice.phase === "clip" && i === voice.index) {
+            try { voiceElement.currentTime = target; } catch (e) { /* not seekable yet */ }
+            return;
+        }
+        voice.phase = "clip";
+        voice.index = i;
+        voice.clip  = voice.list[i];
+        voice.queue = voice.list.slice(i + 1);
+        const offset = target;
+        voiceElement.addEventListener("loadedmetadata", () => {
+            try { voiceElement.currentTime = offset; } catch (e) { /* ignore */ }
+        }, { once: true });
+        if (voice.paused) {
+            voiceElement.src = voice.clip; // stays paused at the new place until the pause menu closes
+            return;
+        }
+        startVoiceSource(voice.clip);
+    }
+
+    // ---- Narration progress bar (Pages/Gameplay.razor .narration-progress): drawn here, no round trip to Blazor ----
+    // The bar gets --p (0-1); a click or drag on it seeks; buttons with data-voice-skip="-10" / "10" jump.
+    function drawProgress() {
+        const bars = document.querySelectorAll(".narration-progress");
+        if (bars.length) {
+            const total = voiceTotal();
+            const p     = total > 0 ? Math.min(1, voicePosition() / total) : 0;
+            const text  = formatTime(voicePosition()) + " / " + formatTime(total);
+            bars.forEach(bar => {
+                bar.style.setProperty("--p", p.toFixed(4));
+                bar.setAttribute("aria-valuenow", String(Math.round(p * 100)));
+                bar.setAttribute("aria-valuetext", text);
+                const label = bar.parentElement && bar.parentElement.querySelector(".narration-time");
+                if (label) label.textContent = text;
+            });
+        }
+        requestAnimationFrame(drawProgress);
+    }
+    requestAnimationFrame(drawProgress);
+
+    function formatTime(s) {
+        s = Math.max(0, Math.round(s));
+        return Math.floor(s / 60) + ":" + String(s % 60).padStart(2, "0");
+    }
+
+    function seekFromPointer(bar, clientX) {
+        const rect = bar.getBoundingClientRect();
+        const f    = Math.min(1, Math.max(0, (clientX - rect.left) / rect.width));
+        voiceSeek(f * voiceTotal() * 0.999);
+    }
+
+    let dragging = null;
+    document.addEventListener("pointerdown", e => {
+        const bar = e.target instanceof Element && e.target.closest(".narration-progress");
+        if (!bar) return;
+        dragging = bar;
+        seekFromPointer(bar, e.clientX);
+    });
+    document.addEventListener("pointermove", e => { if (dragging) seekFromPointer(dragging, e.clientX); });
+    document.addEventListener("pointerup", () => { dragging = null; });
+    document.addEventListener("click", e => {
+        const button = e.target instanceof Element && e.target.closest("[data-voice-skip]");
+        if (button) voiceSeek(voicePosition() + Number(button.getAttribute("data-voice-skip")));
+    });
+    document.addEventListener("keydown", e => {
+        const bar = e.target instanceof Element && e.target.closest(".narration-progress");
+        if (!bar) return;
+        if (e.key === "ArrowLeft")  { voiceSeek(voicePosition() - 5); e.preventDefault(); }
+        if (e.key === "ArrowRight") { voiceSeek(voicePosition() + 5); e.preventDefault(); }
+    });
 
     let preload = null; // warms the browser cache for the next clip of a list, so the gap between clips stays short
 
@@ -409,6 +543,7 @@
     voiceElement.addEventListener("ended", () => {
         if (voice.phase === "clip" && voice.queue.length) {
             voice.clip = voice.queue.shift();
+            voice.index++;
             startVoiceSource(voice.clip);
         }
         else if (voice.phase === "clip") endVoice();
@@ -451,9 +586,16 @@
 
     // ---- Unlock on the first user gesture -------------------------------------------------------------------------
 
+    let pendingWelcome = false; // the welcome bell asked for before the browser allowed sound (main menu, cold start)
+
     function onGesture() {
+        const first = !unlocked;
         unlocked = true;
         applyMusic();
+        if (first && pendingWelcome) {
+            pendingWelcome = false;
+            play("sfx-welcome", "effects", 0);
+        }
     }
 
     for (const type of ["pointerdown", "pointerup", "keydown", "touchend"]) {
@@ -494,10 +636,20 @@
         isUnlocked: () => unlocked,
         // Voice-over
         getVoice: () => voice.setting,
+        // The voice before narration was switched off (the narration toggle switches back to it)
+        getLastVoice: () => {
+            try {
+                const value = localStorage.getItem(KEY_VOICE + ".last");
+                return VOICES.indexOf(value) >= 0 && value !== "off" ? value : VOICE_DEFAULT;
+            } catch (e) {
+                return VOICE_DEFAULT;
+            }
+        },
         setVoice: which => {
             voice.setting = VOICES.indexOf(which) >= 0 ? which : VOICE_DEFAULT;
             try {
                 localStorage.setItem(KEY_VOICE, voice.setting);
+                if (voice.setting !== "off") localStorage.setItem(KEY_VOICE + ".last", voice.setting);
             } catch (e) {
                 // Storage unavailable: keep the setting for this session only
             }
@@ -506,6 +658,8 @@
         voicePlay: voicePlay,
         voicePlayList: voicePlayList,
         voiceStop: endVoice,
+        voiceSeek: voiceSeek,
+        cancelWelcome: () => { pendingWelcome = false; },
         voicePause: voicePause,
         voiceResume: voiceResume,
         voiceSubscribe: listener => { voice.listener = listener || null; },
