@@ -37,8 +37,23 @@ sparkle, lightning, Graphics quality in localStorage `mfwGraphics`, `html[data-g
     the bottom; Graphics Low and reduced motion fade instead.
   - Final scores on one page (`FinalScoring.ScoreEntry`, `GameplayInputPopup.Fields` / `OnCloseFields`, tag
     `ScoreEntry_Player`), first field focused, Enter moves to the next field. Every input popup focuses its field.
-- Phase 3 (next): SPECIAL EVENT banner, vote/bid countdown 3-2-1 REVEAL, THE END? -> unlocked ending card. Optional:
-  first-unlock flourish, "5 of 8" on the scenario picker, locked silhouettes. Setup/menu pages still have the old look.
+- Feedback round (30 Oct): wider parchment padding, darker and slightly heavier ink (`.mfw-ink`, text stroke 0.35px)
+  on story text and dialogs, darker links (#7a170b); square icons no longer clipped to circles; help "?" re-cropped.
+  Sound toggles (`Shared/AudioToggles.razor`): Effects, Music and a Narration toggle (off / last voice), each with a
+  vertical volume slider on hover or focus. Narration progress bar under the title (`.narration-progress`, drawn and
+  seeked in `js/audio.js` across the clip list, 10 s skip buttons, arrow keys 5 s). The church bell is the original
+  welcome sound; it now also plays on the first tap when the browser blocked autoplay.
+- Phase 3:
+  - SPECIAL EVENT banner (Unity ViewSpecialEvent, `special-event-*.webp`) fades over every newly shown window with
+    `SoundCue.SpecialEvent` (not on load/undo).
+  - Vote / bid countdown (`Shared/RevealPanel.razor`, Unity ViewBiddingSystem): a link "start the vote/bid" opens it
+    and Accept follows the link; other SpecialEvent windows that mention a vote or bid get a Start Voting/Bidding button
+    above their links (Accept just closes). 3, 2, 1 (1 s each), REVEAL!, Accept. Unity's bid sounds are not ported
+    (mp3 = LFS); REVEAL plays the special event sound.
+  - Final ending: Next opens the ending page ("Ending unlocked!" / "Ending reached", "You have unlocked X out of 8
+    endings", eight pips, Endings Gallery, Return to Main Menu). Replaces the inline gallery card.
+  - Optional, not done: "5 of 8" on the scenario picker, locked silhouettes, achievements. Setup/menu pages before a
+    game still have the old look.
 
 ## A Time of War - table play test (October 2026)
 

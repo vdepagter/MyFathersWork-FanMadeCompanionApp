@@ -517,6 +517,12 @@ html[data-graphics="low"] .round-step.current {
     margin-top: 0.4rem;
 }
 
+.ending-buttons .mfw-button,
+.ending-next {
+    width: min(250px, 70vw);
+    font-size: 1.05rem;
+}
+
 .ending-close {
     position: absolute;
     top: 0.5rem;
