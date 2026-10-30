@@ -29,7 +29,7 @@ which ported the first two Generations of *The Cost of Disease*. Starting from t
 | Scenario | Status |
 |---|---|
 | **The Cost of Disease** | ✅ Complete, played at the table |
-| **Fear of the Unknown** | ✅ Complete, played through in the browser; waiting for a game at the table |
+| **Fear of the Unknown** | ✅ Complete, played at the table (twice) |
 | **A Time of War** | ✅ Complete, played through in the browser; waiting for a game at the table |
 
 ## Features
@@ -59,10 +59,27 @@ which ported the first two Generations of *The Cost of Disease*. Starting from t
 
 ## Still to do
 
-- Play *Fear of the Unknown* and *A Time of War* at the table.
+- Play *A Time of War* at the table.
 - Oliver's narration for *The Cost of Disease* and *A Time of War*.
 - Test on iPhone and iPad (Safari).
-- Achievements and sharing from the official app are not ported.
+
+## Feedback and bug reports
+
+Found a bug, a typo in a story, or have an idea? Please let us know on GitHub:
+
+1. Sign in to GitHub (creating an account is free).
+2. Go to the [Issues page](https://github.com/vdepagter/myfathersworkapp/issues) and press **New issue**.
+3. Give it a short title and describe what happened. These details help a lot:
+   - the scenario, Generation and screen you were on,
+   - what you expected and what happened instead,
+   - your device and browser (for example "iPhone, Safari" or "Windows laptop, Chrome"),
+   - a screenshot, if you can. You can paste or drag it straight into the issue.
+4. Press **Create** (or **Submit new issue**).
+
+If your report is about a game in progress, a saved game helps us see exactly where you were: open the pause menu, press
+**Local Save Game**, then **Download File** and drag that file into the issue.
+
+No GitHub account? You can also ask in the **My Father's Work Fanmade App** Discord (link below).
 
 ## Running it on your own computer
 
