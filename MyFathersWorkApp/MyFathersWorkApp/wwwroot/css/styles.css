@@ -19,44 +19,6 @@ body, html {
     max-width: 100%;
 }
 
-.menu-container {
-    text-align: center;
-}
-
-.logo {
-    width: 30vw; /* 30% of the viewport width */
-    max-width: 400px; /* Don't exceed 400px */
-    height: auto; /* Maintain aspect ratio */
-    margin-bottom: 3rem;
-}
-
-.menu-buttons {
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
-}
-
-.menu-buttons button {
-    padding: 1rem 2rem;
-    font-size: 1.2rem;
-    background-color: #5c4633;
-    color: #e0d3b8;
-    border: 3px solid #2e1f14;
-    border-radius: 8px;
-    cursor: pointer;
-    box-shadow: 0 0 10px rgba(0,0,0,0.7);
-    transition: transform 0.1s, background-color 0.3s;
-}
-
-.menu-buttons button:hover {
-    background-color: #7a5a3c;
-    transform: scale(1.05);
-}
-
-.menu-buttons button:active {
-    transform: scale(0.95);
-}
-
 .language-select {
     margin-top: 2rem;
     color: #e0d3b8;

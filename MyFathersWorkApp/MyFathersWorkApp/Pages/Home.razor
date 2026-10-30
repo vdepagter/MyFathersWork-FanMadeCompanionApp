@@ -1,4 +1,5 @@
 ﻿@page "/"
+@implements IAsyncDisposable
 @using MyFathersWorkApp.Shared
 @inject NavigationManager Nav
 @inject IJSRuntime        Js
@@ -8,20 +9,44 @@
 
 <PageTitle>My Father's Work Companion App</PageTitle>
 
-<div class="menu-container">
-    <img src="./images/logo.png" class="logo" alt="Logo">
+@* Main Menu scene from the Unity app (Scenes/Main.unity), back to front. The canvases are filled by js/atmosphere.js. *@
+<div class="menu-scene" aria-hidden="true">
+    <div class="sky"></div>
+    <img class="layer mountain" src="images/ui/menu-mountain.webp" alt="">
+    <canvas class="fx" id="menu-fx-back"></canvas>
+    <img class="layer village" src="images/ui/menu-village.webp" alt="">
+    <div class="layer manor">
+        <img src="images/ui/menu-manor.webp" alt="">
+        @foreach ((int x, int y, int size, double delay) in _WindowLights)
+        {
+            <div class="window-light" style="left:@(x)%; top:@(y)%; width:@(size)%; animation-delay:-@(delay.ToString(System.Globalization.CultureInfo.InvariantCulture))s"></div>
+        }
+    </div>
+    <div class="layer ground"></div>
+    <canvas class="fx" id="menu-fx-mid"></canvas>
+    <img class="layer tree-left-back" src="images/ui/menu-trees-2.webp" alt="">
+    <img class="layer tree-right-back" src="images/ui/menu-tree-3.webp" alt="">
+    <img class="layer tree-left" src="images/ui/menu-trees-1.webp" alt="">
+    <img class="layer tree-right" src="images/ui/menu-tree-4.webp" alt="">
+    <canvas class="fx" id="menu-fx-front"></canvas>
+    <div class="layer vignette"></div>
+    <div class="layer lightning" id="menu-lightning"></div>
+</div>
+
+<div class="menu">
+    <img class="menu-logo" src="images/ui/logo.webp" alt="My Father's Work">
 
     <div class="menu-buttons">
         @if (IsContinueAvailable)
         {
-            <button @onclick="OnContinue">@GlobalData.GetLocalizedUITag(GlobalTags.MainMenu_Continue)</button>
+            <button class="mfw-button" @onclick="OnContinue">@GlobalData.GetLocalizedUITag(GlobalTags.MainMenu_Continue)</button>
         }
 
-        <button @onclick="OnNewGameClick">@GlobalData.GetLocalizedUITag(GlobalTags.MainMenu_NewGame)</button>
-        <button @onclick="OpenSavedGames">@GlobalData.GetLocalizedUITag(GlobalTags.MainMenu_SavedGames)</button>
-        <button @onclick="ShowLoadPopup">@GlobalData.GetLocalizedUITag(GlobalTags.MainMenu_LoadGame)</button>
-        <button @onclick="OpenGallery">@GlobalData.GetLocalizedUITag(GlobalTags.MainMenu_Gallery)</button>
-        <button @onclick="OpenHelp">@GlobalData.GetLocalizedUITag(GlobalTags.MainMenu_Help)</button>
+        <button class="mfw-button" @onclick="OnNewGameClick">@GlobalData.GetLocalizedUITag(GlobalTags.MainMenu_NewGame)</button>
+        <button class="mfw-button" @onclick="OpenSavedGames">@GlobalData.GetLocalizedUITag(GlobalTags.MainMenu_SavedGames)</button>
+        <button class="mfw-button" @onclick="ShowLoadPopup">@GlobalData.GetLocalizedUITag(GlobalTags.MainMenu_LoadGame)</button>
+        <button class="mfw-button" @onclick="OpenGallery">@GlobalData.GetLocalizedUITag(GlobalTags.MainMenu_Gallery)</button>
+        <button class="mfw-button" @onclick="OpenHelp">@GlobalData.GetLocalizedUITag(GlobalTags.MainMenu_Help)</button>
 
         @if (GlobalData.UI_Localization.Count > 1)
         {
@@ -36,15 +61,11 @@
             </div>
         }
     </div>
+
+    <p class="disclaimer">@GlobalData.GetLocalizedUITag(GlobalTags.MainMenu_FanMade)</p>
 </div>
 
 <LoadGamePopup Visible="@_ShowLoadGame" OnBack="HideLoadPopup" GlobalData="@GlobalData"/>
-
-<footer class="main-menu-footer">
-    <p class="disclaimer">
-        @GlobalData.GetLocalizedUITag(GlobalTags.MainMenu_FanMade)
-    </p>
-</footer>
 
 @code
 {
@@ -60,9 +81,34 @@
         IsContinueAvailable = await GlobalData.IsContinueAvailableAsync(Js);
     }
 
-    protected override void OnAfterRender(bool firstRender)
+    // Lit windows of the manor (Unity "FakeLight" glows): centre x, centre y and size in % of the manor picture, delay (s)
+    private static readonly (int X, int Y, int Size, double Delay)[] _WindowLights =
+        [(66, 68, 22, 0), (66, 82, 16, 0.7), (48, 40, 12, 1.4), (30, 37, 10, 2.1), (29, 53, 10, 2.8), (43, 64, 10, 3.5), (78, 55, 10, 4.2)];
+
+    // Particle counts at High quality (Medium draws ~40%, Low none)
+    private static readonly object[] _BackFx  = [new { kind = "rainBack", count = 120 }, new { kind = "fog", count = 12 }];
+    private static readonly object[] _MidFx   = [new { kind = "smoke", count = 10 }];
+    private static readonly object[] _FrontFx = [new { kind = "rainFront", count = 170 }, new { kind = "ember", count = 28 }];
+
+    private static readonly string[] _FxIds = ["menu-fx-back", "menu-fx-mid", "menu-fx-front", "menu-lightning"];
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        if (firstRender) Audio.PlayWelcomeOnce();
+        if (!firstRender) return;
+        Audio.PlayWelcomeOnce();
+        await Js.InvokeVoidAsync("mfwAtmosphere.start", "menu-fx-back", _BackFx);
+        await Js.InvokeVoidAsync("mfwAtmosphere.start", "menu-fx-mid", _MidFx);
+        await Js.InvokeVoidAsync("mfwAtmosphere.start", "menu-fx-front", _FrontFx);
+        await Js.InvokeVoidAsync("mfwAtmosphere.lightning", "menu-lightning");
+    }
+
+    public async ValueTask DisposeAsync()
+    {
+        try
+        {
+            foreach (string id in _FxIds) await Js.InvokeVoidAsync("mfwAtmosphere.stop", id);
+        }
+        catch (JSDisconnectedException) { }
     }
 
     private void ShowLoadPopup()

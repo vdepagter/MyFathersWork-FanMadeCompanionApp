@@ -3,6 +3,24 @@
 Only work in progress lives here. When a section is finished, move it to [`HANDOFF_ARCHIVE.md`](HANDOFF_ARCHIVE.md)
 (newest first) and delete it from this file. Conventions are in [`CLAUDE.md`](CLAUDE.md).
 
+## Visual overhaul (October 2026)
+
+Bringing the Unity app's look into the web app. Plan (owner approved 30 Oct 2026, original fonts):
+https://claude.ai/artifact/KaN3ACVp4fjv5jn4duurP8 , live preview of every effect: https://claude.ai/artifact/GPLQg5ChvkKijdTWoNsyQU .
+No libraries: CSS animations plus `wwwroot/js/atmosphere.js` (canvas particles with the original textures, tap
+sparkle, lightning, Graphics quality in localStorage `mfwGraphics`, `html[data-graphics]`). Shared look in
+`wwwroot/css/theme.css` (fonts, `.mfw-button` textured buttons, page background). Art: resized WebP copies of
+`UnityOriginalApp/Assets` in `wwwroot/images/ui/` (WebP and WOFF2 are not LFS, so the cloud can push them). Fonts in
+`wwwroot/fonts/`: Evil Dead (headings), Absolute Empire (buttons), Averia (text, OFL); the first two are free for personal use only.
+
+- Phase 1, Main Menu: manor scene (`Pages/Home.razor` + `.css`): sky drift, mountain, village, manor with flickering
+  window lights, rain, fog, smoke, embers, trees, vignette, lightning; bobbing logo; textured buttons incl. Saved Games;
+  tap sparkle everywhere.
+- Phase 2 (next): Settings menu (Graphics High/Medium/Low, story text size slider), Averia/Evil Dead on all pages,
+  page frame, story pages rising / setup dialogs dropping, parchment zoom, red continue links, light blue hub links,
+  embers on hubs, round indicator at the bottom.
+- Phase 3: SPECIAL EVENT banner, vote/bid countdown 3-2-1 REVEAL, one-page score entry, THE END? -> unlocked ending card.
+
 ## A Time of War - table play test (October 2026)
 
 Fully ported and played through in the browser (details in the archive). Spec: [`docs/ATOW_PORT_MAP.md`](docs/ATOW_PORT_MAP.md).

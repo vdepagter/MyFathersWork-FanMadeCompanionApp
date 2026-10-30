@@ -1,0 +1,96 @@
+/* ---------------------------------------------------------------------------------------------------------------------
+   Look of the Unity app (HANDOFF.md "Visual overhaul"): its fonts, textured buttons, page background and the tap effect.
+   Images in images/ui/ are resized WebP copies of UnityOriginalApp/Assets (New_UI_Assets, VFX, JanleyShader).
+   html[data-graphics] is set by js/atmosphere.js: "low" stops every moving decoration.
+   --------------------------------------------------------------------------------------------------------------------- */
+
+/* Unity: Evil Dead for screen headings, Absolute Empire for buttons, Averia (SIL OFL, fonts/averia-OFL.txt) for text */
+@font-face { font-family: "Averia"; src: url(../fonts/averia-regular.woff2) format("woff2"); font-weight: 400; font-style: normal; font-display: swap; }
+@font-face { font-family: "Averia"; src: url(../fonts/averia-bold.woff2) format("woff2"); font-weight: 700; font-style: normal; font-display: swap; }
+@font-face { font-family: "Averia"; src: url(../fonts/averia-italic.woff2) format("woff2"); font-weight: 400; font-style: italic; font-display: swap; }
+@font-face { font-family: "Averia"; src: url(../fonts/averia-bolditalic.woff2) format("woff2"); font-weight: 700; font-style: italic; font-display: swap; }
+@font-face { font-family: "Absolute Empire"; src: url(../fonts/absolute-empire.woff2) format("woff2"); font-display: swap; }
+@font-face { font-family: "Evil Dead"; src: url(../fonts/evil-dead.woff2) format("woff2"); font-display: swap; }
+
+:root {
+    --mfw-font-heading: "Evil Dead", Georgia, serif;
+    --mfw-font-button:  "Absolute Empire", Georgia, serif;
+    --mfw-font-text:    "Averia", Georgia, serif;
+    --mfw-cream:        #f1e4c4;
+}
+
+/* On html, so it fills the whole window however short the page is; body stays see-through over it */
+html {
+    background: #111 url(../images/ui/page-bg.webp) center / cover fixed;
+}
+
+body {
+    background: transparent;
+}
+
+/* Textured button (Unity Blank_Button_Brown / _Green / Button Red). The label sits a little above the middle of the art. */
+.mfw-button {
+    position: relative;
+    display: grid;
+    place-items: center;
+    aspect-ratio: 640 / 229;
+    padding: 0 8% 2%;
+    border: 0;
+    background: url(../images/ui/button-brown.webp) center / 100% 100% no-repeat;
+    font-family: var(--mfw-font-button);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    line-height: 1;
+    color: var(--mfw-cream);
+    text-shadow: 0 2px 2px #000, 0 0 8px rgba(0, 0, 0, 0.65);
+    cursor: pointer;
+    transition: transform 0.12s, filter 0.25s;
+}
+
+.mfw-button.green { background-image: url(../images/ui/button-green.webp); aspect-ratio: 425 / 151; }
+.mfw-button.red   { background-image: url(../images/ui/button-red.webp); }
+
+.mfw-button:hover         { filter: brightness(1.25) saturate(1.1); transform: scale(1.03); }
+.mfw-button:active        { transform: scale(0.96); }
+.mfw-button:focus-visible { outline: 2px solid #c9a35a; outline-offset: 2px; }
+
+/* Tap: expanding ring + sparks (js/atmosphere.js) */
+.mfw-tap-layer {
+    position: fixed;
+    inset: 0;
+    z-index: 5000;
+    pointer-events: none;
+    overflow: hidden;
+}
+
+.mfw-tap { position: absolute; }
+
+.mfw-tap-ring {
+    position: absolute;
+    width: 90px;
+    height: 90px;
+    margin: -45px 0 0 -45px;
+    background: url(../images/ui/fx-circle.webp) center / contain no-repeat;
+    mix-blend-mode: screen;
+    animation: mfw-tap-ring 0.55s cubic-bezier(0.2, 0.8, 0.3, 1) forwards;
+}
+
+.mfw-tap-spark {
+    position: absolute;
+    width: 14px;
+    height: 14px;
+    margin: -7px 0 0 -7px;
+    background: url(../images/ui/fx-spark.webp) center / contain no-repeat;
+    mix-blend-mode: screen;
+    animation: mfw-tap-spark 0.6s ease-out forwards;
+}
+
+@keyframes mfw-tap-ring {
+    from { transform: scale(0.1); opacity: 1; }
+    to   { transform: scale(1); opacity: 0; }
+}
+
+@keyframes mfw-tap-spark {
+    from { transform: translate(0, 0) scale(1); opacity: 1; }
+    to   { transform: translate(var(--dx), var(--dy)) scale(0.2); opacity: 0; }
+}
