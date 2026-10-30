@@ -21,6 +21,7 @@ public class GameplayPopup
         Title = title switch
         {
             PopUpTitle.SpecialSetup    => globalData.GetLocalizedUITag(GlobalTags.Gameplay_SpecialSetup),
+            PopUpTitle.SpecialRule     => globalData.GetLocalizedUITag(GlobalTags.Gameplay_SpecialRule),
             PopUpTitle.EndOfRound      => globalData.GetLocalizedUITag(GlobalTags.Gameplay_EndOfRound_Title),
             PopUpTitle.EndOfGeneration => globalData.GetLocalizedUITag(GlobalTags.Gameplay_EndOfGeneration_Title),
             _                          => globalData.GetLocalizedUITag(GlobalTags.Gameplay_Setup)
@@ -48,6 +49,7 @@ public class GameplayPopup
         Title = title switch
         {
             PopUpTitle.SpecialSetup    => globalData.GetLocalizedUITag(GlobalTags.Gameplay_SpecialSetup),
+            PopUpTitle.SpecialRule     => globalData.GetLocalizedUITag(GlobalTags.Gameplay_SpecialRule),
             PopUpTitle.EndOfRound      => globalData.GetLocalizedUITag(GlobalTags.Gameplay_EndOfRound_Title),
             PopUpTitle.EndOfGeneration => globalData.GetLocalizedUITag(GlobalTags.Gameplay_EndOfGeneration_Title),
             _                          => globalData.GetLocalizedUITag(GlobalTags.Gameplay_Setup)

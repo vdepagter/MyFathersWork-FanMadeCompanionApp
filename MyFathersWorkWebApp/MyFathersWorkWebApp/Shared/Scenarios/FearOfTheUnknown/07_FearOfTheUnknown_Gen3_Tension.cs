@@ -138,7 +138,14 @@ public static partial class FearOfTheUnknown
         globalData.ActiveWindow.AddDefaultTitle();
         globalData.ActiveWindow.AddCustomContent(LetterHeader(globalData));
         globalData.ActiveWindow.AddDefaultContent();
-        globalData.ActiveWindow.AddClickHereToContinue(Reconciliation);
+        globalData.ActiveWindow.AddClickHereToContinue(MinorReward_0);
+    }
+
+    // Source shows the plot expansion rule under a bold SPECIAL RULE line in the letter; it is a popup here
+    private static void MinorReward_0(GlobalData globalData)
+    {
+        globalData.SaveToUndo();
+        globalData.ActivePopup = new GameplayPopup(globalData, PopUpTitle.SpecialRule, PopUpIcon.S2_BrickTokens, PopUpButton.Confirm, Reconciliation);
     }
 
     // Originally WitchTensionResolution: the heir of an executed witch
@@ -218,7 +225,14 @@ public static partial class FearOfTheUnknown
     private static void CalmBeforeTheTempest_0(GlobalData globalData)
     {
         globalData.SaveToUndo();
-        globalData.ActivePopup = new GameplayPopup(globalData, PopUpTitle.Setup, PopUpIcon.S2_RomaniToken, PopUpButton.Confirm, Tension);
+        globalData.ActivePopup = new GameplayPopup(globalData, PopUpTitle.Setup, PopUpIcon.S2_RomaniToken, PopUpButton.Confirm, CalmBeforeTheTempest_1);
+    }
+
+    // Source shows this rule under a bold SPECIAL RULE line in the setup above; it is its own popup here
+    private static void CalmBeforeTheTempest_1(GlobalData globalData)
+    {
+        globalData.SaveToUndo();
+        globalData.ActivePopup = new GameplayPopup(globalData, PopUpTitle.SpecialRule, PopUpIcon.AngryMob_Icon, PopUpButton.Confirm, Tension);
     }
 
     // Originally TenseConfirm at the end of the Early Years without an overtake. Source only reached its "move the Angry Mob

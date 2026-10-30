@@ -129,11 +129,13 @@ RampageConcludes_0_Content;Move the <icon=AngryMob_Icon> Marker <b>{{0=?|2 space
 MissedOpportunity_0_Content;Any player who gained a Collaboration token <icon=S2_CollaborativeToken> gains <b>1 Knowledge of their choice</b>{{0=?| for each}} and then returns the token to the box.<br /><br />Any player who does not have a Collaboration token <icon=S2_CollaborativeToken> is not dedicated to the craft and <b>loses 2VP</b>.{{1=?|<br /><br />The player with the most Collaboration tokens <icon=S2_CollaborativeToken> <b>gains 4VP</b>. <i>If there is a tie, no one receives this bonus.</i>}}
 //====== Gen3 - Tension ======;
 TwoSides_0_Content;Retrieve the <b>Romani token</b> <icon=S2_RomaniToken> and place it on space <b>1</b> of the <icon=Creepy_Icon> Track.<br /><br />Return the <b>Suspicion</b> Marker to the box. Place the <icon=AngryMob_Icon> Marker on space <b>14</b> of the <icon=Creepy_Icon> Track.
+MinorReward_0_Content;Bricks can now be used to expand to new plots in your Estate.<br /><br />When expanding to a new plot, each brick token you spend is worth $1.
 Reconciliation_0_Content;{{0=...|Oliver|James|Olivia|...}} gains a Servant from Lost and 1 Ingredient of their choice. <i>If you have no Servants available in Lost, gain 2VP instead.</i>
 InSupportOfOthers_0_Content;The player(s) with the most VP immediately <b>loses 1 <icon=Creepy_Icon></b> and <b>discards 1 Experiment card</b> during the Start of a Generation phase.
 TensionSetup_Content;Turn to page <b>19</b> of the Village Chronicle.{{0=?| Return all bricks to the box.}} Retrieve the <b>Cabinet of Curiosities</b> Estate Upgrades from the Scenario box.{{1=?|<br />Then, since this is a 3 player game, pass the starting player marker clockwise 1 additional time.}}
 TensionMiddleSetup_Content;Turn to page <b>{{0=?|20|21}}</b> of the Village Chronicle.
-CalmBeforeTheTempest_0_Content;Remove the Romani token <icon=S2_RomaniToken> from the <icon=Creepy_Icon> Track.<br /><br /><b>SPECIAL RULE</b><br />The <icon=AngryMob_Icon> Marker will remain where it is until the end of the round. Ignore any ability or effect that would move the <icon=AngryMob_Icon> Marker.
+CalmBeforeTheTempest_0_Content;Remove the Romani token <icon=S2_RomaniToken> from the <icon=Creepy_Icon> Track.
+CalmBeforeTheTempest_1_Content;The <icon=AngryMob_Icon> Marker will remain where it is until the end of the round. Ignore any ability or effect that would move the <icon=AngryMob_Icon> Marker.
 CalmBeforeTheTempestEnd_0_Content;Move the <icon=AngryMob_Icon> Marker to the same space as the Romani token <icon=S2_RomaniToken>, then remove the Romani token <icon=S2_RomaniToken> from the <icon=Creepy_Icon> Track.
 GoodNeighbors_0_Content;Remove the <icon=AngryMob_Icon> Marker from the <icon=Creepy_Icon> Track.
 TheCrossroads_0_Content;Put a <b><icon=StorybookToken> token</b> on space {{0=...|8|...}} of the <icon=Creepy_Icon> Track.

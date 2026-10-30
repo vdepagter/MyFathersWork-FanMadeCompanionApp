@@ -109,6 +109,7 @@ public static class GlobalTags
     public const string Gameplay_OnceYouAreReady            = "Gameplay_OnceYouAreReady";
     public const string Gameplay_Setup                      = "Gameplay_Setup";
     public const string Gameplay_SpecialSetup               = "Gameplay_SpecialSetup";
+    public const string Gameplay_SpecialRule                = "Gameplay_SpecialRule";
     public const string Gameplay_Accept                     = "Gameplay_Accept";
     public const string Gameplay_Confirm                    = "Gameplay_Confirm";
     public const string Gameplay_Choose                     = "Gameplay_Choose";
