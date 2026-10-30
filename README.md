@@ -29,7 +29,7 @@ which ported the first two Generations of *The Cost of Disease*. Starting from t
 | Scenario | Status |
 |---|---|
 | **The Cost of Disease** | ✅ Complete, played at the table |
-| **Fear of the Unknown** | ✅ Complete, played at the table (twice) |
+| **Fear of the Unknown** | ✅ Complete, played at the table |
 | **A Time of War** | ✅ Complete, played through in the browser; waiting for a game at the table |
 
 ## Features
